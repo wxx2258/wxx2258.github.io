@@ -266,11 +266,8 @@
       
         
           
-            <blockquote>
-<p>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</p>
-<h2 id="一-作用域"><a href="#一-作用域" class="headerlink" title="一. 作用域"></a>一. 作用域</h2><ol>
-<li><h3 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h3></li>
-</ol>
+            <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
+<h2 id="一-作用域"><a href="#一-作用域" class="headerlink" title="一. 作用域"></a>一. 作用域</h2><h3 id="1-1-编译原理"><a href="#1-1-编译原理" class="headerlink" title="1.1 编译原理"></a>1.1 编译原理</h3><blockquote>
 <p>&#160; &#160; &#160; &#160;虽然通常把javascript分类为“动态”或“解释执行”语言，但事实上是一门编译语言。<br>&#160; &#160; &#160; &#160;对于传统编译语言，一段源代码在执行之前会经历三个步骤：  </p>
 <ul>
 <li>分词/词法分析</li>
@@ -278,17 +275,13 @@
 <li>代码生成<br>&#160; &#160; &#160; &#160;这些步骤这里我们就不深入讲，而相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br><strong>&#160; &#160; &#160; &#160;这里我们只需要知道任何javascript代码片段在执行前都要进行编译。</strong></li>
 </ul>
 </blockquote>
-<ol>
-<li><h3 id="理解作用域"><a href="#理解作用域" class="headerlink" title="理解作用域"></a>理解作用域</h3><blockquote>
-<p>例：处理  <code>var a = 2 ;</code> 代码过程。<br> <strong>在这之前我们我先介绍三个参与处理的角色</strong></p>
-<ul>
-<li>引擎：从头到尾负责整个javascript程序的编译以及执行过程。</li>
-<li>编译器：负责语词分析以及代码生成等脏活累活。</li>
-<li>作用域：负责收集并维护有所有声明的标识符（变量）注册后能够的一系列查询。</li>
-</ul>
-<p>开始介绍：<br>&#160; &#160; &#160; &#160;先是<strong>引擎</strong> 遇到var a = 2;这段代码，进行解析，然后将 <code>var a;</code>给到 <strong>编译器</strong> =&gt;<br>&#160; &#160; &#160; &#160;<strong>编译器</strong> 拿到 <code>var a;</code>就会向 <strong>作用域</strong> 询问是否有已经有该名称的变量存在在作用域的集合中。<br>&#160; &#160; &#160; &#160;如果是 <strong>编译器</strong> 就会忽略该声明，否则它会要求 <strong>作用域</strong> 在当前作用域的集合中声明一个新的变量。<br>&#160; &#160; &#160; &#160;接下来 <strong>编译器</strong> 就会为 <strong>引擎</strong> 生成运行需要的代码，用来处理 <code>a = 2</code> 这个赋值操作。 <strong>引擎</strong> 运行时会询问作用域是否存在 a 变量，如果是，则使用这个变量；否则 <strong>引擎</strong> 会继续查找下去。如果查找不到就抛出异常。</p>
-</blockquote>
-<p> ####<strong>为了进一步理解，接下来我们介绍编译器的一些术语。</strong><br> &#160; &#160; &#160; &#160;在我们上面的例子中，<code>var a=2;</code>中，引擎会为变量 a 进行 LHS查询 和 RHS查询 。  </p>
+<h3 id="1-2-理解作用域"><a href="#1-2-理解作用域" class="headerlink" title="1.2 理解作用域"></a>1.2 理解作用域</h3><blockquote>
+<p>例：处理  <code>var a = 2 ;</code> 代码过程。<br>    <strong>在这之前我们我先介绍三个参与处理的角色</strong></p>
+<pre><code>* 引擎：从头到尾负责整个javascript程序的编译以及执行过程。
+* 编译器：负责语词分析以及代码生成等脏活累活。
+* 作用域：负责收集并维护有所有声明的标识符（变量）注册后能够的一系列查询。
+</code></pre><p>开始介绍：<br>&#160; &#160; &#160; &#160;先是<strong>引擎</strong> 遇到var a = 2;这段代码，进行解析，然后将 <code>var a;</code>给到 <strong>编译器</strong> =&gt;<br>&#160; &#160; &#160; &#160;<strong>编译器</strong> 拿到 <code>var a;</code>就会向 <strong>作用域</strong> 询问是否有已经有该名称的变量存在在作用域的集合中。<br>&#160; &#160; &#160; &#160;如果是 <strong>编译器</strong> 就会忽略该声明，否则它会要求 <strong>作用域</strong> 在当前作用域的集合中声明一个新的变量。<br>&#160; &#160; &#160; &#160;接下来 <strong>编译器</strong> 就会为 <strong>引擎</strong> 生成运行需要的代码，用来处理 <code>a = 2</code> 这个赋值操作。 <strong>引擎</strong> 运行时会询问作用域是否存在 a 变量，如果是，则使用这个变量；否则 <strong>引擎</strong> 会继续查找下去。如果查找不到就抛出异常。</p>
+<p>####<strong>为了进一步理解，接下来我们介绍编译器的一些术语。</strong><br>&#160; &#160; &#160; &#160;在我们上面的例子中，<code>var a=2;</code>中，引擎会为变量 a 进行 LHS查询 和 RHS查询 。  </p>
 <ul>
 <li>LHS：试图找到变量容器本身。（<strong>赋值操作的目标是谁</strong>）</li>
 <li>RHS：获取值。（<strong>随时赋值操作的源头</strong>）<br>考虑下面的代码：（这里的代码既有LHS也有RHS引用。）<pre><code>function foo(a){
@@ -297,21 +290,31 @@
 foo(2);  
 </code></pre>这里最后一行foo函数的调用需要对foo进行 <strong>RHS</strong> 引用，意味着“去找到foo的值，并把它给我”。<br>这里还有一个很重要又很容易被忽略的细节，代码中隐式的 <code>a=2</code> 操作发生在2被当做参数传递到foo()函数，为了给参数a分配值，需进行一次 <strong>LHS</strong>。<br>这里<code>console.log(a)</code>也对a进行 <strong>RHS</strong> 引用。</li>
 </ul>
-<p><strong>&#160; &#160; &#160; &#160;LHS和RHS查询都会从当前执行作用域开始查找，如果没有找到所需的标识符，就上向上级作用域查找目标标识符，这样每次升级一次作用域，直到到达全局作用域，无论有无找到都会停止查找。</strong><br><strong>&#160; &#160; &#160; &#160;不成功的RHS引用会抛出异常，在非严格模式下，会隐式地创建一个全局变量；在严格模式下，抛出ReferenceError异常。</strong>  </p>
-<p> 小测：</p>
-<pre><code>function foo(a){
-    var b = a;
-    return a+b;
-}
-var c = foo(2);
-</code></pre><p> 请问这里有多少处LHS和RHS？  </p>
-</li>
-</ol>
-<pre><code>所有的LHS（有三处）
+</blockquote>
+<p>   <strong>&#160; &#160; &#160; &#160;LHS和RHS查询都会从当前执行作用域开始查找，如果没有找到所需的标识符，就上向上级作用域查找目标标识符，这样每次升级一次作用域，直到到达全局作用域，无论有无找到都会停止查找。</strong><br>   <strong>&#160; &#160; &#160; &#160;不成功的RHS引用会抛出异常，在非严格模式下，会隐式地创建一个全局变量；在严格模式下，抛出ReferenceError异常。</strong>  </p>
+<pre><code>小测：
+    function foo(a){
+        var b = a;
+        return a+b;
+    }
+    var c = foo(2);
+请问这里有多少处LHS和RHS？  
+
+
+
+所有的LHS（有三处）
 c = ..； a = 2 ;b = ..
 所有的RHS（有四处）
 foo（2.. 、 =a 、 a.. 、 ..b）
-</code></pre>
+</code></pre><h2 id="二-词法作用域"><a href="#二-词法作用域" class="headerlink" title="二.词法作用域"></a>二.词法作用域</h2><ol>
+<li><p>对比动态作用域</p>
+</li>
+<li><p>词法阶段</p>
+</li>
+<li><p>欺骗词法</p>
+</li>
+</ol>
+
           
         
       
