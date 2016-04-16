@@ -288,7 +288,7 @@
 </ul>
 <p>开始介绍：<br>&#160; &#160; &#160; &#160;先是<strong>引擎</strong> 遇到var a = 2;这段代码，进行解析，然后将 <code>var a;</code>给到 <strong>编译器</strong> =&gt;<br>&#160; &#160; &#160; &#160;<strong>编译器</strong> 拿到 <code>var a;</code>就会向 <strong>作用域</strong> 询问是否有已经有该名称的变量存在在作用域的集合中。<br>&#160; &#160; &#160; &#160;如果是 <strong>编译器</strong> 就会忽略该声明，否则它会要求 <strong>作用域</strong> 在当前作用域的集合中声明一个新的变量。<br>&#160; &#160; &#160; &#160;接下来 <strong>编译器</strong> 就会为 <strong>引擎</strong> 生成运行需要的代码，用来处理 <code>a = 2</code> 这个赋值操作。 <strong>引擎</strong> 运行时会询问作用域是否存在 a 变量，如果是，则使用这个变量；否则 <strong>引擎</strong> 会继续查找下去。如果查找不到就抛出异常。</p>
 </blockquote>
-<p> <strong>为了进一步理解，接下来我们介绍编译器的一些术语。</strong><br> &#160; &#160; &#160; &#160;在我们上面的例子中，<code>var a=2;</code>中，引擎会为变量 a 进行 LHS查询 和 RHS查询 。  </p>
+<p> ####<strong>为了进一步理解，接下来我们介绍编译器的一些术语。</strong><br> &#160; &#160; &#160; &#160;在我们上面的例子中，<code>var a=2;</code>中，引擎会为变量 a 进行 LHS查询 和 RHS查询 。  </p>
 <ul>
 <li>LHS：试图找到变量容器本身。（<strong>赋值操作的目标是谁</strong>）</li>
 <li>RHS：获取值。（<strong>随时赋值操作的源头</strong>）<br>考虑下面的代码：（这里的代码既有LHS也有RHS引用。）<pre><code>function foo(a){
@@ -382,18 +382,11 @@ foo（2.. 、 =a 、 a.. 、 ..b）
           </div>
 
           
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">1</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
 
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
