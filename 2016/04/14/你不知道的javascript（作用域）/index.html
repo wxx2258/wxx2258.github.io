@@ -71,7 +71,7 @@
 &amp;#160; &amp;#160; &amp;#160; &amp;#160;虽然通常把javascript分类为“动态”或“解释执行”语言，但事实上是一门编译语言。&amp;#160; &amp;#160; &amp;#160; &amp;#160;对于传统编译语言，一段源代码在执行之前会经历三个步骤：  
 
 分词/词法分">
-<meta property="og:updated_time" content="2016-04-16T07:24:09.616Z">
+<meta property="og:updated_time" content="2016-04-16T10:27:56.812Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="你不知道的javascript（作用域）">
 <meta name="twitter:description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
@@ -313,14 +313,122 @@ c = ..； a = 2 ;b = ..
 所有的RHS（有四处）
 foo（2.. 、 =a 、 a.. 、 ..b）
 </code></pre><h2 id="二-词法作用域"><a href="#二-词法作用域" class="headerlink" title="二.词法作用域"></a>二.词法作用域</h2><ol>
-<li><p>对比动态作用域</p>
-</li>
-<li><p>词法阶段</p>
-</li>
-<li><p>欺骗词法</p>
-</li>
-</ol>
+<li><h3 id="对比动态作用域"><a href="#对比动态作用域" class="headerlink" title="对比动态作用域"></a>对比动态作用域</h3><p> &#160; &#160; &#160; &#160;这里需要明确的是：<strong> javascript只有词法作用域，没有动态作用域。this机制只是某种程度像动态作用域。 </strong><br> &#160; &#160; &#160; &#160;这里是说明两者的区别，不细说动态作用域。<br> &#160; &#160; &#160; &#160;主要区别：词法作用域是在写代码或者说定义的时候确定的，而动态作用域实在运行时定义的；词法作用域关注函数在何处声明，而动态作用域光柱函数从何处调用。</p>
+<pre><code>例子：
+function foo(a){
+    console.log(a); //2
+}
+function bar(){
+    var a=3;
+    foo();    
+}
+var a=2;
+bar();
 
+这里词法作用域让foo（）中的 a 通过RHS引用到全局作用域总的 a ，因此会输出 2 。
+</code></pre></li>
+<li><h3 id="词法阶段"><a href="#词法阶段" class="headerlink" title="词法阶段"></a>词法阶段</h3><p> &#160; &#160; &#160; &#160;词法作用域就是定义在词法阶段的作用域。由写代码时变量和快作用域的位置决定。</p>
+</li>
+<li><h3 id="欺骗词法"><a href="#欺骗词法" class="headerlink" title="欺骗词法"></a>欺骗词法</h3><p> &#160; &#160; &#160; &#160;词法作用域完全有写代码期间函数所声明的位置来定义，怎样才能在运行时来“欺骗”词法作用域。<br> &#160; &#160; &#160; &#160;这里有两种机制可以实现欺骗词法，但需要注意的，<strong>这两种机制会导致性能下降。</strong></p>
+<h4 id="eval"><a href="#eval" class="headerlink" title="eval"></a>eval</h4><p> （<strong>严格模式下不可用</strong>）</p>
+<pre><code>javascript中 eval()函数可以接收一个字符串为参数，并将其中的内容视为写在当前位置的代码。
+考虑以下的代码：
+function foo(str,a){
+    eval(str);
+    console.log(a,b);
+}
+var b = 2;
+foo(&quot;var b=3;&quot; , 1);   
+//输出结果为 1，3；
+eval()调用中的 var b=3 这段代码会被当在本来的位置处理，因此在foo()函数中就声明了 b；并遮蔽了全局作用域中的 b；
+</code></pre><h4 id="with（）"><a href="#with（）" class="headerlink" title="with（）"></a>with（）</h4><p> （<strong>严格模式下不可用</strong>）</p>
+<pre><code>with相对比较难以掌握。同时也可以用多种方法解释with，但由于其也不推荐使用。所以这里并不进行详细解释和介绍。
+（其实就是笔者能力有限，就不进行解释误导读者。）
+</code></pre></li>
+</ol>
+<h2 id="三-块作用域"><a href="#三-块作用域" class="headerlink" title="三.块作用域"></a>三.块作用域</h2><ol>
+<li><h3 id="介绍启示"><a href="#介绍启示" class="headerlink" title="介绍启示"></a>介绍启示</h3><p> 一般来说，我们讲javascript没有块作用域。我们先来看一段代码：</p>
+<pre><code>for(var i=1;i&lt;10;i++){
+    console.log(i);
+}
+</code></pre><p> 对于已经入门js的开发者来说，对这段代码一定十分熟悉了。其输出 10次 10。虽然对于大多数开发者对这段代码的解释是console.log()是异步操作，但笔者认为，这必然也跟块作用域脱不了关系。ES6中新声明的 let 语法，实现块作用域结果便不同了。在下文会介绍 let 语法。</p>
+</li>
+<li><h3 id="实现javascript中块作用域的功能"><a href="#实现javascript中块作用域的功能" class="headerlink" title="实现javascript中块作用域的功能"></a>实现javascript中块作用域的功能</h3><h4 id="with"><a href="#with" class="headerlink" title="with"></a>with</h4><pre><code>用with从对象中创建的作用域仅在with声明中而非外部作用域中有效。
+</code></pre><h4 id="try-catch"><a href="#try-catch" class="headerlink" title="try/catch"></a>try/catch</h4><p> 很少人会注意ES3 规范中规定try/catch的catch分句会创建一个块作用域，其中声明的变量仅在catch内部有效。</p>
+<pre><code>例如；
+try{
+    undefined(); //执行一个非法操作强行制造一个异常。    
+}
+catch(err){
+    console.log(err);  //正常运行
+}
+console.log(err);     //ReferenceError： err not found
+err 仅仅存在catch分句内部，当试图从别处引用它会抛出错误。
+</code></pre><h4 id="let（ES6）"><a href="#let（ES6）" class="headerlink" title="let（ES6）"></a>let（ES6）</h4><p> <strong>let关键字可以将变量绑定到所在的任意作用域上（通常是｛…｝内部）</strong></p>
+<pre><code>var foo = 1;
+if(foo){
+    let bar = foo *2;
+    console.log(bar);  //2
+}
+console.log(bar);  //ReferenceError
+</code></pre><p> let循环：</p>
+<pre><code>for(let i=0;i&lt;10;i++){
+    console.log(i);    // 0,1,2,3,4,5,6,7,8,9        
+}
+for循环头部的let不仅将 i 绑定到for循环的快中，
+事实上它将其重新绑定到了循环的每一个迭代中，确保使用上一次循环迭代结束时值重新进行赋值。
+</code></pre><p> ####const（ES6）</p>
+<pre><code>同样可以创建块作用域变量。但其值是固定的（常量），试图修改值的操作会报错。
+</code></pre></li>
+</ol>
+<h2 id="四-提升"><a href="#四-提升" class="headerlink" title="四.提升"></a>四.提升</h2><pre><code>思考一段代码：  
+    console.log(a);
+    var a = 2;
+输出结果为undefined。
+
+其实这段代码处理流程是：
+var a;
+console.log(a);
+a = 2;
+只有声明本身会被提升，而赋值或其他运行逻辑会留在原地。
+</code></pre><p>**函数声明会被提升，而函数表达式却不会被提升。</p>
+<h4 id="函数优先"><a href="#函数优先" class="headerlink" title="函数优先"></a>函数优先</h4><pre><code>foo();
+var foo;
+function foo(){
+    console.log(1);
+}
+foo = function(){
+    console.log(2);
+}
+输出的结果为1而不是2；
+函数声明优先原则。
+</code></pre><h2 id="五-作用域闭包"><a href="#五-作用域闭包" class="headerlink" title="五.作用域闭包"></a>五.作用域闭包</h2><pre><code>提前说明：闭包是js中一块重要，高明的内容，有许多比我优秀的笔者写过更多有关闭包的文章。这里也仅对闭包进行引导性的理解和学习。
+</code></pre><h3 id="实质问题"><a href="#实质问题" class="headerlink" title="实质问题"></a>实质问题</h3><pre><code>认识：当函数可以记住并访问所在的词法作用域时，就产生了闭包，即使函数实在当前词法作用域外执行。
+function foo(){
+    var a=2;
+    function bar(){
+        console.log(a);
+    }    
+}
+var baz = foo();
+baz();  //结果为2   --这就是闭包的效果。
+</code></pre><p>通常来说，foo()执行后，就会期待foo()的整个内部作用域被销毁，因为引擎有垃圾回收机制用来释放不再使用的内存空间。<br>而闭包却可以阻止这样的事情发生，由于bar()所声明的位置，他拥有涵盖foo()内部作用域的闭包，使得这一作用域一直存活。</p>
+<p>记住一句话：<strong>无论通过何种手段将内部函数传递到所在的词法作用域以外，他都会持有对原始定义作用域的引用，无论在何处执行这个函数都会使用闭包。</strong><br>本质上，无论何时何地，如果将函数当做以及的值类型并到处传递，就能看到闭包在这些函数中的引用。在定时器，事件监听器，Ajax请求，跨窗口通信，Web Workers或者任何其他的异步（同步）任务中，只要使用了函数回调，实际上就是使用闭包。</p>
+<h3 id="循环和闭包"><a href="#循环和闭包" class="headerlink" title="循环和闭包"></a>循环和闭包</h3><pre><code>for(var i = 1; i&lt;=5 ; i++){
+    (function(){
+        setTimeout(function timer(){
+            console.log(i);
+        },i*1000)
+    })(i);
+}
+</code></pre><p>在迭代中使用自运行函数（IIFE）会为每一个迭代都生成一个新的作用域，是的延迟函数的回调可以将新的作用域封闭在每个迭代内部，每个迭代中都会含有一个具有正确值供我们访问。</p>
+<h3 id="重返块作用域"><a href="#重返块作用域" class="headerlink" title="重返块作用域"></a>重返块作用域</h3><pre><code>闭包和let的联合。
+for(let i = 1; i&lt;=5 ; i++){
+    setTimeout(function(){
+        console.log(i);
+    },j*1000)
+}
+</code></pre>
       
     </div>
 
@@ -461,7 +569,7 @@ foo（2.. 、 =a 、 a.. 、 ..b）
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-作用域"><span class="nav-number">1.</span> <span class="nav-text">一. 作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-编译原理"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 编译原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-理解作用域"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 理解作用域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-词法作用域"><span class="nav-number">2.</span> <span class="nav-text">二.词法作用域</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-作用域"><span class="nav-number">1.</span> <span class="nav-text">一. 作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-编译原理"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 编译原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-理解作用域"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 理解作用域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-词法作用域"><span class="nav-number">2.</span> <span class="nav-text">二.词法作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对比动态作用域"><span class="nav-number">2.1.</span> <span class="nav-text">对比动态作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#词法阶段"><span class="nav-number">2.2.</span> <span class="nav-text">词法阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#欺骗词法"><span class="nav-number">2.3.</span> <span class="nav-text">欺骗词法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#eval"><span class="nav-number">2.3.1.</span> <span class="nav-text">eval</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#with（）"><span class="nav-number">2.3.2.</span> <span class="nav-text">with（）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-块作用域"><span class="nav-number">3.</span> <span class="nav-text">三.块作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍启示"><span class="nav-number">3.1.</span> <span class="nav-text">介绍启示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现javascript中块作用域的功能"><span class="nav-number">3.2.</span> <span class="nav-text">实现javascript中块作用域的功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#with"><span class="nav-number">3.2.1.</span> <span class="nav-text">with</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#try-catch"><span class="nav-number">3.2.2.</span> <span class="nav-text">try/catch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#let（ES6）"><span class="nav-number">3.2.3.</span> <span class="nav-text">let（ES6）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-提升"><span class="nav-number">4.</span> <span class="nav-text">四.提升</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#函数优先"><span class="nav-number">4.0.1.</span> <span class="nav-text">函数优先</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-作用域闭包"><span class="nav-number">5.</span> <span class="nav-text">五.作用域闭包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实质问题"><span class="nav-number">5.1.</span> <span class="nav-text">实质问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#循环和闭包"><span class="nav-number">5.2.</span> <span class="nav-text">循环和闭包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重返块作用域"><span class="nav-number">5.3.</span> <span class="nav-text">重返块作用域</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
