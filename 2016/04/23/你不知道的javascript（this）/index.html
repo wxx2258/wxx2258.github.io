@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javascript," />
+  <meta name="keywords" content="javascript,this," />
 
 
 
@@ -58,32 +58,33 @@
 
 
 <meta name="description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
-一. 关于this1.1 消除对this的误解在解释this之前，我们需要先消除一些关于this的错误认识。  
+一. 关于this消除对this的误解在解释this之前，我们需要先消除一些关于this的错误认识。  
 
-指向自身　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。我们想要记录以下函数foo被调用的次数，思考以下代码：
+指向自身　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。
+我们想要记录以下函数foo被调用的次数，思考以下代码：
 function foo(num){
-    cons">
+    console">
 <meta property="og:type" content="article">
 <meta property="og:title" content="你不知道的javascript（this）">
 <meta property="og:url" content="http://yoursite.com/2016/04/23/你不知道的javascript（this）/index.html">
 <meta property="og:site_name" content="Wxx's blog">
 <meta property="og:description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
-一. 关于this1.1 消除对this的误解在解释this之前，我们需要先消除一些关于this的错误认识。  
+一. 关于this消除对this的误解在解释this之前，我们需要先消除一些关于this的错误认识。  
 
-指向自身　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。我们想要记录以下函数foo被调用的次数，思考以下代码：
+指向自身　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。
+我们想要记录以下函数foo被调用的次数，思考以下代码：
 function foo(num){
-    cons">
-<meta property="og:image" content="http://yoursite.com/a.png">
-<meta property="og:updated_time" content="2016-04-23T05:13:29.458Z">
+    console">
+<meta property="og:updated_time" content="2016-04-23T13:59:42.778Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="你不知道的javascript（this）">
 <meta name="twitter:description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
-一. 关于this1.1 消除对this的误解在解释this之前，我们需要先消除一些关于this的错误认识。  
+一. 关于this消除对this的误解在解释this之前，我们需要先消除一些关于this的错误认识。  
 
-指向自身　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。我们想要记录以下函数foo被调用的次数，思考以下代码：
+指向自身　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。
+我们想要记录以下函数foo被调用的次数，思考以下代码：
 function foo(num){
-    cons">
-<meta name="twitter:image" content="http://yoursite.com/a.png">
+    console">
 
 
 
@@ -318,9 +319,10 @@ function foo(num){
 
       
         <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
-<h2 id="一-关于this"><a href="#一-关于this" class="headerlink" title="一. 关于this"></a>一. 关于this</h2><h3 id="1-1-消除对this的误解"><a href="#1-1-消除对this的误解" class="headerlink" title="1.1 消除对this的误解"></a>1.1 消除对this的误解</h3><p>在解释this之前，我们需要先消除一些关于this的错误认识。  </p>
+<h2 id="一-关于this"><a href="#一-关于this" class="headerlink" title="一. 关于this"></a>一. 关于this</h2><h3 id="消除对this的误解"><a href="#消除对this的误解" class="headerlink" title="消除对this的误解"></a>消除对this的误解</h3><p>在解释this之前，我们需要先消除一些关于this的错误认识。  </p>
 <ul>
-<li>指向自身<br>　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。<pre><code>我们想要记录以下函数foo被调用的次数，思考以下代码：
+<li><h4 id="指向自身"><a href="#指向自身" class="headerlink" title="指向自身"></a>指向自身</h4><p>　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。</p>
+<pre><code>我们想要记录以下函数foo被调用的次数，思考以下代码：
 function foo(num){
     console.log(&quot;foo :&quot; + num);
     //记录foo被调用的次数
@@ -337,10 +339,197 @@ for(var i = 0;i&lt;10;i++){
 //foo :7
 //foo :8
 //foo :9        
-console.log( foo.count );
+console.log( foo.count );  //0        
+
+console.log语句输出四次，可点foo()函数调用了四次，
+而foo.count仍然为0，说明foo()函数中的this并非指向
+foo函数。
+
+console.log( window.count );  //NAN
+这里其实this引用的是全局，生成一个window对象下的全局
+变量，值为NAN。
+</code></pre></li>
+<li><h4 id="this的作用域"><a href="#this的作用域" class="headerlink" title="this的作用域"></a>this的作用域</h4><p>　　第二种常见的误解，this指向函数的作用域。这个观点在某种情况下是正确的，但在其他情况下确实错误的。<br>　　ths和词法作用域的查找是无法实现的。</p>
+<pre><code>function foo(){
+    var a = 2;
+    this.bar();
+}
+function bar(){
+    console.log(&quot;bar 引用成功。&quot;)
+    console.log(this.a);
+}
+foo();
+输出结果：
+// bar 引用成功。
+// undefined
 </code></pre></li>
 </ul>
-<p><img src="a.png"></p>
+<p>　　这段代码的看起来好像是我们故意写的错误，但其实诠释的是this的误导性。<br>　　《你不知道的javascript》一书中说this.bar(),无法调用bar函数，我们在bar函数中加入console.log(“bar 引用成功”);而实际中会输出“bar 引用成功”，说明bar调用成功。　<br>　　<strong>可能的原因是现在的浏览器引擎已经修补了这个错误。　</strong><br>　　this.a 输出为undefined，这里代码尝试将foo和bar的作用与连接，是错误的做法，无法实现。</p>
+<h3 id="this到底是什么？"><a href="#this到底是什么？" class="headerlink" title="this到底是什么？"></a>this到底是什么？</h3><p>　　当一个函数被调用时，会创建一个活动记录（也称为执行上下问）。这个记录会包含函数在哪里被调用（调用栈），函数的调用方法，传入的参数等信息。<strong>this就是记录的其中一个属性，会在函数执行的过程中用到</strong>。</p>
+<h2 id="二-this全面解析"><a href="#二-this全面解析" class="headerlink" title="二. this全面解析"></a>二. this全面解析</h2><h3 id="绑定规则"><a href="#绑定规则" class="headerlink" title="绑定规则"></a>绑定规则</h3><ul>
+<li><h4 id="默认绑定"><a href="#默认绑定" class="headerlink" title="默认绑定"></a>默认绑定</h4><pre><code>function foo(){
+    console.log(this.a);
+}
+var a = 2;
+foo();  //2
+</code></pre><p>我们调用foo()函数，this.a被解析成 全局变量中的a，为什么？因为在这个例子中，函数调用的时候，<strong>this指向了全局对象。<br>this.a 即 window.a;</strong><br>总结来说：<br>　　默认绑定就是没有进行任何修饰的调用，谁调用this绑定谁。</p>
+<pre><code>function foo(){
+    &quot;use strict&quot;;
+
+    console.log(this.a);
+}
+var a = 2;
+foo();　　
+//TypeError: Cannot read property &apos;a&apos; of undefined
+</code></pre><p>在严格模式下，全局对象无法使用默认绑定。所以报错。        </p>
+</li>
+<li><h4 id="隐式绑定"><a href="#隐式绑定" class="headerlink" title="隐式绑定"></a>隐式绑定</h4>　　 一个需要考虑的规则是 调用位置是否有上下文对象，或者说某个对象拥有或者包含。<br>　　思考以下代码：<pre><code>function foo(){
+    console.log(this.a);
+}
+var obj = {
+    a:2,
+    foo:foo
+}
+obj.foo();  //2
+</code></pre>这里会使用obj上下文引用函数，即函数被调用时obj对象“拥有”或者“包含”。当foo()被调用的时候，<strong>隐式绑定规则会把函数调用中的this绑定到这个对象。</strong>因此foo()的this绑定到obj对象上，因此输入2。</li>
+<li><p>隐式丢失：（隐式绑定的函数会）<br>看下面的代码：</p>
+<pre><code>function foo(){
+    console.log(this.a);
+}
+var obj = {
+    a:2,
+    foo:foo
+}
+var bar = obj.foo;
+var a = &quot;global&quot;
+bar();   //global
+</code></pre><p>这里输出的global，说明bar()调用的时候，this绑定的是全局对象， 这里造成的原因其实是 bar 赋值得到是 foo函数的一个引用。所以bar调用的时候不带任何的修饰，因此应用了默认绑定。</p>
+<pre><code>function foo(){
+    console.log(this.a);
+}
+function dofoo(fn){
+    fu();
+}
+var obj = {
+    a:2,
+    foo:foo
+}
+var a = &quot;global&quot;
+dofoo(obj.foo);   //global
+</code></pre><p>这里同样输出的是global，参数传递是一种隐式赋值，所以和上个例子一样。</p>
+<blockquote>
+<p>除去上面的情况，调用回调函数也可能会修改this。在一些流行的javascript库中，会把回调函数的this强制绑定到触发事件的DOM元素上。所以使用的时候要注意小心。</p>
+</blockquote>
+</li>
+<li><h4 id="显式绑定"><a href="#显式绑定" class="headerlink" title="显式绑定"></a>显式绑定</h4><p>call()和apply()方法的第一参数为对象。它们会把这个对象绑定到this，接着在调用函数事指定这个this。我们称之为显式绑定。</p>
+</li>
+</ul>
+<blockquote>
+<p>可惜显式绑定不可以解决上面说的绑定丢失，但是显式绑定的一个变形（硬绑定）可以解决。</p>
+</blockquote>
+<h5 id="硬绑定"><a href="#硬绑定" class="headerlink" title="硬绑定"></a>硬绑定</h5><pre><code>function foo(){
+    console.log(this.a);
+}
+var obj = {
+    a:2,
+}
+var bar = function(){
+    foo.call( obj );
+}
+bar();  //2
+setTimeout( bar , 100); //2
+//硬绑定的bar 不可能在外部改变它的this了
+bar.call(window);
+</code></pre><p>这里我们创建了bar函数，并在它的内部手动调用了foo.call(obj),因此强制把foo的this值绑定到了 obj。无论如何调用函数bar函数，总会手动在obj调用foo。  </p>
+<pre><code>创建一个辅助绑定函数，参数为要被绑定的函数和对象。  
+函数返回被绑定的函数。
+function bind(fn,obj){
+    return function(){
+        return fn.apply(obj,arguments);
+    }
+}        
+</code></pre><p>由于硬绑定是一种非常常用的模式，所以在ES5中提供内置的方法，Function.prototype.bind,用法如下，</p>
+<pre><code>function foo(something){
+    console.log(this.a , something);
+    return this.a + something;
+}
+var obj = {
+    a:2
+}
+var bar = foo.bind(obj);
+var b = bar(3);
+console.log(b); //5
+</code></pre><p>bind(…)会返回一个硬编码的新函数，它会把参数设置为this的上下问并调用原始函数。    </p>
+<ul>
+<li><h4 id="new绑定"><a href="#new绑定" class="headerlink" title="new绑定"></a>new绑定</h4>　　首先声明以下，javascript中new的机制和面向类的语言完全不同。<br>　　在javascript中的“构造函数”，只是一些使用new操作符被调用的函数，它们并不会属于某个类，也不会实例化一个类，只是一个被new操作符调用的普通函数。<br>　　使用new来调用那个函数，或者说发生构造函数调用时，会执行下面的操作：<pre><code>1. 创建（或者说构造）一个全新的对象。
+2. 这个新对象会被执行[[原型]]连接。
+3. 这个新函数会绑定到函数被调用的this。
+4. 如果函数没有返回其他对象，那么new表达式的函数调用会自动返回这个新对象。
+</code></pre></li>
+</ul>
+<p>我们会构造一个对象，并把它绑定到 函数 调用中的this上，这就叫new绑定。</p>
+<ul>
+<li><h4 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h4>这里不详细讲解测试优先级的过程，直接说结果，有兴趣的读者可以可尝试，测试需要注意的是<pre><code>1. new和call/apply无法一起使用，无法通过new foo.call（obj）来直接测试。
+2.  判断硬绑定函数是否被new调用，是的话使用新this替代硬绑定的this。
+</code></pre>**优先级：new绑定 &gt; 显示绑定 &gt; 隐式绑定 &gt; 默认绑定</li>
+</ul>
+<h3 id="绑定例外"><a href="#绑定例外" class="headerlink" title="绑定例外"></a>绑定例外</h3><ul>
+<li><h4 id="被忽略的this"><a href="#被忽略的this" class="headerlink" title="被忽略的this"></a>被忽略的this</h4>　　如果 null 或者 undefined 作为this的绑定对象传入 apply，call或者bind，这些值在函数调用的时候被忽略，实际应用的是默认绑定规则。<pre><code>function foo(){
+    console.log(this.a);
+}
+var a = 2;
+foo.call( null );  //2
+</code></pre></li>
+</ul>
+<p>　　　　一种常见的做法就是使用apply(..)来展开一个数组，类似地，bind(..)可以对参数进行柯里化。</p>
+<pre><code>function foo(){
+    console.log(this.a);
+}
+var a = 2;
+foo.call( null );  //2
+
+function foo(a,b){
+    console.log(&quot;a: &quot; + a +&quot;,b: &quot; + b)
+}
+// 把数组展开
+foo.apply(null,[2,3]);  //a: 2,b: 3
+// 使用bind(..)进行柯里化
+var bar = foo.bind(null,2);
+bar(3);  //a: 2,b: 3
+</code></pre><p>　　然而总使用null可能会产生一个副作用，如果某个函数确实使用了this，而默认绑定则会把this绑定到全局对象，这将导致错误。</p>
+<p><strong> 　　更好的做法是传入一个空对象</strong>，使用Object.create(null),会创建一个比{}更空的对象。</p>
+<pre><code>function foo(a,b){
+    console.log(&quot;a: &quot; + a +&quot;,b: &quot; + b)
+}
+// 我们的DMZ对象
+var nullObj = Object.create(null);
+// 把数组展开
+foo.apply(nullObj,[2,3]);  //a: 2,b: 3
+// 使用bind(..)进行柯里化
+var bar = foo.bind(nullObj,2);
+bar(3);  //a: 2,b: 3
+</code></pre><ul>
+<li><h4 id="间接引用"><a href="#间接引用" class="headerlink" title="间接引用"></a>间接引用</h4><p>　　你可能有意或者无意创建一个函数的“间接引用”，这种情况下，函数的调用应用默认绑定。</p>
+<pre><code>function foo(){
+    console.log(this.a);
+}
+var a = 2;
+var o = {
+    a:3,
+    foo:foo
+};
+var p = {
+    a:4
+};
+o.foo();  //3
+(p.foo = o.foo)();  //2
+</code></pre><blockquote>
+<p>这里(p.foo = o.foo）这个赋值操作返回的是 foo 的引用，应用默认绑定，调用时绑定到全局对象，所以为this.a 为 2.</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="三-this词法"><a href="#三-this词法" class="headerlink" title="三.this词法"></a>三.this词法</h3><p>　　前面介绍的四条规则可以包含所有正常的函数。但是 ES6 中出现的一种无法使用这些规则的特殊函数类型：箭头函数。  ==&gt;</p>
+<p>　　</p>
 
       
     </div>
@@ -356,6 +545,8 @@ console.log( foo.count );
         <div class="post-tags">
           
             <a href="/tags/javascript/" rel="tag">#javascript</a>
+          
+            <a href="/tags/this/" rel="tag">#this</a>
           
         </div>
       
@@ -452,7 +643,7 @@ console.log( foo.count );
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -496,7 +687,7 @@ console.log( foo.count );
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-关于this"><span class="nav-number">1.</span> <span class="nav-text">一. 关于this</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-消除对this的误解"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 消除对this的误解</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-关于this"><span class="nav-number">1.</span> <span class="nav-text">一. 关于this</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消除对this的误解"><span class="nav-number">1.1.</span> <span class="nav-text">消除对this的误解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#指向自身"><span class="nav-number">1.1.1.</span> <span class="nav-text">指向自身</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#this的作用域"><span class="nav-number">1.1.2.</span> <span class="nav-text">this的作用域</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#this到底是什么？"><span class="nav-number">1.2.</span> <span class="nav-text">this到底是什么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-this全面解析"><span class="nav-number">2.</span> <span class="nav-text">二. this全面解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#绑定规则"><span class="nav-number">2.1.</span> <span class="nav-text">绑定规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#默认绑定"><span class="nav-number">2.1.1.</span> <span class="nav-text">默认绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐式绑定"><span class="nav-number">2.1.2.</span> <span class="nav-text">隐式绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显式绑定"><span class="nav-number">2.1.3.</span> <span class="nav-text">显式绑定</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#硬绑定"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">硬绑定</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#new绑定"><span class="nav-number">2.1.4.</span> <span class="nav-text">new绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优先级"><span class="nav-number">2.1.5.</span> <span class="nav-text">优先级</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绑定例外"><span class="nav-number">2.2.</span> <span class="nav-text">绑定例外</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#被忽略的this"><span class="nav-number">2.2.1.</span> <span class="nav-text">被忽略的this</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#间接引用"><span class="nav-number">2.2.2.</span> <span class="nav-text">间接引用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-this词法"><span class="nav-number">2.3.</span> <span class="nav-text">三.this词法</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
