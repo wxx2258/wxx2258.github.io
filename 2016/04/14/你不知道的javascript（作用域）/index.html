@@ -73,7 +73,7 @@
 
 分词/词法分析
 解析">
-<meta property="og:updated_time" content="2016-04-23T07:40:21.732Z">
+<meta property="og:updated_time" content="2016-04-23T14:22:55.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="你不知道的javascript（作用域）">
 <meta name="twitter:description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
@@ -321,7 +321,7 @@
 <ul>
 <li>分词/词法分析</li>
 <li>解析、语法分析</li>
-<li>代码生成<br>&#160; &#160; &#160; &#160;这些步骤这里我们就不深入讲，而相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br><strong>&#160; &#160; &#160; &#160;这里我们只需要知道任何javascript代码片段在执行前都要进行编译。</strong></li>
+<li>代码生成<br>&#160; &#160; &#160; &#160;相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br>&#160; &#160; &#160; &#160;这里我们只需要知道<strong>任何javascript代码片段在执行前都要进行编译。</strong></li>
 </ul>
 </blockquote>
 <h3 id="理解作用域"><a href="#理解作用域" class="headerlink" title="理解作用域"></a>理解作用域</h3><blockquote>
@@ -434,7 +434,7 @@ var a;
 console.log(a);
 a = 2;
 只有声明本身会被提升，而赋值或其他运行逻辑会留在原地。
-</code></pre><p>**函数声明会被提升，而函数表达式却不会被提升。</p>
+</code></pre><p><strong>函数声明会被提升，而函数表达式却不会被提升。</strong></p>
 <h4 id="函数优先"><a href="#函数优先" class="headerlink" title="函数优先"></a>函数优先</h4><pre><code>foo();
 var foo;
 function foo(){
