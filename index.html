@@ -358,7 +358,7 @@ script.onreadystatechange = function(){
 
 script.src = &quot;script1.js&quot;;
 document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><h4 id="函数封装，兼容标准和IE特有的实现方法"><a href="#函数封装，兼容标准和IE特有的实现方法" class="headerlink" title="函数封装，兼容标准和IE特有的实现方法"></a><strong>函数封装，兼容标准和IE特有的实现方法</strong></h4><pre><code>function loadScript(url, callback){
+</code></pre><h3 id="函数封装，兼容标准和IE特有的实现方法"><a href="#函数封装，兼容标准和IE特有的实现方法" class="headerlink" title="函数封装，兼容标准和IE特有的实现方法"></a><strong>函数封装，兼容标准和IE特有的实现方法</strong></h3><pre><code>function loadScript(url, callback){
     var script = document.createElement (&quot;script&quot;)
     script.type = &quot;text/javascript&quot;;
     if (script.readyState){ //IE
@@ -386,7 +386,7 @@ loadScript(&quot;script1.js&quot;, function(){
     });
 });
 此代码等待 script1.js 可用之后才开始加载 script2.js，等 script2.js 可用之后才开始加载 script3.js。
-</code></pre><p>　　callback函数可以是去加载另外一个js，不过如果要加载的js文件较多，就成了“回调地狱”（callback hell）。<br>　　回调地狱式可以通过一些模式来解决，例如下面给出的串行方式。</p>
+</code></pre><h3 id="解决加载多js文件带来的“回调地狱”"><a href="#解决加载多js文件带来的“回调地狱”" class="headerlink" title="解决加载多js文件带来的“回调地狱”"></a>解决加载多js文件带来的“回调地狱”</h3><p>　　callback函数可以是去加载另外一个js，不过如果要加载的js文件较多，就成了“回调地狱”（callback hell）。<br>　　回调地狱式可以通过一些模式来解决，例如下面给出的串行方式。</p>
 <pre><code>Loader = (function() {
 
   var load_cursor = 0;

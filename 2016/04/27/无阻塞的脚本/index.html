@@ -69,7 +69,7 @@
 
 
 在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐将所有的&amp;lt;script&amp;gt;标签尽可能的放到&amp;lt;body&amp;gt;标签的底部。">
-<meta property="og:updated_time" content="2016-04-27T12:14:51.791Z">
+<meta property="og:updated_time" content="2016-04-27T12:23:27.170Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="无阻塞的脚本">
 <meta name="twitter:description" content="为什么需要无阻塞的脚本？　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 &amp;lt;script&amp;gt; 标签每次出现都会让页面等待脚本的解析和执行。　　下面是两种比较简单的提高性能的做法：
@@ -361,7 +361,7 @@ script.onreadystatechange = function(){
 
 script.src = &quot;script1.js&quot;;
 document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><h4 id="函数封装，兼容标准和IE特有的实现方法"><a href="#函数封装，兼容标准和IE特有的实现方法" class="headerlink" title="函数封装，兼容标准和IE特有的实现方法"></a><strong>函数封装，兼容标准和IE特有的实现方法</strong></h4><pre><code>function loadScript(url, callback){
+</code></pre><h3 id="函数封装，兼容标准和IE特有的实现方法"><a href="#函数封装，兼容标准和IE特有的实现方法" class="headerlink" title="函数封装，兼容标准和IE特有的实现方法"></a><strong>函数封装，兼容标准和IE特有的实现方法</strong></h3><pre><code>function loadScript(url, callback){
     var script = document.createElement (&quot;script&quot;)
     script.type = &quot;text/javascript&quot;;
     if (script.readyState){ //IE
@@ -389,7 +389,7 @@ loadScript(&quot;script1.js&quot;, function(){
     });
 });
 此代码等待 script1.js 可用之后才开始加载 script2.js，等 script2.js 可用之后才开始加载 script3.js。
-</code></pre><p>　　callback函数可以是去加载另外一个js，不过如果要加载的js文件较多，就成了“回调地狱”（callback hell）。<br>　　回调地狱式可以通过一些模式来解决，例如下面给出的串行方式。</p>
+</code></pre><h3 id="解决加载多js文件带来的“回调地狱”"><a href="#解决加载多js文件带来的“回调地狱”" class="headerlink" title="解决加载多js文件带来的“回调地狱”"></a>解决加载多js文件带来的“回调地狱”</h3><p>　　callback函数可以是去加载另外一个js，不过如果要加载的js文件较多，就成了“回调地狱”（callback hell）。<br>　　回调地狱式可以通过一些模式来解决，例如下面给出的串行方式。</p>
 <pre><code>Loader = (function() {
 
   var load_cursor = 0;
@@ -616,7 +616,7 @@ onerror事件也添加了回调，用来处理无法加载的js文件。当遇�
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要无阻塞的脚本？"><span class="nav-number">1.</span> <span class="nav-text">为什么需要无阻塞的脚本？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无阻塞的脚本"><span class="nav-number">2.</span> <span class="nav-text">无阻塞的脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#函数封装，兼容标准和IE特有的实现方法"><span class="nav-number">2.0.1.</span> <span class="nav-text">函数封装，兼容标准和IE特有的实现方法</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要无阻塞的脚本？"><span class="nav-number">1.</span> <span class="nav-text">为什么需要无阻塞的脚本？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无阻塞的脚本"><span class="nav-number">2.</span> <span class="nav-text">无阻塞的脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数封装，兼容标准和IE特有的实现方法"><span class="nav-number">2.1.</span> <span class="nav-text">函数封装，兼容标准和IE特有的实现方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决加载多js文件带来的“回调地狱”"><span class="nav-number">2.2.</span> <span class="nav-text">解决加载多js文件带来的“回调地狱”</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
