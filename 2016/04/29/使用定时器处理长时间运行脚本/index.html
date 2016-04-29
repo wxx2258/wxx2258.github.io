@@ -57,28 +57,28 @@
 
 
 
-<meta name="description" content="##长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
+<meta name="description" content="长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
 
 这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
-##使用">
+使用定时器处">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用定时器处理长时间运行脚本">
 <meta property="og:url" content="http://yoursite.com/2016/04/29/使用定时器处理长时间运行脚本/index.html">
 <meta property="og:site_name" content="Wxx's blog">
-<meta property="og:description" content="##长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
+<meta property="og:description" content="长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
 
 这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
-##使用">
-<meta property="og:updated_time" content="2016-04-29T03:27:32.117Z">
+使用定时器处">
+<meta property="og:updated_time" content="2016-04-29T03:29:59.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用定时器处理长时间运行脚本">
-<meta name="twitter:description" content="##长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
+<meta name="twitter:description" content="长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
 
 这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
-##使用">
+使用定时器处">
 
 
 
@@ -312,12 +312,11 @@
       
 
       
-        <p>##长时间运行的javascript任务<br>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
+        <h2 id="长时间运行的javascript任务"><a href="#长时间运行的javascript任务" class="headerlink" title="长时间运行的javascript任务"></a>长时间运行的javascript任务</h2><p>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
 <blockquote>
 <p>这时候最理想的方法就是<strong>让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。</strong><br>创建一个 定时器 会造成UI线程暂停。</p>
 </blockquote>
-<p>##使用定时器处理数组</p>
-<blockquote>
+<h2 id="使用定时器处理数组"><a href="#使用定时器处理数组" class="headerlink" title="使用定时器处理数组"></a>使用定时器处理数组</h2><blockquote>
 <p>一种常见的造成长时间运行脚本的起因是耗时过长的循环。  </p>
 </blockquote>
 <pre><code>典型的简单循环模式：
@@ -363,8 +362,16 @@ function processArray(items,process,callback){
     }
   },25)
 }
-</code></pre><p>##分割任务<br>    多任务函数导致长时间运行<br>    function saveDocument(id){<br>      // 写入文档<br>      openDocument(id);<br>      writeText(id);<br>      closeDocument(id);<br>      // 更新UI<br>      updata(id);<br>    }</p>
-<p>处理思路：将每个任务函数放在一个数组中，然后使用前面提到的数组处理模式。  </p>
+</code></pre><h2 id="分割任务"><a href="#分割任务" class="headerlink" title="分割任务"></a>分割任务</h2><pre><code>多任务函数导致长时间运行
+function saveDocument(id){
+  // 写入文档
+  openDocument(id);
+  writeText(id);
+  closeDocument(id);
+  // 更新UI
+  updata(id);
+}
+</code></pre><p>处理思路：将每个任务函数放在一个数组中，然后使用前面提到的数组处理模式。  </p>
 <pre><code>function saveDocument(id){
   var tasks = [openDocument,writeText,closeDocument,updataUI];
   setTimeout(function(){
@@ -396,8 +403,7 @@ function multistep(steps,args,callback){
     }
   },25);
 }
-</code></pre><p>##定时器与性能</p>
-<ul>
+</code></pre><h2 id="定时器与性能"><a href="#定时器与性能" class="headerlink" title="定时器与性能"></a>定时器与性能</h2><ul>
 <li>定时器可以让你的javascript整体代码性能带来优化，但过度使用也会造成负面影响。本篇博客代码使用的了定时器序列，同一时间只有一个定时器存在，只有当这个定时器结束时才会新创建一个。</li>
 <li>当多个重复的定时器同时创建往往会出现性能问题，因为只有一个UI线程，而所有的定时器都在争夺运行时间。在使用定时器优化性能时，注意避免这种情况。</li>
 </ul>
@@ -560,7 +566,7 @@ function multistep(steps,args,callback){
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#长时间运行的javascript任务"><span class="nav-number">1.</span> <span class="nav-text">长时间运行的javascript任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用定时器处理数组"><span class="nav-number">2.</span> <span class="nav-text">使用定时器处理数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分割任务"><span class="nav-number">3.</span> <span class="nav-text">分割任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定时器与性能"><span class="nav-number">4.</span> <span class="nav-text">定时器与性能</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
