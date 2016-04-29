@@ -256,6 +256,190 @@
             
               
                 
+                <a class="post-title-link" href="/2016/04/29/使用定时器处理长时间运行脚本/" itemprop="url">
+                  使用定时器处理长时间运行脚本
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-29T10:13:33+08:00" content="2016-04-29">
+              2016-04-29
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/29/使用定时器处理长时间运行脚本/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/29/使用定时器处理长时间运行脚本/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>##长时间运行的javascript任务<br>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
+<blockquote>
+<p>这时候最理想的方法就是<strong>让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。</strong><br>创建一个 定时器 会造成UI线程暂停。</p>
+</blockquote>
+<p>##使用定时器处理数组</p>
+<blockquote>
+<p>一种常见的造成长时间运行脚本的起因是耗时过长的循环。  </p>
+</blockquote>
+<pre><code>典型的简单循环模式：
+for (var i = 0 , len = items.length; i &lt; len; i++) {
+  process(items[i]);
+}
+</code></pre><p>是否可以用定时器取代循环的两个决定性因素：</p>
+<ol>
+<li>处理过程不需要同步</li>
+<li><p>数据是不需要按顺序处理</p>
+<pre><code>一种基本的异步代码模式：
+var todo = items.concat(); //克隆数组
+setTimeout(function(){
+  // 取得数组的下一个元素并出栈。
+  process(tods.shift());
+  // 如果还有需要处理的元素，创建另一个定时器
+  if(todo.length &gt; 0){
+    setTimeout(argument.callee , 25)
+    // argument.callee 匿名函数下调用本身。
+  }else{
+    callback(items);
+    // 没有需要处理的元素了，执行回调函数。
+  }
+},25)
+</code></pre></li>
+</ol>
+<p>函数封装：  </p>
+<pre><code>/*
+*处理耗时过长的异步循环。
+*参数：待处理数组，处理数组的函数，回调函数
+*/
+function processArray(items,process,callback){
+  var todo = items.concat(); //克隆数组
+  setTimeout(function(){
+    // 取得数组的下一个元素并出栈。
+    process(tods.shift());
+    // 如果还有需要处理的元素，创建另一个定时器
+    if(todo.length &gt; 0){
+      setTimeout(argument.callee , 25)
+      // argument.callee 匿名函数下调用本身。
+    }else{
+      callback(items);
+    }
+  },25)
+}
+</code></pre><p>##分割任务<br>    多任务函数导致长时间运行<br>    function saveDocument(id){<br>      // 写入文档<br>      openDocument(id);<br>      writeText(id);<br>      closeDocument(id);<br>      // 更新UI<br>      updata(id);<br>    }</p>
+<p>处理思路：将每个任务函数放在一个数组中，然后使用前面提到的数组处理模式。  </p>
+<pre><code>function saveDocument(id){
+  var tasks = [openDocument,writeText,closeDocument,updataUI];
+  setTimeout(function(){
+    // 执行下一个任务
+    var task = tasks.shift();
+    task(id);
+    // 检查是否还有任务
+    if(task.length &gt; 0){
+      setTimeout(argument.callee , 25)
+    }
+  },25);
+}
+</code></pre><p>函数封装：</p>
+<pre><code>/*
+*分割多任务函数的长时间运行javascript
+*参数：任务步骤数组，参数，回调函数
+*/
+function multistep(steps,args,callback){
+  var tasks = steps.concat();
+  setTimeout(function(){
+    // 执行下一个任务
+    var task = tasks.shift();
+    task.apply(null,args || []);
+    // 检查是否还有任务
+    if(task.length &gt; 0){
+      setTimeout(argument.callee , 25)
+    }else{
+      callback();
+    }
+  },25);
+}
+</code></pre><p>##定时器与性能</p>
+<ul>
+<li>定时器可以让你的javascript整体代码性能带来优化，但过度使用也会造成负面影响。本篇博客代码使用的了定时器序列，同一时间只有一个定时器存在，只有当这个定时器结束时才会新创建一个。</li>
+<li>当多个重复的定时器同时创建往往会出现性能问题，因为只有一个UI线程，而所有的定时器都在争夺运行时间。在使用定时器优化性能时，注意避免这种情况。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/04/27/无阻塞的脚本/" itemprop="url">
                   无阻塞的脚本
                 </a>
@@ -1077,7 +1261,7 @@ for(let i = 1; i&lt;=5 ; i++){
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1087,7 +1271,7 @@ for(let i = 1; i&lt;=5 ; i++){
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

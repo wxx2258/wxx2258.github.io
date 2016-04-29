@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javascript,前端性能,无阻塞的脚本," />
+  <meta name="keywords" content="javascript,前端性能,定时器," />
 
 
 
@@ -57,25 +57,28 @@
 
 
 
-<meta name="description" content="为什么需要无阻塞的脚本？　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 &amp;lt;script&amp;gt; 标签每次出现都会让页面等待脚本的解析和执行。　　下面是两种比较简单的提高性能的做法：
+<meta name="description" content="##长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
 
+这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
-在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐将所有的&amp;lt;script&amp;gt;标签尽可能的放到&amp;lt;body&amp;gt;标签的底部。">
+##使用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="无阻塞的脚本">
-<meta property="og:url" content="http://yoursite.com/2016/04/27/无阻塞的脚本/index.html">
+<meta property="og:title" content="使用定时器处理长时间运行脚本">
+<meta property="og:url" content="http://yoursite.com/2016/04/29/使用定时器处理长时间运行脚本/index.html">
 <meta property="og:site_name" content="Wxx's blog">
-<meta property="og:description" content="为什么需要无阻塞的脚本？　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 &amp;lt;script&amp;gt; 标签每次出现都会让页面等待脚本的解析和执行。　　下面是两种比较简单的提高性能的做法：
+<meta property="og:description" content="##长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
 
+这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
-在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐将所有的&amp;lt;script&amp;gt;标签尽可能的放到&amp;lt;body&amp;gt;标签的底部。">
-<meta property="og:updated_time" content="2016-04-27T12:23:27.170Z">
+##使用">
+<meta property="og:updated_time" content="2016-04-29T03:27:32.117Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="无阻塞的脚本">
-<meta name="twitter:description" content="为什么需要无阻塞的脚本？　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 &amp;lt;script&amp;gt; 标签每次出现都会让页面等待脚本的解析和执行。　　下面是两种比较简单的提高性能的做法：
+<meta name="twitter:title" content="使用定时器处理长时间运行脚本">
+<meta name="twitter:description" content="##长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
 
+这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
-在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐将所有的&amp;lt;script&amp;gt;标签尽可能的放到&amp;lt;body&amp;gt;标签的底部。">
+##使用">
 
 
 
@@ -93,7 +96,7 @@
   };
 </script>
 
-  <title> 无阻塞的脚本 | Wxx's blog </title>
+  <title> 使用定时器处理长时间运行脚本 | Wxx's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -263,7 +266,7 @@
             
             
               
-                无阻塞的脚本
+                使用定时器处理长时间运行脚本
               
             
           </h1>
@@ -275,8 +278,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-04-27T15:46:15+08:00" content="2016-04-27">
-              2016-04-27
+            <time itemprop="dateCreated" datetime="2016-04-29T10:13:33+08:00" content="2016-04-29">
+              2016-04-29
             </time>
           </span>
 
@@ -286,8 +289,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/04/27/无阻塞的脚本/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/27/无阻塞的脚本/" itemprop="commentsCount"></span>
+                <a href="/2016/04/29/使用定时器处理长时间运行脚本/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/29/使用定时器处理长时间运行脚本/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -309,154 +312,95 @@
       
 
       
-        <h2 id="为什么需要无阻塞的脚本？"><a href="#为什么需要无阻塞的脚本？" class="headerlink" title="为什么需要无阻塞的脚本？"></a>为什么需要无阻塞的脚本？</h2><p>　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 <code>&lt;script&gt;</code> 标签每次出现都会让页面等待脚本的解析和执行。<br>　　下面是两种比较简单的提高性能的做法：</p>
+        <p>##长时间运行的javascript任务<br>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
 <blockquote>
-<ol>
-<li>在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐<code>将所有的&lt;script&gt;标签尽可能的放到&lt;body&gt;标签的底部。</code></li>
-<li>合并脚本，减少http请求，减少每个<code>&lt;script&gt;</code> 标签初始下载，执行带来的迟延。  </li>
-</ol>
+<p>这时候最理想的方法就是<strong>让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。</strong><br>创建一个 定时器 会造成UI线程暂停。</p>
 </blockquote>
-<p>　　减少javascript文件大小并限制HTTP请求数可以带来性能优化。但是当下载一个单个较大的javascript，虽然只产生一次HTTP请求，却会锁死浏览器一大段时间。</p>
-<h2 id="无阻塞的脚本"><a href="#无阻塞的脚本" class="headerlink" title="无阻塞的脚本"></a>无阻塞的脚本</h2><p>　　无阻塞的脚本的思路：在页面加载完成后，才加载javascript代码。也就是说在window对象的loading时间触发后再下载脚本。</p>
-<p>####动态脚本元素</p>
-<pre><code>* 通过标准 DOM 函数创建`&lt;script&gt;`元素  
-var script = document.createElement (&quot;script&quot;);
-   script.type = &quot;text/javascript&quot;;
-   script.src = &quot;script1.js&quot;;
-   document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><p>　　新的<code>&lt;script&gt;</code>元素加载 script1.js 源文件。此文件当元素添加到页面之后立刻开始下载。此技术的重点在于：无论在何处启动下载，文件的下载和运行都不会阻塞其他页面处理过程。</p>
-<p>　　1. 当文件使用动态脚本节点下载时，返回的代码通常立即执行（除了 Firefox 和 Opera，他们将等待此前的所有动态脚本节点执行完毕）。当脚本是“自运行”类型时，这一机制运行正常，但是如果脚本只包含供页面其他脚本调用调用的接口，则会带来问题。这种情况下，您需要跟踪脚本下载完成并是否准备妥善。可以使用动态 <code>&lt;script&gt;</code> 节点发出事件得到相关信息。</p>
+<p>##使用定时器处理数组</p>
 <blockquote>
-<p>　　Firefox、Opera, Chorme 和 Safari 3+会在<code>&lt;script&gt;</code>节点接收完成之后发出一个 onload 事件。您可以监听这一事件，以得到脚本准备好的通知：</p>
+<p>一种常见的造成长时间运行脚本的起因是耗时过长的循环。  </p>
 </blockquote>
-<pre><code>* 通过监听 onload 事件加载 JavaScript 脚本
-var script = document.createElement (&quot;script&quot;)
-script.type = &quot;text/javascript&quot;;
-
-//Firefox, Opera, Chrome, Safari 3+
-script.onload = function(){
-    alert(&quot;Script loaded!&quot;);
-};
-
-script.src = &quot;script1.js&quot;;
-document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><p>　　2. Internet Explorer 支持另一种实现方式，它发出一个 readystatechange 事件。<code>&lt;script&gt;</code>元素有一个 readyState 属性，它的值随着下载外部文件的过程而改变。readyState 有五种取值：</p>
-<pre><code>“uninitialized”：默认状态
-“loading”：下载开始
-“loaded”：下载完成
-“interactive”：下载完成但尚不可用
-“complete”：所有数据已经准备好
-</code></pre><p>　　“loaded”和“complete”状态。有时<code>&lt;script&gt;</code>元素会得到“loader”却从不出现“complete”，但另外一些情况下出现“complete”而用不到“loaded”。最安全的办法就是在 readystatechange 事件中检查这两种状态，并且当其中一种状态出现时，删除 readystatechange 事件句柄（保证事件不会被处理两次）：</p>
-<pre><code>* 通过检查 readyState 状态加载 JavaScript 脚本
-var script = document.createElement(&quot;script&quot;)
-script.type = &quot;text/javascript&quot;;
-
-//Internet Explorer
-script.onreadystatechange = function(){
-     if (script.readyState == &quot;loaded&quot; || script.readyState == &quot;complete&quot;){
-           script.onreadystatechange = null;
-           alert(&quot;Script loaded.&quot;);
-     }
-};
-
-script.src = &quot;script1.js&quot;;
-document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><h3 id="函数封装，兼容标准和IE特有的实现方法"><a href="#函数封装，兼容标准和IE特有的实现方法" class="headerlink" title="函数封装，兼容标准和IE特有的实现方法"></a><strong>函数封装，兼容标准和IE特有的实现方法</strong></h3><pre><code>function loadScript(url, callback){
-    var script = document.createElement (&quot;script&quot;)
-    script.type = &quot;text/javascript&quot;;
-    if (script.readyState){ //IE
-        script.onreadystatechange = function(){
-            if (script.readyState == &quot;loaded&quot; || script.readyState == &quot;complete&quot;){
-                script.onreadystatechange = null;
-                callback();
-            }
-        };
-    } else { //Others
-        script.onload = function(){
-            callback();
-        };
-    }
-    script.src = url;
-    document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
+<pre><code>典型的简单循环模式：
+for (var i = 0 , len = items.length; i &lt; len; i++) {
+  process(items[i]);
 }
-</code></pre><p>　　此函数接收两个参数：JavaScript 文件的 URL，和一个当 JavaScript 接收完成时触发的回调函数。属性检查用于决定监视哪种事件。最后一步，设置 src 属性，并将<code>&lt;script&gt;</code>元素添加至页面。此 loadScript() 函数使用方法如下：<br>        *　loadScript()函数使用方法<br>        loadScript(“script1.js”, function(){<br>            alert(“File is loaded!”);<br>        });<br>　　您可以在页面中动态加载很多 JavaScript 文件，但要注意，浏览器不保证文件加载的顺序。所有主流浏览器之中，只有 Firefox 和 Opera 保证脚本按照您指定的顺序执行。其他浏览器将按照服务器返回它们的次序下载并运行不同的代码文件。您可以将下载操作串联在一起以保证他们的次序，如下：</p>
-<pre><code>* 通过 loadScript()函数加载多个 JavaScript 脚本
-loadScript(&quot;script1.js&quot;, function(){
-    loadScript(&quot;script2.js&quot;, function(){
-        loadScript(&quot;script3.js&quot;, function(){
-            alert(&quot;All files are loaded!&quot;);
-        });
-    });
-});
-此代码等待 script1.js 可用之后才开始加载 script2.js，等 script2.js 可用之后才开始加载 script3.js。
-</code></pre><h3 id="解决加载多js文件带来的“回调地狱”"><a href="#解决加载多js文件带来的“回调地狱”" class="headerlink" title="解决加载多js文件带来的“回调地狱”"></a>解决加载多js文件带来的“回调地狱”</h3><p>　　callback函数可以是去加载另外一个js，不过如果要加载的js文件较多，就成了“回调地狱”（callback hell）。<br>　　回调地狱式可以通过一些模式来解决，例如下面给出的串行方式。</p>
-<pre><code>Loader = (function() {
-
-  var load_cursor = 0;
-  var load_queue;
-
-  var loadFinished = function() {
-    load_cursor ++;
-    if (load_cursor &lt; load_queue.length) {
-      loadScript();
+</code></pre><p>是否可以用定时器取代循环的两个决定性因素：</p>
+<ol>
+<li>处理过程不需要同步</li>
+<li><p>数据是不需要按顺序处理</p>
+<pre><code>一种基本的异步代码模式：
+var todo = items.concat(); //克隆数组
+setTimeout(function(){
+  // 取得数组的下一个元素并出栈。
+  process(tods.shift());
+  // 如果还有需要处理的元素，创建另一个定时器
+  if(todo.length &gt; 0){
+    setTimeout(argument.callee , 25)
+    // argument.callee 匿名函数下调用本身。
+  }else{
+    callback(items);
+    // 没有需要处理的元素了，执行回调函数。
+  }
+},25)
+</code></pre></li>
+</ol>
+<p>函数封装：  </p>
+<pre><code>/*
+*处理耗时过长的异步循环。
+*参数：待处理数组，处理数组的函数，回调函数
+*/
+function processArray(items,process,callback){
+  var todo = items.concat(); //克隆数组
+  setTimeout(function(){
+    // 取得数组的下一个元素并出栈。
+    process(tods.shift());
+    // 如果还有需要处理的元素，创建另一个定时器
+    if(todo.length &gt; 0){
+      setTimeout(argument.callee , 25)
+      // argument.callee 匿名函数下调用本身。
+    }else{
+      callback(items);
     }
-  }
-
-  function loadError (oError) {
-    console.error(&quot;The script &quot; + oError.target.src + &quot; is not accessible.&quot;);
-  }
-
-
-  var loadScript = function() {
-    var url = load_queue[load_cursor];
-    var script = document.createElement(&apos;script&apos;);
-    script.type = &quot;text/javascript&quot;;
-
-    if (script.readyState){  //IE
-        script.onreadystatechange = function(){
-            if (script.readyState == &quot;loaded&quot; ||
-                    script.readyState == &quot;complete&quot;){
-                script.onreadystatechange = null;
-                loadFinished();
-            }
-        };
-    } else {  //Others
-        script.onload = function(){
-            loadFinished();
-        };
+  },25)
+}
+</code></pre><p>##分割任务<br>    多任务函数导致长时间运行<br>    function saveDocument(id){<br>      // 写入文档<br>      openDocument(id);<br>      writeText(id);<br>      closeDocument(id);<br>      // 更新UI<br>      updata(id);<br>    }</p>
+<p>处理思路：将每个任务函数放在一个数组中，然后使用前面提到的数组处理模式。  </p>
+<pre><code>function saveDocument(id){
+  var tasks = [openDocument,writeText,closeDocument,updataUI];
+  setTimeout(function(){
+    // 执行下一个任务
+    var task = tasks.shift();
+    task(id);
+    // 检查是否还有任务
+    if(task.length &gt; 0){
+      setTimeout(argument.callee , 25)
     }
-
-    script.onerror = loadError;
-
-    script.src = url+&apos;?&apos;+&apos;time=&apos;+Date.parse(new Date());
-    document.body.appendChild(script);
-  };
-
-  var loadMultiScript = function(url_array) {
-    load_cursor = 0;
-    load_queue = url_array;
-    loadScript();
-  }
-
-  return {
-    load: loadMultiScript,
-  };
-
-})();  // end Loader
-
-//loading ...
-Loader.load([
-            &apos;script1.js&apos;, 
-            &apos;script2.js&apos;,
-            &apos;script3.js&apos;
-             ]);
-load_queue是一个队列，保存需要依次加载的js的url。当一个js加载完毕后，load_cursor++用来模拟出队操作，然后加载下一个脚本。
-
-onerror事件也添加了回调，用来处理无法加载的js文件。当遇到无法加载的js文件时停止加载，剩下的文件也不会加载了。
-</code></pre><p>还有许多实现动态加载js文件的方式：</p>
-<blockquote>
-<p><a href="https://github.com/someus/how-to-load-dynamic-script" target="_blank" rel="external">https://github.com/someus/how-to-load-dynamic-script</a></p>
-</blockquote>
+  },25);
+}
+</code></pre><p>函数封装：</p>
+<pre><code>/*
+*分割多任务函数的长时间运行javascript
+*参数：任务步骤数组，参数，回调函数
+*/
+function multistep(steps,args,callback){
+  var tasks = steps.concat();
+  setTimeout(function(){
+    // 执行下一个任务
+    var task = tasks.shift();
+    task.apply(null,args || []);
+    // 检查是否还有任务
+    if(task.length &gt; 0){
+      setTimeout(argument.callee , 25)
+    }else{
+      callback();
+    }
+  },25);
+}
+</code></pre><p>##定时器与性能</p>
+<ul>
+<li>定时器可以让你的javascript整体代码性能带来优化，但过度使用也会造成负面影响。本篇博客代码使用的了定时器序列，同一时间只有一个定时器存在，只有当这个定时器结束时才会新创建一个。</li>
+<li>当多个重复的定时器同时创建往往会出现性能问题，因为只有一个UI线程，而所有的定时器都在争夺运行时间。在使用定时器优化性能时，注意避免这种情况。</li>
+</ul>
 
       
     </div>
@@ -475,7 +419,7 @@ onerror事件也添加了回调，用来处理无法加载的js文件。当遇�
           
             <a href="/tags/前端性能/" rel="tag">#前端性能</a>
           
-            <a href="/tags/无阻塞的脚本/" rel="tag">#无阻塞的脚本</a>
+            <a href="/tags/定时器/" rel="tag">#定时器</a>
           
         </div>
       
@@ -484,17 +428,13 @@ onerror事件也添加了回调，用来处理无法加载的js文件。当遇�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/23/你不知道的javascript（this）/" rel="next" title="你不知道的javascript（this）">
-                <i class="fa fa-chevron-left"></i> 你不知道的javascript（this）
+              <a href="/2016/04/27/无阻塞的脚本/" rel="next" title="无阻塞的脚本">
+                <i class="fa fa-chevron-left"></i> 无阻塞的脚本
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/04/29/使用定时器处理长时间运行脚本/" rel="prev" title="使用定时器处理长时间运行脚本">
-                使用定时器处理长时间运行脚本 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -520,8 +460,8 @@ onerror事件也添加了回调，用来处理无法加载的js文件。当遇�
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/04/27/无阻塞的脚本/"
-           data-title="无阻塞的脚本" data-url="http://yoursite.com/2016/04/27/无阻塞的脚本/">
+      <div class="ds-thread" data-thread-key="2016/04/29/使用定时器处理长时间运行脚本/"
+           data-title="使用定时器处理长时间运行脚本" data-url="http://yoursite.com/2016/04/29/使用定时器处理长时间运行脚本/">
       </div>
     
   </div>
@@ -620,7 +560,7 @@ onerror事件也添加了回调，用来处理无法加载的js文件。当遇�
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要无阻塞的脚本？"><span class="nav-number">1.</span> <span class="nav-text">为什么需要无阻塞的脚本？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无阻塞的脚本"><span class="nav-number">2.</span> <span class="nav-text">无阻塞的脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数封装，兼容标准和IE特有的实现方法"><span class="nav-number">2.1.</span> <span class="nav-text">函数封装，兼容标准和IE特有的实现方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决加载多js文件带来的“回调地狱”"><span class="nav-number">2.2.</span> <span class="nav-text">解决加载多js文件带来的“回调地狱”</span></a></li></ol></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
