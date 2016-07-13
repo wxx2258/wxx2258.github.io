@@ -256,6 +256,159 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/13/javascript数据类型总结/" itemprop="url">
+                  javascript数据类型总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-13T15:48:34+08:00" content="2016-07-13">
+              2016-07-13
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/13/javascript数据类型总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/13/javascript数据类型总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><h2 id="es5数据类型："><a href="#es5数据类型：" class="headerlink" title="es5数据类型："></a>es5数据类型：</h2><h3 id="非引用型："><a href="#非引用型：" class="headerlink" title="非引用型："></a>非引用型：</h3><ul>
+<li>“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。</li>
+<li>“Boolean” ： 布尔值，只有”true” 和 “false”两个值。</li>
+<li>“String” ：字符串。</li>
+<li>“Number” ：数值。其中”NAN” 属于这个数据类型<h3 id="引用型："><a href="#引用型：" class="headerlink" title="引用型："></a>引用型：</h3></li>
+<li>“Object” ： “Null”属于对象类型。<ul>
+<li>Array类型</li>
+<li>Data类型</li>
+<li>RegExp类型</li>
+<li>Function类型</li>
+<li>……</li>
+</ul>
+</li>
+</ul>
+<h3 id="Es6-新增数据类型"><a href="#Es6-新增数据类型" class="headerlink" title="Es6 新增数据类型"></a>Es6 新增数据类型</h3><ul>
+<li>symbol</li>
+<li>（由于对symbol认知比较浅，不加深入探讨。）</li>
+</ul>
+<h2 id="判断数据类型"><a href="#判断数据类型" class="headerlink" title="判断数据类型"></a>判断数据类型</h2><blockquote>
+<p>这里判断类型的是根据Underscore.js 1.8.3源码整理。<br>最直接是使用 typeof 判断数据类型，但这样直接判断存在许多误差和特殊情况。</p>
+</blockquote>
+<p>1.判断是否为 DOM 节点：  </p>
+<blockquote>
+<p>这里的 “!!” 是起到强制转换为布尔值的一种做法。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/B5E430F44AA04035888D604DCC35F825" alt="image">  </p>
+</blockquote>
+<p>2.判断 null 和 undefined  </p>
+<blockquote>
+<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/D93BA67905F14E7D91BEC57D85F78D97" alt="image"></p>
+</blockquote>
+<p>3.判断 NaN  </p>
+<blockquote>
+<p>首先要判断是否为Number，排除”null”和”undefined”特殊情况。<br>NaN不能通过相等操作符（== 和 ===）来判断 ，因为 NaN == NaN 和 NaN === NaN 都会返回 false。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/70058931130A403CBE3418B640C7F902" alt="image"></p>
+</blockquote>
+<p>判断是否为有限数值:</p>
+<blockquote>
+<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/08CDE4E1FCAF4188925D232567D03452" alt="image"></p>
+</blockquote>
+<p>4.判断是否为数组</p>
+<blockquote>
+<p>虽然ES5中已经有 isArray() 这一方法，但其中存在兼容问题。所以这里需要加一步判断。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/768AD14CD6B8426F85B9BAA34717427F" alt="image"></p>
+</blockquote>
+<p>5.判断是否为一个函数</p>
+<blockquote>
+<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/FE23FDFD11F04E409279A17DCD8DF2E6" alt="image"></p>
+</blockquote>
+<p>判断是否为函数参数:</p>
+<blockquote>
+<p>arguments有个特有属性callee。根据这个属性可以判断。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/1E7B6A53905244EDAB11CBCD9D0F419F" alt="image"></p>
+</blockquote>
+<p>6.判断是否为一个对象</p>
+<blockquote>
+<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/8737F13CAB6D4D3FA09C1C928F65BD3A" alt="image"></p>
+</blockquote>
+<h2 id="判断两个对象是否相同"><a href="#判断两个对象是否相同" class="headerlink" title="判断两个对象是否相同"></a>判断两个对象是否相同</h2><blockquote>
+<p>这里贴出其中的代码和个人的一部分理解。  </p>
+</blockquote>
+<p>####<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/C0FCE181A4F545768142A93834FB2DE6" alt="image"><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/3CB6D48031B14E79B4222540F9C6A0DA" alt="image"></p>
+<p>对于数组和对象只能用递归了，同时用aStack和bStack来暂存递归中的子对象。这里一个小技巧的就是先判断数组/属性的长度，如果不相等可以有效地减少递归。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/BC6D971489A648D195ABC99DEC74D7B3" alt="image"></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/04/29/使用定时器处理长时间运行脚本/" itemprop="url">
                   使用定时器处理长时间运行脚本
                 </a>
@@ -1267,7 +1420,7 @@ for(let i = 1; i&lt;=5 ; i++){
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1277,7 +1430,7 @@ for(let i = 1; i&lt;=5 ; i++){
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
