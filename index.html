@@ -256,6 +256,149 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/17/自己实现一个简单的事件系统/" itemprop="url">
+                  自己实现一个简单的事件系统
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-17T17:28:01+08:00" content="2016-07-17">
+              2016-07-17
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/17/自己实现一个简单的事件系统/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/17/自己实现一个简单的事件系统/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="事件系统"><a href="#事件系统" class="headerlink" title="事件系统"></a>事件系统</h2><h3 id="nodejs的事件模块"><a href="#nodejs的事件模块" class="headerlink" title="nodejs的事件模块"></a>nodejs的事件模块</h3><blockquote>
+<p><a href="http://nodejs.cn/api/events.html/" target="_blank" rel="external">nodejs官方api文档</a>   </p>
+</blockquote>
+<ul>
+<li>nodejs中的事件模块，是用来给其他对象提供绑定事件，触发事件等能力。</li>
+<li><p>官方的一个小demo，可以看出，将一个宿主对象集成 events 模块提供的对象，那么这个宿主对象拥有了这个方法。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const EventEmitter = require(&apos;events&apos;);</span><br><span class="line"></span><br><span class="line">class MyEmitter extends EventEmitter &#123;&#125;</span><br><span class="line"></span><br><span class="line">const myEmitter = new MyEmitter();</span><br><span class="line">myEmitter.on(&apos;event&apos;, () =&gt; &#123;</span><br><span class="line">  console.log(&apos;an event occurred!&apos;);</span><br><span class="line">&#125;);</span><br><span class="line">myEmitter.emit(&apos;event&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>我们再看一个官网上的一段代码：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const myEmitter = new MyEmitter();</span><br><span class="line">myEmitter.on(&apos;event&apos;, function(a, b) &#123;</span><br><span class="line">  console.log(a, b, this);</span><br><span class="line">    // Prints:</span><br><span class="line">    //   a b MyEmitter &#123;</span><br><span class="line">    //     domain: null,</span><br><span class="line">    //     _events: &#123; event: [Function] &#125;,</span><br><span class="line">    //     _eventsCount: 1,</span><br><span class="line">    //     _maxListeners: undefined &#125;</span><br><span class="line">&#125;);</span><br><span class="line">myEmitter.emit(&apos;event&apos;, &apos;a&apos;, &apos;b&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>可以看出，其中MyEmitter对象通过该on 添加了一个事件，其中的内部属性也打印出来，这里不难得到启发，可知，事件系统有自己的属性，通过属性联系绑定和取消等函数。</p>
+</blockquote>
+<h3 id="事件系统模块设计"><a href="#事件系统模块设计" class="headerlink" title="事件系统模块设计"></a>事件系统模块设计</h3><ul>
+<li><p>从nodejs的事件系统中，一个事件系统，必须具备的是：  </p>
+<ul>
+<li>添加绑定事件 </li>
+<li>取消绑定事件  </li>
+<li>触发绑定事件  </li>
+</ul>
+</li>
+<li><p>我们整理下思路：</p>
+<ul>
+<li>首先我们需要实现一个事件类，用来创建不同的事件对象。如click事件对象，error事件对象。</li>
+<li>其次，我们需要为每一个事件对象提供处理函数。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>（这里需要明白的是，同一个类型的只有一个事件对象，不同的事件对象有多个处理函数，重复的处理函数是无效的）</p>
+</blockquote>
+<h3 id="事件对象"><a href="#事件对象" class="headerlink" title="事件对象"></a>事件对象</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 事件对象</span><br><span class="line">/*</span><br><span class="line"> *parme：事件名称</span><br><span class="line"> *handlerLister：存放该事件的事件处理函数</span><br><span class="line">*/</span><br><span class="line">var EventMeta = function (eventname)&#123;</span><br><span class="line">    this.name = eventname;</span><br><span class="line">    this.handlerList = [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="事件宿主对象函数"><a href="#事件宿主对象函数" class="headerlink" title="事件宿主对象函数"></a>事件宿主对象函数</h3><ul>
+<li>每一个事件宿主对象都应该持有一个map，用来保存自己的事件单元对象， 那么这个宿主函数的原型架构为：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function createEvents()&#123;</span><br><span class="line">    // 存放该事件系统的事件类型</span><br><span class="line">    this.EventHandlerMap = [];</span><br><span class="line">    </span><br><span class="line">    // 事件处理函数</span><br><span class="line">    var eventSystem=&#123;</span><br><span class="line">        on:on,</span><br><span class="line">        off:off,</span><br><span class="line">        trigger:trigger</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    其他辅助函数</span><br><span class="line">    </span><br><span class="line">    // 获取事件系统的事件类型数组。</span><br><span class="line">    getEventHandlerMap:getEventHandlerMap;</span><br><span class="line">    </span><br><span class="line">    return eventSystem;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="添加绑定事件"><a href="#添加绑定事件" class="headerlink" title="添加绑定事件"></a>添加绑定事件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">on:function(eventname,handler)&#123;</span><br><span class="line">    var eventMaps = getEventHandlerMap();</span><br><span class="line">    var meta = eventMaps[eventname];</span><br><span class="line">    if ( !meta ) &#123;</span><br><span class="line">        meta = eventMaps[eventname] = new EventMeta(eventname);</span><br><span class="line">        meta.handlerList.push(handler);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        var len = meta.handlerList.length;</span><br><span class="line">        for (var i = 0; i &lt; len; i++) &#123;</span><br><span class="line">            if ( eqfn( handler,meta.handlerList[i] ) ) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line">        meta.handlerList.push(handler); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">#### 取消绑定事件</span><br></pre></td></tr></table></figure>
+<p>off:function(eventname,handler){<br>    var eventMaps = getEventHandlerMap();<br>    var meta = eventMaps[eventname];<br>    if ( !meta ) {<br>        return false;<br>    }else if(!handler){<br>        eventMaps[eventname] = null;<br>    }else{<br>        var len = meta.handlerList.length;<br>        for (var i = 0; i &lt; len; i++) {<br>            if ( eqfn( handler,meta.handlerList[i] ) ) {<br>                meta.handlerList.splice(i,1);<br>            }<br>        }<br>    }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 触发绑定事件</span><br></pre></td></tr></table></figure></p>
+<p>trigger:function(eventname){<br>    var eventMaps = getEventHandlerMap();<br>    var meta = eventMaps[eventname];<br>    if ( !meta ) {<br>        console.log(“noerror”)<br>        return false;<br>    }else{<br>        var len = meta.handlerList.length;<br>        for (var i = 0; i &lt; len; i++) {<br>            meta.handlerList[i].apply(this);<br>        }<br>    }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 整体代码和demo</span><br></pre></td></tr></table></figure></p>
+<p>function createEvents(){<br>    // 存放该事件系统的事件类型<br>    this.EventHandlerMap = [];<br>    // 事件对象<br>    /<em>
+     </em>parme：事件名称<br>     <em>handlerLister：存放该事件的事件处理函数
+    </em>/<br>    var EventMeta = function (eventname){<br>        this.name = eventname;<br>        this.handlerList = [];<br>    }<br>    // 判断函数是否相等<br>    var eqfn = function(fna,fnb){<br>        return fna.toString() == fnb.toString();<br>    }<br>    // 事件处理函数<br>    var eventSystem = {<br>        on:function(eventname,handler){<br>            var eventMaps = getEventHandlerMap();<br>            var meta = eventMaps[eventname];<br>            if ( !meta ) {<br>                meta = eventMaps[eventname] = new EventMeta(eventname);<br>                meta.handlerList.push(handler);<br>            }else{<br>                var len = meta.handlerList.length;<br>                for (var i = 0; i &lt; len; i++) {<br>                    if ( eqfn( handler,meta.handlerList[i] ) ) {<br>                        return;<br>                    }<br>                }<br>                meta.handlerList.push(handler);<br>            }<br>        },<br>        off:function(eventname,handler){<br>            var eventMaps = getEventHandlerMap();<br>            var meta = eventMaps[eventname];<br>            if ( !meta ) {<br>                return false;<br>            }else if(!handler){<br>                eventMaps[eventname] = null;<br>            }else{<br>                var len = meta.handlerList.length;<br>                for (var i = 0; i &lt; len; i++) {<br>                    if ( eqfn( handler,meta.handlerList[i] ) ) {<br>                        meta.handlerList.splice(i,1);<br>                    }<br>                }<br>            }<br>        },<br>        trigger:function(eventname){<br>            var eventMaps = getEventHandlerMap();<br>            var meta = eventMaps[eventname];<br>            if ( !meta ) {<br>                console.log(“noerror”)<br>                return false;<br>            }else{<br>                var len = meta.handlerList.length;<br>                for (var i = 0; i &lt; len; i++) {<br>                    meta.handlerList[i].apply(this);<br>                }<br>            }<br>        }<br>    }<br>    // 获取事件类型列表<br>    var getEventHandlerMap = function(){<br>        return this.EventHandlerMap;<br>    }<br>    return eventSystem;<br>}</p>
+<p>var listen = createEvents();<br>listen.on(“error”,function(){<br>    console.log(“error1”)<br>})<br>listen.on(“error”,function(){<br>    console.log(“error2”)<br>})<br>listen.trigger(“error”)<br>listen.off(“error”,function(){<br>    console.log(“error2”)<br>})<br>listen.trigger(“error”)<br>var a  = createEvents();<br>a.trigger(“error”)<br>```</p>
+<blockquote>
+<p>资料参考：<br><a href="https://github.com/zouchengzhuo/czevent" target="_blank" rel="external">自己实现一个简单的事件系统</a></p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/17/javascript事件/" itemprop="url">
                   javascript事件
                 </a>
@@ -1735,7 +1878,7 @@ for(let i = 1; i&lt;=5 ; i++){
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
