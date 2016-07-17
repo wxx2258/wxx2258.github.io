@@ -256,6 +256,162 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/17/javascript事件/" itemprop="url">
+                  javascript事件
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-17T15:30:54+08:00" content="2016-07-17">
+              2016-07-17
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/17/javascript事件/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/17/javascript事件/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="javascript事件机制"><a href="#javascript事件机制" class="headerlink" title="javascript事件机制"></a>javascript事件机制</h2><h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><ol>
+<li>事件：我们在网页中的某个操作（有的操作对应多个事件）。例如：当我们点击一个按钮就会产生一个事件。是可以被 JavaScript 侦测到的行为。  </li>
+<li>事件触发的三个阶段：<ul>
+<li>事件捕捉</li>
+<li>到达事件位置，触发事件（如果这里既有捕捉事件，也有冒泡事件，则按注册的顺序执行）</li>
+<li>事件冒泡，并触发。</li>
+</ul>
+</li>
+</ol>
+<ol>
+<li>事件，IE与火狐的事件机制有什么区别？ 如何阻止冒泡？<ul>
+<li>事件处理机制：IE是事件冒泡、firefox同时支持两种事件模型，也就是：捕获型事件和冒泡型事件。；</li>
+<li>ev.stopPropagation();注意旧ie的方法 ev.cancelBubble = true;  </li>
+</ul>
+</li>
+</ol>
+<h3 id="事件处理程序"><a href="#事件处理程序" class="headerlink" title="事件处理程序"></a>事件处理程序</h3><p>事件的绑定主要为IE8以下浏览器做兼容处理：</p>
+<blockquote>
+<p>IE8以下只支持事件冒泡<br>IE事件处理使用attachEvent detachEvent</p>
+</blockquote>
+<h4 id="事件绑定"><a href="#事件绑定" class="headerlink" title="事件绑定"></a>事件绑定</h4><blockquote>
+<p>主要方法：addEventListener ， attachEvent(IE) ， [on + type]</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EU.addHandler = function(element,type,handler)&#123;</span><br><span class="line">    //DOM2级事件处理，IE9也支持</span><br><span class="line">    if(element.addEventListener)&#123;</span><br><span class="line">        element.addEventListener(type,handler,false);</span><br><span class="line">    &#125;</span><br><span class="line">    else if(element.attachEvent)&#123;</span><br><span class="line">        //type加&apos;on&apos;</span><br><span class="line">        //IE9也可以这样绑定</span><br><span class="line">        element.attachEvent(&apos;on&apos; + type,handler);</span><br><span class="line">    &#125;</span><br><span class="line">    //DOM0级事件处理步，事件流也是冒泡</span><br><span class="line">    else&#123;</span><br><span class="line">        element[&apos;on&apos; + type] = handler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>element.addEventListener(event, function, useCapture)</li>
+<li>useCapture：可选。布尔值，指定事件是否在捕获或冒泡阶段执行。<ul>
+<li>true - 事件句柄在捕获阶段执行</li>
+<li>false- false- 默认。事件句柄在冒泡阶段执行 </li>
+</ul>
+</li>
+</ul>
+<h4 id="取消绑定事件"><a href="#取消绑定事件" class="headerlink" title="取消绑定事件"></a>取消绑定事件</h4><blockquote>
+<p>注意，取消的事件函数应该和绑定函数相同<br>主要方法：removeEventListener ， detachEvent(IE) ，[on + type] = null </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">EU.removeHandler = function(element,type,handler)&#123;</span><br><span class="line">    if(element.removeEventListener)&#123;</span><br><span class="line">        element.removeEventListener(type,handler);</span><br><span class="line">    &#125;</span><br><span class="line">    else if(element.attachEvent)&#123;</span><br><span class="line">       element.detachEvent(&apos;on&apos; + type,handler);</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        //属性置空就可以</span><br><span class="line">        element[&apos;on&apos; + type] = null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="事件对象"><a href="#事件对象" class="headerlink" title="事件对象"></a>事件对象</h3><blockquote>
+<p>IE下event是全局对象，通过window.event取得</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EU.getEvent = function(event)&#123;</span><br><span class="line">    return event || window.event;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="事件对象属性"><a href="#事件对象属性" class="headerlink" title="事件对象属性"></a>事件对象属性</h4><p><img src="http://note.youdao.com/yws/public/resource/b488b53bfe0ce287dcd7fe072dd1a871/9FE97D070F30404B94F71C763878C95E" alt="image"><br><img src="http://note.youdao.com/yws/public/resource/b488b53bfe0ce287dcd7fe072dd1a871/59F9331E7DC64D8A8A58F2E7392224B9" alt="image"></p>
+<h3 id="事件的目标"><a href="#事件的目标" class="headerlink" title="事件的目标"></a>事件的目标</h3><blockquote>
+<p>IE下通过attachEvent绑定事件，内部this并非触发事件的DOM,而是window;<br>通过目标对象来获取DOM节点，IE下是srcElement属性，等同于其他浏览器的target属性<br>主要属性：event.target ， event.srcElement(IE)  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EU.addTarget = function(event)&#123;</span><br><span class="line">    return event.target || event.srcElement;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="阻止默认事件"><a href="#阻止默认事件" class="headerlink" title="阻止默认事件"></a>阻止默认事件</h3><blockquote>
+<p>主要方法：event.preventDefault ,  event.returnValue = false;</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EU.preventDefault = function(event)&#123;</span><br><span class="line">    if(event.preventDefault)&#123;</span><br><span class="line">        event.preventDefault();</span><br><span class="line">    &#125;</span><br><span class="line">    //IE下处理</span><br><span class="line">    else&#123;</span><br><span class="line">        event.returnValue = false; //默认为true</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="阻止事件冒泡"><a href="#阻止事件冒泡" class="headerlink" title="阻止事件冒泡"></a>阻止事件冒泡</h3><blockquote>
+<p>主要方法：event.stopPropagation ,  event.cancelBubble = true</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EU.stopPropagation = function(event)&#123;</span><br><span class="line">    if(event.stopPropagation)&#123;</span><br><span class="line">        event.stopPropagation();</span><br><span class="line">    &#125;</span><br><span class="line">    //IE下处理</span><br><span class="line">    else&#123;</span><br><span class="line">        event.cancelBubble = true;//默认为false，注意区分于returnValue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="事件类型"><a href="#事件类型" class="headerlink" title="事件类型"></a>事件类型</h3><p>事件类型有 鼠标事件，键盘事件，移动端的事件，自定义事件。。。。<br>不做详细介绍。需要了解可以查看mdn 或 w3cschool 相关资料。</p>
+<h2 id="事件代理和事件委托"><a href="#事件代理和事件委托" class="headerlink" title="事件代理和事件委托"></a>事件代理和事件委托</h2><h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><h2 id="事件委托：事件就是onclick，onmouseover，onmouseout，等，利用冒泡的原理，把事件加到父级上，触发执行效果"><a href="#事件委托：事件就是onclick，onmouseover，onmouseout，等，利用冒泡的原理，把事件加到父级上，触发执行效果" class="headerlink" title="* 事件委托：事件就是onclick，onmouseover，onmouseout，等，利用冒泡的原理，把事件加到父级上，触发执行效果"></a>* 事件委托：事件就是onclick，onmouseover，onmouseout，等，利用冒泡的原理，把事件加到父级上，触发执行效果</h2><ul>
+<li>事件代理：如果我们不想或不能够直接操纵目标对象，我们可以利用delegate创建一个代理对象来调用目标对象的方法，从而达到操纵目标对象的目的。代理对象要拥有目标对象的引用。这就是事件代理(也就是说不会直接去操纵对象)</li>
+</ul>
+<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><blockquote>
+<p>原理是事件冒泡，将事件加在父元素，触发执行</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function delegate(element, targetSelector, type, handler) &#123;</span><br><span class="line">    var targets = Array.prototype.slice</span><br><span class="line">                    .call(element.querySelectorAll(targetSelector));</span><br><span class="line">    element.addEventListener(type, function(event) &#123;</span><br><span class="line">        var target = event.target;</span><br><span class="line">        if (targets.indexOf(target) != -1) &#123;</span><br><span class="line">            return handler.apply(target, arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/13/javascript继承/" itemprop="url">
                   javascript继承
                 </a>
@@ -1579,7 +1735,7 @@ for(let i = 1; i&lt;=5 ; i++){
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
