@@ -57,52 +57,22 @@
 
 
 
-<meta name="description" content="数据类型es5数据类型：非引用型：
-“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。
-“Boolean” ： 布尔值，只有”true” 和 “false”两个值。
-“String” ：字符串。
-“Number” ：数值。其中”NAN” 属于这个数据类型引用型：
-“Object” ： “Null”属于对象类型。
-Array类型
-Data类型
-RegExp类">
+<meta name="description" content="函数节流
+处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。
+函数节流：利用定时器使其降低频率和操作，提高性能">
 <meta property="og:type" content="article">
-<meta property="og:title" content="javascript数据类型总结">
-<meta property="og:url" content="http://yoursite.com/2016/07/13/javascript数据类型总结/index.html">
+<meta property="og:title" content="函数节流">
+<meta property="og:url" content="http://yoursite.com/2016/07/23/函数节流/index.html">
 <meta property="og:site_name" content="Wxx's blog">
-<meta property="og:description" content="数据类型es5数据类型：非引用型：
-“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。
-“Boolean” ： 布尔值，只有”true” 和 “false”两个值。
-“String” ：字符串。
-“Number” ：数值。其中”NAN” 属于这个数据类型引用型：
-“Object” ： “Null”属于对象类型。
-Array类型
-Data类型
-RegExp类">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/B5E430F44AA04035888D604DCC35F825">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/D93BA67905F14E7D91BEC57D85F78D97">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/70058931130A403CBE3418B640C7F902">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/08CDE4E1FCAF4188925D232567D03452">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/768AD14CD6B8426F85B9BAA34717427F">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/FE23FDFD11F04E409279A17DCD8DF2E6">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/1E7B6A53905244EDAB11CBCD9D0F419F">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/8737F13CAB6D4D3FA09C1C928F65BD3A">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/C0FCE181A4F545768142A93834FB2DE6">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/3CB6D48031B14E79B4222540F9C6A0DA">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/BC6D971489A648D195ABC99DEC74D7B3">
-<meta property="og:updated_time" content="2016-07-23T08:50:49.516Z">
+<meta property="og:description" content="函数节流
+处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。
+函数节流：利用定时器使其降低频率和操作，提高性能">
+<meta property="og:updated_time" content="2016-07-23T13:30:47.086Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="javascript数据类型总结">
-<meta name="twitter:description" content="数据类型es5数据类型：非引用型：
-“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。
-“Boolean” ： 布尔值，只有”true” 和 “false”两个值。
-“String” ：字符串。
-“Number” ：数值。其中”NAN” 属于这个数据类型引用型：
-“Object” ： “Null”属于对象类型。
-Array类型
-Data类型
-RegExp类">
-<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/B5E430F44AA04035888D604DCC35F825">
+<meta name="twitter:title" content="函数节流">
+<meta name="twitter:description" content="函数节流
+处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。
+函数节流：利用定时器使其降低频率和操作，提高性能">
 
 
 
@@ -120,7 +90,7 @@ RegExp类">
   };
 </script>
 
-  <title> javascript数据类型总结 | Wxx's blog </title>
+  <title> 函数节流 | Wxx's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -290,7 +260,7 @@ RegExp类">
             
             
               
-                javascript数据类型总结
+                函数节流
               
             
           </h1>
@@ -302,8 +272,8 @@ RegExp类">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-13T15:48:34+08:00" content="2016-07-13">
-              2016-07-13
+            <time itemprop="dateCreated" datetime="2016-07-23T21:29:30+08:00" content="2016-07-23">
+              2016-07-23
             </time>
           </span>
 
@@ -313,8 +283,8 @@ RegExp类">
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/07/13/javascript数据类型总结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/13/javascript数据类型总结/" itemprop="commentsCount"></span>
+                <a href="/2016/07/23/函数节流/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/23/函数节流/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -336,63 +306,20 @@ RegExp类">
       
 
       
-        <h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><h2 id="es5数据类型："><a href="#es5数据类型：" class="headerlink" title="es5数据类型："></a>es5数据类型：</h2><h3 id="非引用型："><a href="#非引用型：" class="headerlink" title="非引用型："></a>非引用型：</h3><ul>
-<li>“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。</li>
-<li>“Boolean” ： 布尔值，只有”true” 和 “false”两个值。</li>
-<li>“String” ：字符串。</li>
-<li>“Number” ：数值。其中”NAN” 属于这个数据类型<h3 id="引用型："><a href="#引用型：" class="headerlink" title="引用型："></a>引用型：</h3></li>
-<li>“Object” ： “Null”属于对象类型。<ul>
-<li>Array类型</li>
-<li>Data类型</li>
-<li>RegExp类型</li>
-<li>Function类型</li>
-<li>……<a id="more"></a>
-<h3 id="Es6-新增数据类型"><a href="#Es6-新增数据类型" class="headerlink" title="Es6 新增数据类型"></a>Es6 新增数据类型</h3></li>
+        <h3 id="函数节流"><a href="#函数节流" class="headerlink" title="函数节流"></a>函数节流</h3><ul>
+<li>处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。</li>
+<li>函数节流：利用定时器使其降低频率和操作，提高性能<a id="more"></a></li>
+<li>param：  fn ：需要执行的函数 <pre><code>delay :  延迟执行的时间 
+mustRunDelay : 可选，必须等待的时间
+</code></pre></li>
+<li>主要思想：通过定时器，让函数延迟执行，如果在这个延迟的时间也有函数要执行，就阻止并清楚他。<ul>
+<li>其次，闭包保存第一次函数开始执行的时间戳。</li>
+<li>第一个判断就是保存开始的时间</li>
+<li>第二个判断是查看是否超出必须等待的时间，如果超出，则立即执行函数，如果没有超出，重新设置定时器。</li>
 </ul>
 </li>
-<li>symbol</li>
-<li>（由于对symbol认知比较浅，不加深入探讨。）</li>
 </ul>
-<h2 id="判断数据类型"><a href="#判断数据类型" class="headerlink" title="判断数据类型"></a>判断数据类型</h2><blockquote>
-<p>这里判断类型的是根据Underscore.js 1.8.3源码整理。<br>最直接是使用 typeof 判断数据类型，但这样直接判断存在许多误差和特殊情况。</p>
-</blockquote>
-<p>1.判断是否为 DOM 节点：  </p>
-<blockquote>
-<p>这里的 “!!” 是起到强制转换为布尔值的一种做法。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/B5E430F44AA04035888D604DCC35F825" alt="image">  </p>
-</blockquote>
-<p>2.判断 null 和 undefined  </p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/D93BA67905F14E7D91BEC57D85F78D97" alt="image"></p>
-</blockquote>
-<p>3.判断 NaN  </p>
-<blockquote>
-<p>首先要判断是否为Number，排除”null”和”undefined”特殊情况。<br>NaN不能通过相等操作符（== 和 ===）来判断 ，因为 NaN == NaN 和 NaN === NaN 都会返回 false。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/70058931130A403CBE3418B640C7F902" alt="image"></p>
-</blockquote>
-<p>判断是否为有限数值:</p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/08CDE4E1FCAF4188925D232567D03452" alt="image"></p>
-</blockquote>
-<p>4.判断是否为数组</p>
-<blockquote>
-<p>虽然ES5中已经有 isArray() 这一方法，但其中存在兼容问题。所以这里需要加一步判断。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/768AD14CD6B8426F85B9BAA34717427F" alt="image"></p>
-</blockquote>
-<p>5.判断是否为一个函数</p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/FE23FDFD11F04E409279A17DCD8DF2E6" alt="image"></p>
-</blockquote>
-<p>判断是否为函数参数:</p>
-<blockquote>
-<p>arguments有个特有属性callee。根据这个属性可以判断。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/1E7B6A53905244EDAB11CBCD9D0F419F" alt="image"></p>
-</blockquote>
-<p>6.判断是否为一个对象</p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/8737F13CAB6D4D3FA09C1C928F65BD3A" alt="image"></p>
-</blockquote>
-<h2 id="判断两个对象是否相同"><a href="#判断两个对象是否相同" class="headerlink" title="判断两个对象是否相同"></a>判断两个对象是否相同</h2><blockquote>
-<p>这里贴出其中的代码和个人的一部分理解。  </p>
-</blockquote>
-<p>####<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/C0FCE181A4F545768142A93834FB2DE6" alt="image"><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/3CB6D48031B14E79B4222540F9C6A0DA" alt="image"></p>
-<p>对于数组和对象只能用递归了，同时用aStack和bStack来暂存递归中的子对象。这里一个小技巧的就是先判断数组/属性的长度，如果不相等可以有效地减少递归。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/BC6D971489A648D195ABC99DEC74D7B3" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">var throttleV = function(fn, delay, mustRunDelay)&#123;</span><br><span class="line"> 	var timer = null;</span><br><span class="line"> 	var t_start ;</span><br><span class="line"> 	// 闭包</span><br><span class="line"> 	return function()&#123;</span><br><span class="line"> 		var context = this, args = arguments, t_curr = +new Date();</span><br><span class="line"> 		clearTimeout(timer); //清除前面的定时器，以在延迟中最后一次函数准</span><br><span class="line"></span><br><span class="line"> 		// console.log(t_start);</span><br><span class="line"> 		if(!t_start)&#123;</span><br><span class="line"> 			t_start = t_curr;</span><br><span class="line"> 		&#125;</span><br><span class="line"></span><br><span class="line"> 		if(t_curr - t_start &gt;= mustRunDelay)&#123;</span><br><span class="line"> 			fn.apply(context, args);</span><br><span class="line"> 			t_start = t_curr;</span><br><span class="line"> 		&#125;</span><br><span class="line"> 		else &#123;</span><br><span class="line"> 			// console.log(t_curr - t_start);</span><br><span class="line"> 			timer = setTimeout(function()&#123;</span><br><span class="line"> 				fn.apply(context, args);</span><br><span class="line"> 			&#125;, delay);</span><br><span class="line"> 		&#125;</span><br><span class="line"> 	&#125;;</span><br><span class="line"> &#125;;</span><br><span class="line"></span><br><span class="line"> // example</span><br><span class="line"> var a= throttleV(function()&#123;</span><br><span class="line"> 	console.log(&quot;1&quot;);</span><br><span class="line"> &#125;,200,100)</span><br><span class="line"> //  var b=throttleV(function()&#123;</span><br><span class="line"> // 	console.log(t_start);</span><br><span class="line"> // &#125;,200,300)</span><br><span class="line">a();a();a();</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -418,17 +345,13 @@ RegExp类">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/29/使用定时器处理长时间运行脚本/" rel="next" title="使用定时器处理长时间运行脚本">
-                <i class="fa fa-chevron-left"></i> 使用定时器处理长时间运行脚本
+              <a href="/2016/07/23/this的应用场景/" rel="next" title="this的应用场景">
+                <i class="fa fa-chevron-left"></i> this的应用场景
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/13/javascript继承/" rel="prev" title="javascript继承">
-                javascript继承 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -454,8 +377,8 @@ RegExp类">
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/07/13/javascript数据类型总结/"
-           data-title="javascript数据类型总结" data-url="http://yoursite.com/2016/07/13/javascript数据类型总结/">
+      <div class="ds-thread" data-thread-key="2016/07/23/函数节流/"
+           data-title="函数节流" data-url="http://yoursite.com/2016/07/23/函数节流/">
       </div>
     
   </div>
@@ -554,7 +477,7 @@ RegExp类">
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据类型"><span class="nav-number">1.</span> <span class="nav-text">数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#es5数据类型："><span class="nav-number">1.1.</span> <span class="nav-text">es5数据类型：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#非引用型："><span class="nav-number">1.1.1.</span> <span class="nav-text">非引用型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用型："><span class="nav-number">1.1.2.</span> <span class="nav-text">引用型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Es6-新增数据类型"><span class="nav-number">1.1.3.</span> <span class="nav-text">Es6 新增数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判断数据类型"><span class="nav-number">1.2.</span> <span class="nav-text">判断数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判断两个对象是否相同"><span class="nav-number">1.3.</span> <span class="nav-text">判断两个对象是否相同</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数节流"><span class="nav-number">1.</span> <span class="nav-text">函数节流</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
