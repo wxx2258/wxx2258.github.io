@@ -1,0 +1,831 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript,前端知识总结," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="this
+this到底是什么？  
+当一个函数被调用时，会创建一个活动记录（也称为执行上下问）。这个记录会包含函数在哪里被调用（调用栈），函数的调用方法，传入的参数等信息。this就是记录的其中一个属性，会在函数执行的过程中用到。
+
+
+this 在javascript中，严格模式和非严格模式略有区别。this在javascript的各种情景
+
+1. 全局上下文在全局上下文中（在任何函数体外部），t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="this的应用场景">
+<meta property="og:url" content="http://yoursite.com/2016/07/23/this的应用场景/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="this
+this到底是什么？  
+当一个函数被调用时，会创建一个活动记录（也称为执行上下问）。这个记录会包含函数在哪里被调用（调用栈），函数的调用方法，传入的参数等信息。this就是记录的其中一个属性，会在函数执行的过程中用到。
+
+
+this 在javascript中，严格模式和非严格模式略有区别。this在javascript的各种情景
+
+1. 全局上下文在全局上下文中（在任何函数体外部），t">
+<meta property="og:updated_time" content="2016-07-23T12:28:56.571Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="this的应用场景">
+<meta name="twitter:description" content="this
+this到底是什么？  
+当一个函数被调用时，会创建一个活动记录（也称为执行上下问）。这个记录会包含函数在哪里被调用（调用栈），函数的调用方法，传入的参数等信息。this就是记录的其中一个属性，会在函数执行的过程中用到。
+
+
+this 在javascript中，严格模式和非严格模式略有区别。this在javascript的各种情景
+
+1. 全局上下文在全局上下文中（在任何函数体外部），t">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> this的应用场景 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                this的应用场景
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-23T20:28:15+08:00" content="2016-07-23">
+              2016-07-23
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/23/this的应用场景/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/23/this的应用场景/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="this"><a href="#this" class="headerlink" title="this"></a>this</h2><ul>
+<li>this到底是什么？  <blockquote>
+<p>当一个函数被调用时，会创建一个活动记录（也称为执行上下问）。这个记录会包含函数在哪里被调用（调用栈），函数的调用方法，传入的参数等信息。<strong>this就是记录的其中一个属性，会在函数执行的过程中用到</strong>。</p>
+</blockquote>
+</li>
+<li>this 在javascript中，严格模式和非严格模式略有区别。<h2 id="this在javascript的各种情景"><a href="#this在javascript的各种情景" class="headerlink" title="this在javascript的各种情景"></a>this在javascript的各种情景</h2></li>
+</ul>
+<h3 id="1-全局上下文"><a href="#1-全局上下文" class="headerlink" title="1. 全局上下文"></a>1. 全局上下文</h3><p>在全局上下文中（在任何函数体外部），this指代全局对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">console.log(this.document === document); // true</span><br><span class="line"></span><br><span class="line">// 在浏览器中，全局对象为 window 对象：</span><br><span class="line">console.log(this === window); // true</span><br><span class="line"></span><br><span class="line">this.a = 37;</span><br><span class="line">console.log(window.a); // 37</span><br></pre></td></tr></table></figure>
+<h3 id="2-函数上下文"><a href="#2-函数上下文" class="headerlink" title="2. 函数上下文"></a>2. 函数上下文</h3><p>在函数内部，this 的取值取决于函数是如何调用的。这里对于函数不同的调用，this的取值会有所不同，详见这篇博客：<a href="http://wxx2258.github.io/2016/04/23/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84javascript%EF%BC%88this%EF%BC%89/" target="_blank" rel="external">你不知道的javascript（this）</a> 对于 <strong>隐式绑定</strong> 这个绑定原则的说法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">直接调用：</span><br><span class="line">function f1()&#123;</span><br><span class="line">  return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f1() === window; // true</span><br></pre></td></tr></table></figure>
+<p>在严格模式下，this 是在进入运行环境时设置的。若没有定义，this的值将维持undefined状态。同时它也能设置成任意值，比如 null 或者42 或者“I am not this”。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function f2()&#123;</span><br><span class="line">  &quot;use strict&quot;; // 这里是严格模式</span><br><span class="line">  return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f2() === undefined; // true</span><br></pre></td></tr></table></figure>
+<h3 id="3-对象方法中的-this"><a href="#3-对象方法中的-this" class="headerlink" title="3. 对象方法中的 this"></a>3. 对象方法中的 this</h3><p>当以对象里的方法调用函数时，他们的 this 时调用该函数的对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// 当 o.f() 被调用时，函数内的this将绑定到o对象</span><br><span class="line">var o = &#123;</span><br><span class="line">  prop: 37,</span><br><span class="line">  f: function() &#123;</span><br><span class="line">    return this.prop;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">console.log(o.f()); // logs 37</span><br><span class="line"></span><br><span class="line">example2：</span><br><span class="line">// 这说明this的值只与函数 f 作为 o 的成员被调用有关系</span><br><span class="line">var o = &#123;prop: 37&#125;;</span><br><span class="line"></span><br><span class="line">function independent() &#123;</span><br><span class="line">  return this.prop;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">o.f = independent;</span><br><span class="line"></span><br><span class="line">console.log(o.f()); // logs 37</span><br></pre></td></tr></table></figure>
+<ul>
+<li>原型中的this</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var o = &#123;</span><br><span class="line">  f : function()&#123; </span><br><span class="line">    return this.a + this.b; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">var p = Object.create(o);</span><br><span class="line">p.a = 1;</span><br><span class="line">p.b = 4;</span><br><span class="line"></span><br><span class="line">console.log(p.f()); // 5</span><br></pre></td></tr></table></figure>
+<p>在这个例子中，对象p没有属于它自己的f属性，它的f属性继承自它的原型。但是这对于最终在o中找到f属性的查找过程来说没有关系；查找过程首先从p.f的引用开始，所以函数中的this指向p。也就是说，因为f是作为p的方法调用的，所以它的this指向了p。这是JavaScript的原型继承中的一个有趣的特性。</p>
+<ul>
+<li>getter 与 setter 中的 this</li>
+</ul>
+<p>再次，相同的概念也适用时的函数作为一个 getter 或者 一个setter调用。作为getter或setter函数都会绑定 this 到从设置属性或得到属性的那个对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">function modulus()&#123;</span><br><span class="line">  return Math.sqrt(this.re * this.re + this.im * this.im);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var o = &#123;</span><br><span class="line">  re: 1,</span><br><span class="line">  im: -1,</span><br><span class="line">  get phase()&#123;</span><br><span class="line">    return Math.atan2(this.im, this.re);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Object.defineProperty(o, &apos;modulus&apos;, &#123;</span><br><span class="line">  get: modulus, enumerable:true, configurable:true&#125;);</span><br><span class="line"></span><br><span class="line">console.log(o.phase, o.modulus); // logs -0.78 1.4142</span><br></pre></td></tr></table></figure>
+<h3 id="4-构造函数中的-this"><a href="#4-构造函数中的-this" class="headerlink" title="4.构造函数中的 this"></a>4.构造函数中的 this</h3><p>当一个函数被作为一个构造函数来使用（使用new关键字），它的this与即将被创建的新对象绑定。</p>
+<p><strong>注意：当构造器返回的默认值是一个this引用的对象时，可以手动设置返回其他的对象，如果返回值不是一个对象，返回this。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function C()&#123;</span><br><span class="line">  this.a = 37;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var o = new C();</span><br><span class="line">console.log(o.a); // logs 37</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function C2()&#123;</span><br><span class="line">  this.a = 37;</span><br><span class="line">  return &#123;a:38&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">o = new C2();</span><br><span class="line">console.log(o.a); // logs 38</span><br></pre></td></tr></table></figure>
+<p>在最后的例子中（C2），因为在调用构造函数的过程中，手动的设置了返回对象，与this绑定的默认对象被取消。</p>
+<h3 id="5-call-和-apply"><a href="#5-call-和-apply" class="headerlink" title="5. call 和 apply"></a>5. call 和 apply</h3><p>当一个函数的函数体中使用了this关键字时，通过所有函数都从Function对象的原型中继承的call()方法和apply()方法调用时，它的值可以绑定到一个指定的对象上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function add(c, d)&#123;</span><br><span class="line">  return this.a + this.b + c + d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var o = &#123;a:1, b:3&#125;;</span><br><span class="line"></span><br><span class="line">add.call(o, 5, 7); // 1 + 3 + 5 + 7 = 16</span><br><span class="line"></span><br><span class="line">add.apply(o, [10, 20]); // 1 + 3 + 10 + 20 = 34</span><br></pre></td></tr></table></figure>
+<p>使用 call 和 apply 函数的时候要注意，如果传递的 this 值不是一个对象，JavaScript 将会尝试使用内部 ToObject 操作将其转换为对象。因此，如果传递的值是一个原始值比如 7 或 ‘foo’ ，那么就会使用相关构造函数将它转换为对象，所以原始值 7 通过new Number(7)被转换为对象，而字符串’foo’使用 new String(‘foo’) 转化为对象，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function bar() &#123;</span><br><span class="line">  console.log(Object.prototype.toString.call(this));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bar.call(7); // [object Number]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>bind 方法</li>
+</ul>
+<p>ECMAScript 5 引入了 Function.prototype.bind。调用f.bind(someObject)会创建一个与f具有相同函数体和作用域的函数，但是在这个新函数中，this将永久地被绑定到了bind的第一个参数，无论这个函数是如何被调用的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function f()&#123;</span><br><span class="line">  return this.a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var g = f.bind(&#123;a:&quot;azerty&quot;&#125;);</span><br><span class="line">console.log(g()); // azerty</span><br><span class="line"></span><br><span class="line">var o = &#123;a:37, f:f, g:g&#125;;</span><br><span class="line">console.log(o.f(), o.g()); // 37, azerty</span><br></pre></td></tr></table></figure>
+<h3 id="6-DOM事件处理函数中的-this"><a href="#6-DOM事件处理函数中的-this" class="headerlink" title="6.DOM事件处理函数中的 this"></a>6.DOM事件处理函数中的 this</h3><p>当函数被用作事件处理函数时，它的this指向触发事件的元素）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 被调用时，将关联的元素变成蓝色</span><br><span class="line">function bluify(e)&#123;</span><br><span class="line">  console.log(this === e.currentTarget); // 总是 true</span><br><span class="line"></span><br><span class="line">  // 当 currentTarget 和 target 是同一个对象是为 true</span><br><span class="line">  console.log(this === e.target);        </span><br><span class="line">  this.style.backgroundColor = &apos;#A5D9F3&apos;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 获取文档中的所有元素的列表</span><br><span class="line">var elements = document.getElementsByTagName(&apos;*&apos;);</span><br><span class="line"></span><br><span class="line">// 将bluify作为元素的点击监听函数，当元素被点击时，就会变成蓝色</span><br><span class="line">for(var i=0 ; i&lt;elements.length ; i++)&#123;</span><br><span class="line">  elements[i].addEventListener(&apos;click&apos;, bluify, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="7-内联事件处理函数中的-this"><a href="#7-内联事件处理函数中的-this" class="headerlink" title="7.内联事件处理函数中的 this"></a>7.内联事件处理函数中的 this</h3><p>当代码被内联处理函数调用时，它的this指向监听器所在的DOM元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onclick=&quot;alert(this.tagName.toLowerCase());&quot;&gt;</span><br><span class="line">  Show this</span><br><span class="line">&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的alert会显示button。注意只有外层代码中的this是这样设置的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onclick=&quot;alert((function()&#123;return this&#125;)());&quot;&gt;</span><br><span class="line">  Show inner this</span><br><span class="line">&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<p>在这种情况下，没有设置内部函数的 this，所以它指向 global/window 对象（即非严格模式下调用的函数未设置 this 时指向的默认对象）。  </p>
+<blockquote>
+<p>资料参考<br><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/this" target="_blank" rel="external">this-javascript|MDN</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag">#javascript</a>
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/17/自己实现一个简单的事件系统/" rel="next" title="自己实现一个简单的事件系统">
+                <i class="fa fa-chevron-left"></i> 自己实现一个简单的事件系统
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/23/this的应用场景/"
+           data-title="this的应用场景" data-url="http://yoursite.com/2016/07/23/this的应用场景/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#this"><span class="nav-number">1.</span> <span class="nav-text">this</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#this在javascript的各种情景"><span class="nav-number">2.</span> <span class="nav-text">this在javascript的各种情景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-全局上下文"><span class="nav-number">2.1.</span> <span class="nav-text">1. 全局上下文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-函数上下文"><span class="nav-number">2.2.</span> <span class="nav-text">2. 函数上下文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-对象方法中的-this"><span class="nav-number">2.3.</span> <span class="nav-text">3. 对象方法中的 this</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-构造函数中的-this"><span class="nav-number">2.4.</span> <span class="nav-text">4.构造函数中的 this</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-call-和-apply"><span class="nav-number">2.5.</span> <span class="nav-text">5. call 和 apply</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-DOM事件处理函数中的-this"><span class="nav-number">2.6.</span> <span class="nav-text">6.DOM事件处理函数中的 this</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-内联事件处理函数中的-this"><span class="nav-number">2.7.</span> <span class="nav-text">7.内联事件处理函数中的 this</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
