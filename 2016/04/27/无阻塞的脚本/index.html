@@ -69,7 +69,7 @@
 
 
 在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐将所有的&amp;lt;script&amp;gt;标签尽可能的放到&amp;lt;body&amp;gt;标签的底部。">
-<meta property="og:updated_time" content="2016-04-27T12:23:27.170Z">
+<meta property="og:updated_time" content="2016-07-23T08:51:24.566Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="无阻塞的脚本">
 <meta name="twitter:description" content="为什么需要无阻塞的脚本？　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 &amp;lt;script&amp;gt; 标签每次出现都会让页面等待脚本的解析和执行。　　下面是两种比较简单的提高性能的做法：
@@ -313,7 +313,8 @@
 <blockquote>
 <ol>
 <li>在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐<code>将所有的&lt;script&gt;标签尽可能的放到&lt;body&gt;标签的底部。</code></li>
-<li>合并脚本，减少http请求，减少每个<code>&lt;script&gt;</code> 标签初始下载，执行带来的迟延。  </li>
+<li>合并脚本，减少http请求，减少每个<code>&lt;script&gt;</code> 标签初始下载，执行带来的迟延。  <a id="more"></a>
+</li>
 </ol>
 </blockquote>
 <p>　　减少javascript文件大小并限制HTTP请求数可以带来性能优化。但是当下载一个单个较大的javascript，虽然只产生一次HTTP请求，却会锁死浏览器一大段时间。</p>

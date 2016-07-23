@@ -305,51 +305,20 @@
 
       
         
-          
-            <h2 id="事件系统"><a href="#事件系统" class="headerlink" title="事件系统"></a>事件系统</h2><h3 id="nodejs的事件模块"><a href="#nodejs的事件模块" class="headerlink" title="nodejs的事件模块"></a>nodejs的事件模块</h3><blockquote>
-<p><a href="http://nodejs.cn/api/events.html/" target="_blank" rel="external">nodejs官方api文档</a>   </p>
+          <h2 id="事件系统"><a href="#事件系统" class="headerlink" title="事件系统"></a>事件系统</h2><h3 id="nodejs的事件模块"><a href="#nodejs的事件模块" class="headerlink" title="nodejs的事件模块"></a>nodejs的事件模块</h3><blockquote>
+<p><a href="http://nodejs.cn/api/events.html/">nodejs官方api文档</a>   </p>
 </blockquote>
 <ul>
 <li>nodejs中的事件模块，是用来给其他对象提供绑定事件，触发事件等能力。</li>
 <li><p>官方的一个小demo，可以看出，将一个宿主对象集成 events 模块提供的对象，那么这个宿主对象拥有了这个方法。</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const EventEmitter = require(&apos;events&apos;);</span><br><span class="line"></span><br><span class="line">class MyEmitter extends EventEmitter &#123;&#125;</span><br><span class="line"></span><br><span class="line">const myEmitter = new MyEmitter();</span><br><span class="line">myEmitter.on(&apos;event&apos;, () =&gt; &#123;</span><br><span class="line">  console.log(&apos;an event occurred!&apos;);</span><br><span class="line">&#125;);</span><br><span class="line">myEmitter.emit(&apos;event&apos;);</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>我们再看一个官网上的一段代码：</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const myEmitter = new MyEmitter();</span><br><span class="line">myEmitter.on(&apos;event&apos;, function(a, b) &#123;</span><br><span class="line">  console.log(a, b, this);</span><br><span class="line">    // Prints:</span><br><span class="line">    //   a b MyEmitter &#123;</span><br><span class="line">    //     domain: null,</span><br><span class="line">    //     _events: &#123; event: [Function] &#125;,</span><br><span class="line">    //     _eventsCount: 1,</span><br><span class="line">    //     _maxListeners: undefined &#125;</span><br><span class="line">&#125;);</span><br><span class="line">myEmitter.emit(&apos;event&apos;, &apos;a&apos;, &apos;b&apos;);</span><br></pre></td></tr></table></figure>
-</li>
 </ul>
-<blockquote>
-<p>可以看出，其中MyEmitter对象通过该on 添加了一个事件，其中的内部属性也打印出来，这里不难得到启发，可知，事件系统有自己的属性，通过属性联系绑定和取消等函数。</p>
-</blockquote>
-<h3 id="事件系统模块设计"><a href="#事件系统模块设计" class="headerlink" title="事件系统模块设计"></a>事件系统模块设计</h3><ul>
-<li><p>从nodejs的事件系统中，一个事件系统，必须具备的是：  </p>
-<ul>
-<li>添加绑定事件 </li>
-<li>取消绑定事件  </li>
-<li>触发绑定事件  </li>
-</ul>
-</li>
-<li><p>我们整理下思路：</p>
-<ul>
-<li>首先我们需要实现一个事件类，用来创建不同的事件对象。如click事件对象，error事件对象。</li>
-<li>其次，我们需要为每一个事件对象提供处理函数。</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>（这里需要明白的是，同一个类型的只有一个事件对象，不同的事件对象有多个处理函数，重复的处理函数是无效的）</p>
-</blockquote>
-<h3 id="事件对象"><a href="#事件对象" class="headerlink" title="事件对象"></a>事件对象</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 事件对象</span><br><span class="line">/*</span><br><span class="line"> *parme：事件名称</span><br><span class="line"> *handlerLister：存放该事件的事件处理函数</span><br><span class="line">*/</span><br><span class="line">var EventMeta = function (eventname)&#123;</span><br><span class="line">    this.name = eventname;</span><br><span class="line">    this.handlerList = [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="事件宿主对象函数"><a href="#事件宿主对象函数" class="headerlink" title="事件宿主对象函数"></a>事件宿主对象函数</h3><ul>
-<li>每一个事件宿主对象都应该持有一个map，用来保存自己的事件单元对象， 那么这个宿主函数的原型架构为：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">function createEvents()&#123;</span><br><span class="line">    // 存放该事件系统的事件类型</span><br><span class="line">    this.EventHandlerMap = [];</span><br><span class="line">    </span><br><span class="line">    // 事件处理函数</span><br><span class="line">    var eventSystem=&#123;</span><br><span class="line">        on:on,</span><br><span class="line">        off:off,</span><br><span class="line">        trigger:trigger</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    其他辅助函数</span><br><span class="line">    // 获取事件系统的事件类型数组。</span><br><span class="line">    getEventHandlerMap:getEventHandlerMap;</span><br><span class="line">    return eventSystem;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">```</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">### 整体代码和demo</span><br><span class="line"></span><br><span class="line">function createEvents()&#123;</span><br><span class="line">    // 存放该事件系统的事件类型</span><br><span class="line">    this.EventHandlerMap = [];</span><br><span class="line">    // 事件对象</span><br><span class="line">    /*</span><br><span class="line">     *parme：事件名称</span><br><span class="line">     *handlerLister：存放该事件的事件处理函数</span><br><span class="line">    */</span><br><span class="line">    var EventMeta = function (eventname)&#123;</span><br><span class="line">        this.name = eventname;</span><br><span class="line">        this.handlerList = [];</span><br><span class="line">    &#125;</span><br><span class="line">    // 判断函数是否相等</span><br><span class="line">    var eqfn = function(fna,fnb)&#123;</span><br><span class="line">        return fna.toString() == fnb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">    // 事件处理函数</span><br><span class="line">    var eventSystem = &#123;</span><br><span class="line">        // 绑定事件函数</span><br><span class="line">        on:function(eventname,handler)&#123;</span><br><span class="line">            var eventMaps = getEventHandlerMap();</span><br><span class="line">            var meta = eventMaps[eventname];</span><br><span class="line">            if ( !meta ) &#123;</span><br><span class="line">                meta = eventMaps[eventname] = new EventMeta(eventname);</span><br><span class="line">                meta.handlerList.push(handler);</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                var len = meta.handlerList.length;</span><br><span class="line">                for (var i = 0; i &lt; len; i++) &#123;</span><br><span class="line">                    if ( eqfn( handler,meta.handlerList[i] ) ) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; </span><br><span class="line">                meta.handlerList.push(handler); </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        //取消绑定事件函数</span><br><span class="line">        off:function(eventname,handler)&#123;</span><br><span class="line">            var eventMaps = getEventHandlerMap();</span><br><span class="line">            var meta = eventMaps[eventname];</span><br><span class="line">            if ( !meta ) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;else if(!handler)&#123;</span><br><span class="line">                eventMaps[eventname] = null;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                var len = meta.handlerList.length;</span><br><span class="line">                for (var i = 0; i &lt; len; i++) &#123;</span><br><span class="line">                    if ( eqfn( handler,meta.handlerList[i] ) ) &#123;</span><br><span class="line">                        meta.handlerList.splice(i,1);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        //触发绑定事件函数</span><br><span class="line">        trigger:function(eventname)&#123;</span><br><span class="line">            var eventMaps = getEventHandlerMap();</span><br><span class="line">            var meta = eventMaps[eventname];</span><br><span class="line">            if ( !meta ) &#123;</span><br><span class="line">                console.log(&quot;noerror&quot;)</span><br><span class="line">                return false;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                var len = meta.handlerList.length;</span><br><span class="line">                for (var i = 0; i &lt; len; i++) &#123;</span><br><span class="line">                    meta.handlerList[i].apply(this);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 获取事件类型列表</span><br><span class="line">    var getEventHandlerMap = function()&#123;</span><br><span class="line">        return this.EventHandlerMap;</span><br><span class="line">    &#125;</span><br><span class="line">    return eventSystem;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var listen = createEvents();</span><br><span class="line">listen.on(&quot;error&quot;,function()&#123;</span><br><span class="line">    console.log(&quot;error1&quot;)</span><br><span class="line">&#125;)</span><br><span class="line">listen.on(&quot;error&quot;,function()&#123;</span><br><span class="line">    console.log(&quot;error2&quot;)</span><br><span class="line">&#125;)</span><br><span class="line">listen.trigger(&quot;error&quot;)</span><br><span class="line">listen.off(&quot;error&quot;,function()&#123;</span><br><span class="line">    console.log(&quot;error2&quot;)</span><br><span class="line">&#125;)</span><br><span class="line">listen.trigger(&quot;error&quot;)</span><br><span class="line">var a  = createEvents();</span><br><span class="line">a.trigger(&quot;error&quot;)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>资料参考：<br><a href="https://github.com/zouchengzhuo/czevent" target="_blank" rel="external">自己实现一个简单的事件系统</a></p>
-</blockquote>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/17/自己实现一个简单的事件系统/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -442,8 +411,7 @@
 
       
         
-          
-            <h2 id="javascript事件机制"><a href="#javascript事件机制" class="headerlink" title="javascript事件机制"></a>javascript事件机制</h2><h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><ol>
+          <h2 id="javascript事件机制"><a href="#javascript事件机制" class="headerlink" title="javascript事件机制"></a>javascript事件机制</h2><h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><ol>
 <li>事件：我们在网页中的某个操作（有的操作对应多个事件）。例如：当我们点击一个按钮就会产生一个事件。是可以被 JavaScript 侦测到的行为。  </li>
 <li>事件触发的三个阶段：<ul>
 <li>事件捕捉</li>
@@ -459,53 +427,11 @@
 </ul>
 </li>
 </ol>
-<h3 id="事件处理程序"><a href="#事件处理程序" class="headerlink" title="事件处理程序"></a>事件处理程序</h3><p>事件的绑定主要为IE8以下浏览器做兼容处理：</p>
-<blockquote>
-<p>IE8以下只支持事件冒泡<br>IE事件处理使用attachEvent detachEvent</p>
-</blockquote>
-<h4 id="事件绑定"><a href="#事件绑定" class="headerlink" title="事件绑定"></a>事件绑定</h4><blockquote>
-<p>主要方法：addEventListener ， attachEvent(IE) ， [on + type]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EU.addHandler = function(element,type,handler)&#123;</span><br><span class="line">    //DOM2级事件处理，IE9也支持</span><br><span class="line">    if(element.addEventListener)&#123;</span><br><span class="line">        element.addEventListener(type,handler,false);</span><br><span class="line">    &#125;</span><br><span class="line">    else if(element.attachEvent)&#123;</span><br><span class="line">        //type加&apos;on&apos;</span><br><span class="line">        //IE9也可以这样绑定</span><br><span class="line">        element.attachEvent(&apos;on&apos; + type,handler);</span><br><span class="line">    &#125;</span><br><span class="line">    //DOM0级事件处理步，事件流也是冒泡</span><br><span class="line">    else&#123;</span><br><span class="line">        element[&apos;on&apos; + type] = handler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>element.addEventListener(event, function, useCapture)</li>
-<li>useCapture：可选。布尔值，指定事件是否在捕获或冒泡阶段执行。<ul>
-<li>true - 事件句柄在捕获阶段执行</li>
-<li>false- false- 默认。事件句柄在冒泡阶段执行 </li>
-</ul>
-</li>
-</ul>
-<h4 id="取消绑定事件"><a href="#取消绑定事件" class="headerlink" title="取消绑定事件"></a>取消绑定事件</h4><blockquote>
-<p>注意，取消的事件函数应该和绑定函数相同<br>主要方法：removeEventListener ， detachEvent(IE) ，[on + type] = null </p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">EU.removeHandler = function(element,type,handler)&#123;</span><br><span class="line">    if(element.removeEventListener)&#123;</span><br><span class="line">        element.removeEventListener(type,handler);</span><br><span class="line">    &#125;</span><br><span class="line">    else if(element.attachEvent)&#123;</span><br><span class="line">       element.detachEvent(&apos;on&apos; + type,handler);</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        //属性置空就可以</span><br><span class="line">        element[&apos;on&apos; + type] = null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="事件对象"><a href="#事件对象" class="headerlink" title="事件对象"></a>事件对象</h3><blockquote>
-<p>IE下event是全局对象，通过window.event取得</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EU.getEvent = function(event)&#123;</span><br><span class="line">    return event || window.event;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="事件对象属性"><a href="#事件对象属性" class="headerlink" title="事件对象属性"></a>事件对象属性</h4><p><img src="http://note.youdao.com/yws/public/resource/b488b53bfe0ce287dcd7fe072dd1a871/9FE97D070F30404B94F71C763878C95E" alt="image"><br><img src="http://note.youdao.com/yws/public/resource/b488b53bfe0ce287dcd7fe072dd1a871/59F9331E7DC64D8A8A58F2E7392224B9" alt="image"></p>
-<h3 id="事件的目标"><a href="#事件的目标" class="headerlink" title="事件的目标"></a>事件的目标</h3><blockquote>
-<p>IE下通过attachEvent绑定事件，内部this并非触发事件的DOM,而是window;<br>通过目标对象来获取DOM节点，IE下是srcElement属性，等同于其他浏览器的target属性<br>主要属性：event.target ， event.srcElement(IE)  </p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EU.addTarget = function(event)&#123;</span><br><span class="line">    return event.target || event.srcElement;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="阻止默认事件"><a href="#阻止默认事件" class="headerlink" title="阻止默认事件"></a>阻止默认事件</h3><blockquote>
-<p>主要方法：event.preventDefault ,  event.returnValue = false;</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EU.preventDefault = function(event)&#123;</span><br><span class="line">    if(event.preventDefault)&#123;</span><br><span class="line">        event.preventDefault();</span><br><span class="line">    &#125;</span><br><span class="line">    //IE下处理</span><br><span class="line">    else&#123;</span><br><span class="line">        event.returnValue = false; //默认为true</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="阻止事件冒泡"><a href="#阻止事件冒泡" class="headerlink" title="阻止事件冒泡"></a>阻止事件冒泡</h3><blockquote>
-<p>主要方法：event.stopPropagation ,  event.cancelBubble = true</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">EU.stopPropagation = function(event)&#123;</span><br><span class="line">    if(event.stopPropagation)&#123;</span><br><span class="line">        event.stopPropagation();</span><br><span class="line">    &#125;</span><br><span class="line">    //IE下处理</span><br><span class="line">    else&#123;</span><br><span class="line">        event.cancelBubble = true;//默认为false，注意区分于returnValue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="事件类型"><a href="#事件类型" class="headerlink" title="事件类型"></a>事件类型</h3><p>事件类型有 鼠标事件，键盘事件，移动端的事件，自定义事件。。。。<br>不做详细介绍。需要了解可以查看mdn 或 w3cschool 相关资料。</p>
-<h2 id="事件代理和事件委托"><a href="#事件代理和事件委托" class="headerlink" title="事件代理和事件委托"></a>事件代理和事件委托</h2><p>*区别  </p>
-<pre><code>* 事件委托：事件就是onclick，onmouseover，onmouseout，等，利用冒泡的原理，把事件加到父级上，触发执行效果
-* 事件代理：如果我们不想或不能够直接操纵目标对象，我们可以利用delegate创建一个代理对象来调用目标对象的方法，从而达到操纵目标对象的目的。代理对象要拥有目标对象的引用。这就是事件代理(也就是说不会直接去操纵对象)
-</code></pre><h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><blockquote>
-<p>原理是事件冒泡，将事件加在父元素，触发执行</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function delegate(element, targetSelector, type, handler) &#123;</span><br><span class="line">    var targets = Array.prototype.slice</span><br><span class="line">                    .call(element.querySelectorAll(targetSelector));</span><br><span class="line">    element.addEventListener(type, function(event) &#123;</span><br><span class="line">        var target = event.target;</span><br><span class="line">        if (targets.indexOf(target) != -1) &#123;</span><br><span class="line">            return handler.apply(target, arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/17/javascript事件/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -598,8 +524,7 @@
 
       
         
-          
-            <h2 id="js继承的概念"><a href="#js继承的概念" class="headerlink" title="js继承的概念"></a>js继承的概念</h2><blockquote>
+          <h2 id="js继承的概念"><a href="#js继承的概念" class="headerlink" title="js继承的概念"></a>js继承的概念</h2><blockquote>
 <p>有如下两种常用的继承方式：</p>
 <ul>
 <li>原型链继承（对象间的继承）</li>
@@ -608,63 +533,11 @@
 </blockquote>
 <h3 id="原型链继承与类式继承"><a href="#原型链继承与类式继承" class="headerlink" title="原型链继承与类式继承"></a>原型链继承与类式继承</h3><p>类式继承是在子类型构造函数的内部调用超类型的构造函数。<br>严格的类式继承并不是很常见，一般都是组合着用：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function Super()&#123;</span><br><span class="line">    this.colors=[&quot;red&quot;,&quot;blue&quot;];</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">function Sub()&#123;</span><br><span class="line">    Super.call(this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>原型式继承是借助已有的对象创建新的对象，将子类的原型指向父类，就相当于加入了父类这条原型链</p>
-<h3 id="原型链继承："><a href="#原型链继承：" class="headerlink" title="原型链继承："></a>原型链继承：</h3><ul>
-<li>原型链继承：是借助已有的对象创建新的对象，将子类的原型指向父类，就相当于加入了父类这条原型链。</li>
-<li>为了让子类继承父类的属性（也包括方法），首先需要定义一个构造函数。然后，将父类的新实例赋值给构造函数的原型。代码如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function Parent()&#123;</span><br><span class="line">        this.name = &apos;mike&apos;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function Child()&#123;</span><br><span class="line">        this.age = 12;</span><br><span class="line">    &#125;</span><br><span class="line">    Child.prototype = new Parent();//Child继承Parent，通过原型，形成链条</span><br><span class="line"></span><br><span class="line">    var test = new Child();</span><br><span class="line">    alert(test.age);</span><br><span class="line">    alert(test.name);//得到被继承的属性</span><br><span class="line">    //继续原型链继承</span><br><span class="line">    function Brother()&#123;   //brother构造</span><br><span class="line">        this.weight = 60;</span><br><span class="line">    &#125;</span><br><span class="line">    Brother.prototype = new Child();//继续原型链继承</span><br><span class="line">    var brother = new Brother();</span><br><span class="line">    alert(brother.name);//继承了Parent和Child,弹出mike</span><br><span class="line">    alert(brother.age);//弹出12</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<blockquote>
-<p>以上原型链继承还缺少一环，那就是Object，所有的构造函数都继承自Object。而继承Object是自动完成的，并不需要我们自己手动继承，那么他们的从属关系是怎样的呢？</p>
-</blockquote>
-<ul>
-<li>确定原型和实例的关系<br>可以通过两种方式来确定原型和实例之间的关系。操作符instanceof和isPrototypeof()方法：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">alert(brother instanceof Object)//true</span><br><span class="line">alert(test instanceof Brother);//false,test 是brother的超类</span><br><span class="line">alert(brother instanceof Child);//true</span><br><span class="line">alert(brother instanceof Parent);//true</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>只要是原型链中出现过的原型，都可以说是该原型链派生的实例的原型，因此，isPrototypeof()方法也会返回true。</p>
-</blockquote>
-<h3 id="借用构造函数（类式继承）"><a href="#借用构造函数（类式继承）" class="headerlink" title="借用构造函数（类式继承）"></a>借用构造函数（类式继承）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function Parent(age)&#123;</span><br><span class="line">        this.name = [&apos;mike&apos;,&apos;jack&apos;,&apos;smith&apos;];</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function Child(age)&#123;</span><br><span class="line">        Parent.call(this,age);</span><br><span class="line">    &#125;</span><br><span class="line">    var test = new Child(21);</span><br><span class="line">    alert(test.age);//21</span><br><span class="line">    alert(test.name);//mike,jack,smith</span><br><span class="line">    test.name.push(&apos;bill&apos;);</span><br><span class="line">    alert(test.name);//mike,jack,smith,bill</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>借用构造函数虽然解决了刚才两种问题，但没有原型，则复用无从谈起，所以我们需要原型链+借用构造函数的模式，这种模式称为组合继承</p>
-</blockquote>
-<h3 id="组合继承"><a href="#组合继承" class="headerlink" title="组合继承"></a>组合继承</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function Parent(age)&#123;</span><br><span class="line">        this.name = [&apos;mike&apos;,&apos;jack&apos;,&apos;smith&apos;];</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    Parent.prototype.run = function () &#123;</span><br><span class="line">        return this.name  + &apos; are both&apos; + this.age;</span><br><span class="line">    &#125;;</span><br><span class="line">    function Child(age)&#123;</span><br><span class="line">        Parent.call(this,age);//对象冒充，给超类型传参</span><br><span class="line">    &#125;</span><br><span class="line">    Child.prototype = new Parent();//原型链继承</span><br><span class="line">    var test = new Child(21);//写new Parent(21)也行</span><br><span class="line">    alert(test.run());//mike,jack,smith are both21</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>组合式继承是比较常用的一种继承方法，其背后的思路是 使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。这样，既通过在原型上定义方法实现了函数复用，又保证每个实例都有它自己的属性。</p>
-<p>call()的用法：调用一个对象的一个方法，以另一个对象替换当前对象。</p>
-<p>call([thisObj[,arg1[, arg2[, [,.argN]]]]]) </p>
-</blockquote>
-<h3 id="原型式继承"><a href="#原型式继承" class="headerlink" title="原型式继承"></a>原型式继承</h3><ul>
-<li>这种继承借助原型并基于已有的对象创建新对象，同时还不用创建自定义类型的方式称为原型式继承</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">     function obj(o)&#123;</span><br><span class="line">         function F()&#123;&#125;</span><br><span class="line">         F.prototype = o;</span><br><span class="line">         return new F();</span><br><span class="line">     &#125;</span><br><span class="line">    var box = &#123;</span><br><span class="line">        name : &apos;trigkit4&apos;,</span><br><span class="line">        arr : [&apos;brother&apos;,&apos;sister&apos;,&apos;baba&apos;]</span><br><span class="line">    &#125;;</span><br><span class="line">    var b1 = obj(box);</span><br><span class="line">    alert(b1.name);//trigkit4</span><br><span class="line"></span><br><span class="line">    b1.name = &apos;mike&apos;;</span><br><span class="line">    alert(b1.name);//mike</span><br><span class="line"></span><br><span class="line">    alert(b1.arr);//brother,sister,baba</span><br><span class="line">    b1.arr.push(&apos;parents&apos;);</span><br><span class="line">    alert(b1.arr);//brother,sister,baba,parents</span><br><span class="line"></span><br><span class="line">    var b2 = obj(box);</span><br><span class="line">    alert(b2.name);//trigkit4</span><br><span class="line">    alert(b2.arr);//brother,sister,baba,parents</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>原型式继承首先在obj()函数内部创建一个临时性的构造函数 ，然后将传入的对象作为这个构造函数的原型，最后返回这个临时类型的一个新实例。</p>
-</blockquote>
-<h3 id="寄生式继承"><a href="#寄生式继承" class="headerlink" title="寄生式继承"></a>寄生式继承</h3><ul>
-<li>这种继承方式是把原型式+工厂模式结合起来，目的是为了封装创建的过程。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function create(o)&#123;</span><br><span class="line">        var f= obj(o);</span><br><span class="line">        f.run = function () &#123;</span><br><span class="line">            return this.arr;//同样，会共享引用</span><br><span class="line">        &#125;;</span><br><span class="line">        return f;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>组合式继承的小问题:<br>    组合式继承是js最常用的继承模式，但组合继承的超类型在使用过程中会被调用两次；一次是创建子类型的时候，另一次是在子类型构造函数的内部</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function Parent(name)&#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.arr = [&apos;哥哥&apos;,&apos;妹妹&apos;,&apos;父母&apos;];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Parent.prototype.run = function () &#123;</span><br><span class="line">        return this.name;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    function Child(name,age)&#123;</span><br><span class="line">        Parent.call(this,age);//第二次调用</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Child.prototype = new Parent();//第一次调用</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>以上代码是之前的组合继承，那么寄生组合继承，解决了两次调用的问题。</p>
-</blockquote>
-<h3 id="寄生组合式继承"><a href="#寄生组合式继承" class="headerlink" title="寄生组合式继承"></a>寄生组合式继承</h3><p>&lt;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">script&gt;</span><br><span class="line">    function obj(o)&#123;</span><br><span class="line">        function F()&#123;&#125;</span><br><span class="line">        F.prototype = o;</span><br><span class="line">        return new F();</span><br><span class="line">    &#125;</span><br><span class="line">    function create(parent,test)&#123;</span><br><span class="line">        var f = obj(parent.prototype);//创建对象</span><br><span class="line">        f.constructor = test;//增强对象</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function Parent(name)&#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.arr = [&apos;brother&apos;,&apos;sister&apos;,&apos;parents&apos;];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Parent.prototype.run = function () &#123;</span><br><span class="line">        return this.name;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    function Child(name,age)&#123;</span><br><span class="line">        Parent.call(this,name);</span><br><span class="line">        this.age =age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    inheritPrototype(Parent,Child);//通过这里实现继承</span><br><span class="line"></span><br><span class="line">    var test = new Child(&apos;trigkit4&apos;,21);</span><br><span class="line">    test.arr.push(&apos;nephew&apos;);</span><br><span class="line">    alert(test.arr);//</span><br><span class="line">    alert(test.run());//只共享了方法</span><br><span class="line"></span><br><span class="line">    var test2 = new Child(&apos;jack&apos;,22);</span><br><span class="line">    alert(test2.arr);//引用问题解决</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<h3 id="call和apply"><a href="#call和apply" class="headerlink" title="call和apply"></a>call和apply</h3><ul>
-<li>全局函数apply和call可以用来改变函数中this的指向，如下：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 定义一个全局函数</span><br><span class="line">    function foo() &#123;</span><br><span class="line">        console.log(this.fruit);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 定义一个全局变量</span><br><span class="line">    var fruit = &quot;apple&quot;;</span><br><span class="line">    // 自定义一个对象</span><br><span class="line">    var pack = &#123;</span><br><span class="line">        fruit: &quot;orange&quot;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    // 等价于window.foo();</span><br><span class="line">    foo.apply(window);  // &quot;apple&quot;,此时this等于window</span><br><span class="line">    // 此时foo中的this === pack</span><br><span class="line">    foo.apply(pack);    // &quot;orange&quot;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>资料参考：  </p>
-<blockquote>
-<p><a href="https://segmentfault.com/a/1190000002440502#articleHeader10" target="_blank" rel="external">JavaScript继承方式详解</a><br>《javascript高级程序设计》</p>
-</blockquote>
-</blockquote>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/13/javascript继承/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -757,8 +630,7 @@
 
       
         
-          
-            <h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><h2 id="es5数据类型："><a href="#es5数据类型：" class="headerlink" title="es5数据类型："></a>es5数据类型：</h2><h3 id="非引用型："><a href="#非引用型：" class="headerlink" title="非引用型："></a>非引用型：</h3><ul>
+          <h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><h2 id="es5数据类型："><a href="#es5数据类型：" class="headerlink" title="es5数据类型："></a>es5数据类型：</h2><h3 id="非引用型："><a href="#非引用型：" class="headerlink" title="非引用型："></a>非引用型：</h3><ul>
 <li>“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。</li>
 <li>“Boolean” ： 布尔值，只有”true” 和 “false”两个值。</li>
 <li>“String” ：字符串。</li>
@@ -768,56 +640,12 @@
 <li>Data类型</li>
 <li>RegExp类型</li>
 <li>Function类型</li>
-<li>……</li>
-</ul>
-</li>
-</ul>
-<h3 id="Es6-新增数据类型"><a href="#Es6-新增数据类型" class="headerlink" title="Es6 新增数据类型"></a>Es6 新增数据类型</h3><ul>
-<li>symbol</li>
-<li>（由于对symbol认知比较浅，不加深入探讨。）</li>
-</ul>
-<h2 id="判断数据类型"><a href="#判断数据类型" class="headerlink" title="判断数据类型"></a>判断数据类型</h2><blockquote>
-<p>这里判断类型的是根据Underscore.js 1.8.3源码整理。<br>最直接是使用 typeof 判断数据类型，但这样直接判断存在许多误差和特殊情况。</p>
-</blockquote>
-<p>1.判断是否为 DOM 节点：  </p>
-<blockquote>
-<p>这里的 “!!” 是起到强制转换为布尔值的一种做法。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/B5E430F44AA04035888D604DCC35F825" alt="image">  </p>
-</blockquote>
-<p>2.判断 null 和 undefined  </p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/D93BA67905F14E7D91BEC57D85F78D97" alt="image"></p>
-</blockquote>
-<p>3.判断 NaN  </p>
-<blockquote>
-<p>首先要判断是否为Number，排除”null”和”undefined”特殊情况。<br>NaN不能通过相等操作符（== 和 ===）来判断 ，因为 NaN == NaN 和 NaN === NaN 都会返回 false。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/70058931130A403CBE3418B640C7F902" alt="image"></p>
-</blockquote>
-<p>判断是否为有限数值:</p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/08CDE4E1FCAF4188925D232567D03452" alt="image"></p>
-</blockquote>
-<p>4.判断是否为数组</p>
-<blockquote>
-<p>虽然ES5中已经有 isArray() 这一方法，但其中存在兼容问题。所以这里需要加一步判断。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/768AD14CD6B8426F85B9BAA34717427F" alt="image"></p>
-</blockquote>
-<p>5.判断是否为一个函数</p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/FE23FDFD11F04E409279A17DCD8DF2E6" alt="image"></p>
-</blockquote>
-<p>判断是否为函数参数:</p>
-<blockquote>
-<p>arguments有个特有属性callee。根据这个属性可以判断。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/1E7B6A53905244EDAB11CBCD9D0F419F" alt="image"></p>
-</blockquote>
-<p>6.判断是否为一个对象</p>
-<blockquote>
-<p><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/8737F13CAB6D4D3FA09C1C928F65BD3A" alt="image"></p>
-</blockquote>
-<h2 id="判断两个对象是否相同"><a href="#判断两个对象是否相同" class="headerlink" title="判断两个对象是否相同"></a>判断两个对象是否相同</h2><blockquote>
-<p>这里贴出其中的代码和个人的一部分理解。  </p>
-</blockquote>
-<p>####<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/C0FCE181A4F545768142A93834FB2DE6" alt="image"><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/3CB6D48031B14E79B4222540F9C6A0DA" alt="image"></p>
-<p>对于数组和对象只能用递归了，同时用aStack和bStack来暂存递归中的子对象。这里一个小技巧的就是先判断数组/属性的长度，如果不相等可以有效地减少递归。<br><img src="http://note.youdao.com/yws/public/resource/423c1cabc1c0df1d4f40715a3ba06ed4/BC6D971489A648D195ABC99DEC74D7B3" alt="image"></p>
-
-          
+<li>……
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/13/javascript数据类型总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -910,8 +738,7 @@
 
       
         
-          
-            <h2 id="长时间运行的javascript任务"><a href="#长时间运行的javascript任务" class="headerlink" title="长时间运行的javascript任务"></a>长时间运行的javascript任务</h2><p>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
+          <h2 id="长时间运行的javascript任务"><a href="#长时间运行的javascript任务" class="headerlink" title="长时间运行的javascript任务"></a>长时间运行的javascript任务</h2><p>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
 <blockquote>
 <p>这时候最理想的方法就是<strong>让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。</strong><br>创建一个 定时器 会造成UI线程暂停。</p>
 </blockquote>
@@ -922,92 +749,12 @@
 for (var i = 0 , len = items.length; i &lt; len; i++) {
   process(items[i]);
 }
-</code></pre><p>是否可以用定时器取代循环的两个决定性因素：</p>
-<ol>
-<li>处理过程不需要同步</li>
-<li><p>数据是不需要按顺序处理</p>
-<pre><code>一种基本的异步代码模式：
-var todo = items.concat(); //克隆数组
-setTimeout(function(){
-  // 取得数组的下一个元素并出栈。
-  process(tods.shift());
-  // 如果还有需要处理的元素，创建另一个定时器
-  if(todo.length &gt; 0){
-    setTimeout(argument.callee , 25)
-    // argument.callee 匿名函数下调用本身。
-  }else{
-    callback(items);
-    // 没有需要处理的元素了，执行回调函数。
-  }
-},25)
-</code></pre></li>
-</ol>
-<p>函数封装：  </p>
-<pre><code>/*
-*处理耗时过长的异步循环。
-*参数：待处理数组，处理数组的函数，回调函数
-*/
-function processArray(items,process,callback){
-  var todo = items.concat(); //克隆数组
-  setTimeout(function(){
-    // 取得数组的下一个元素并出栈。
-    process(tods.shift());
-    // 如果还有需要处理的元素，创建另一个定时器
-    if(todo.length &gt; 0){
-      setTimeout(argument.callee , 25)
-      // argument.callee 匿名函数下调用本身。
-    }else{
-      callback(items);
-    }
-  },25)
-}
-</code></pre><h2 id="分割任务"><a href="#分割任务" class="headerlink" title="分割任务"></a>分割任务</h2><pre><code>多任务函数导致长时间运行
-function saveDocument(id){
-  // 写入文档
-  openDocument(id);
-  writeText(id);
-  closeDocument(id);
-  // 更新UI
-  updata(id);
-}
-</code></pre><p>处理思路：将每个任务函数放在一个数组中，然后使用前面提到的数组处理模式。  </p>
-<pre><code>function saveDocument(id){
-  var tasks = [openDocument,writeText,closeDocument,updataUI];
-  setTimeout(function(){
-    // 执行下一个任务
-    var task = tasks.shift();
-    task(id);
-    // 检查是否还有任务
-    if(task.length &gt; 0){
-      setTimeout(argument.callee , 25)
-    }
-  },25);
-}
-</code></pre><p>函数封装：</p>
-<pre><code>/*
-*分割多任务函数的长时间运行javascript
-*参数：任务步骤数组，参数，回调函数
-*/
-function multistep(steps,args,callback){
-  var tasks = steps.concat();
-  setTimeout(function(){
-    // 执行下一个任务
-    var task = tasks.shift();
-    task.apply(null,args || []);
-    // 检查是否还有任务
-    if(task.length &gt; 0){
-      setTimeout(argument.callee , 25)
-    }else{
-      callback();
-    }
-  },25);
-}
-</code></pre><h2 id="定时器与性能"><a href="#定时器与性能" class="headerlink" title="定时器与性能"></a>定时器与性能</h2><ul>
-<li>定时器可以让你的javascript整体代码性能带来优化，但过度使用也会造成负面影响。本篇博客代码使用的了定时器序列，同一时间只有一个定时器存在，只有当这个定时器结束时才会新创建一个。</li>
-<li>当多个重复的定时器同时创建往往会出现性能问题，因为只有一个UI线程，而所有的定时器都在争夺运行时间。在使用定时器优化性能时，注意避免这种情况。</li>
-</ul>
-
-          
+</code></pre>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/29/使用定时器处理长时间运行脚本/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1100,157 +847,16 @@ function multistep(steps,args,callback){
 
       
         
-          
-            <h2 id="为什么需要无阻塞的脚本？"><a href="#为什么需要无阻塞的脚本？" class="headerlink" title="为什么需要无阻塞的脚本？"></a>为什么需要无阻塞的脚本？</h2><p>　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 <code>&lt;script&gt;</code> 标签每次出现都会让页面等待脚本的解析和执行。<br>　　下面是两种比较简单的提高性能的做法：</p>
+          <h2 id="为什么需要无阻塞的脚本？"><a href="#为什么需要无阻塞的脚本？" class="headerlink" title="为什么需要无阻塞的脚本？"></a>为什么需要无阻塞的脚本？</h2><p>　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 <code>&lt;script&gt;</code> 标签每次出现都会让页面等待脚本的解析和执行。<br>　　下面是两种比较简单的提高性能的做法：</p>
 <blockquote>
 <ol>
 <li>在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐<code>将所有的&lt;script&gt;标签尽可能的放到&lt;body&gt;标签的底部。</code></li>
-<li>合并脚本，减少http请求，减少每个<code>&lt;script&gt;</code> 标签初始下载，执行带来的迟延。  </li>
-</ol>
-</blockquote>
-<p>　　减少javascript文件大小并限制HTTP请求数可以带来性能优化。但是当下载一个单个较大的javascript，虽然只产生一次HTTP请求，却会锁死浏览器一大段时间。</p>
-<h2 id="无阻塞的脚本"><a href="#无阻塞的脚本" class="headerlink" title="无阻塞的脚本"></a>无阻塞的脚本</h2><p>　　无阻塞的脚本的思路：在页面加载完成后，才加载javascript代码。也就是说在window对象的loading时间触发后再下载脚本。</p>
-<p>####动态脚本元素</p>
-<pre><code>* 通过标准 DOM 函数创建`&lt;script&gt;`元素  
-var script = document.createElement (&quot;script&quot;);
-   script.type = &quot;text/javascript&quot;;
-   script.src = &quot;script1.js&quot;;
-   document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><p>　　新的<code>&lt;script&gt;</code>元素加载 script1.js 源文件。此文件当元素添加到页面之后立刻开始下载。此技术的重点在于：无论在何处启动下载，文件的下载和运行都不会阻塞其他页面处理过程。</p>
-<p>　　1. 当文件使用动态脚本节点下载时，返回的代码通常立即执行（除了 Firefox 和 Opera，他们将等待此前的所有动态脚本节点执行完毕）。当脚本是“自运行”类型时，这一机制运行正常，但是如果脚本只包含供页面其他脚本调用调用的接口，则会带来问题。这种情况下，您需要跟踪脚本下载完成并是否准备妥善。可以使用动态 <code>&lt;script&gt;</code> 节点发出事件得到相关信息。</p>
-<blockquote>
-<p>　　Firefox、Opera, Chorme 和 Safari 3+会在<code>&lt;script&gt;</code>节点接收完成之后发出一个 onload 事件。您可以监听这一事件，以得到脚本准备好的通知：</p>
-</blockquote>
-<pre><code>* 通过监听 onload 事件加载 JavaScript 脚本
-var script = document.createElement (&quot;script&quot;)
-script.type = &quot;text/javascript&quot;;
-
-//Firefox, Opera, Chrome, Safari 3+
-script.onload = function(){
-    alert(&quot;Script loaded!&quot;);
-};
-
-script.src = &quot;script1.js&quot;;
-document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><p>　　2. Internet Explorer 支持另一种实现方式，它发出一个 readystatechange 事件。<code>&lt;script&gt;</code>元素有一个 readyState 属性，它的值随着下载外部文件的过程而改变。readyState 有五种取值：</p>
-<pre><code>“uninitialized”：默认状态
-“loading”：下载开始
-“loaded”：下载完成
-“interactive”：下载完成但尚不可用
-“complete”：所有数据已经准备好
-</code></pre><p>　　“loaded”和“complete”状态。有时<code>&lt;script&gt;</code>元素会得到“loader”却从不出现“complete”，但另外一些情况下出现“complete”而用不到“loaded”。最安全的办法就是在 readystatechange 事件中检查这两种状态，并且当其中一种状态出现时，删除 readystatechange 事件句柄（保证事件不会被处理两次）：</p>
-<pre><code>* 通过检查 readyState 状态加载 JavaScript 脚本
-var script = document.createElement(&quot;script&quot;)
-script.type = &quot;text/javascript&quot;;
-
-//Internet Explorer
-script.onreadystatechange = function(){
-     if (script.readyState == &quot;loaded&quot; || script.readyState == &quot;complete&quot;){
-           script.onreadystatechange = null;
-           alert(&quot;Script loaded.&quot;);
-     }
-};
-
-script.src = &quot;script1.js&quot;;
-document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-</code></pre><h3 id="函数封装，兼容标准和IE特有的实现方法"><a href="#函数封装，兼容标准和IE特有的实现方法" class="headerlink" title="函数封装，兼容标准和IE特有的实现方法"></a><strong>函数封装，兼容标准和IE特有的实现方法</strong></h3><pre><code>function loadScript(url, callback){
-    var script = document.createElement (&quot;script&quot;)
-    script.type = &quot;text/javascript&quot;;
-    if (script.readyState){ //IE
-        script.onreadystatechange = function(){
-            if (script.readyState == &quot;loaded&quot; || script.readyState == &quot;complete&quot;){
-                script.onreadystatechange = null;
-                callback();
-            }
-        };
-    } else { //Others
-        script.onload = function(){
-            callback();
-        };
-    }
-    script.src = url;
-    document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-}
-</code></pre><p>　　此函数接收两个参数：JavaScript 文件的 URL，和一个当 JavaScript 接收完成时触发的回调函数。属性检查用于决定监视哪种事件。最后一步，设置 src 属性，并将<code>&lt;script&gt;</code>元素添加至页面。此 loadScript() 函数使用方法如下：<br>        *　loadScript()函数使用方法<br>        loadScript(“script1.js”, function(){<br>            alert(“File is loaded!”);<br>        });<br>　　您可以在页面中动态加载很多 JavaScript 文件，但要注意，浏览器不保证文件加载的顺序。所有主流浏览器之中，只有 Firefox 和 Opera 保证脚本按照您指定的顺序执行。其他浏览器将按照服务器返回它们的次序下载并运行不同的代码文件。您可以将下载操作串联在一起以保证他们的次序，如下：</p>
-<pre><code>* 通过 loadScript()函数加载多个 JavaScript 脚本
-loadScript(&quot;script1.js&quot;, function(){
-    loadScript(&quot;script2.js&quot;, function(){
-        loadScript(&quot;script3.js&quot;, function(){
-            alert(&quot;All files are loaded!&quot;);
-        });
-    });
-});
-此代码等待 script1.js 可用之后才开始加载 script2.js，等 script2.js 可用之后才开始加载 script3.js。
-</code></pre><h3 id="解决加载多js文件带来的“回调地狱”"><a href="#解决加载多js文件带来的“回调地狱”" class="headerlink" title="解决加载多js文件带来的“回调地狱”"></a>解决加载多js文件带来的“回调地狱”</h3><p>　　callback函数可以是去加载另外一个js，不过如果要加载的js文件较多，就成了“回调地狱”（callback hell）。<br>　　回调地狱式可以通过一些模式来解决，例如下面给出的串行方式。</p>
-<pre><code>Loader = (function() {
-
-  var load_cursor = 0;
-  var load_queue;
-
-  var loadFinished = function() {
-    load_cursor ++;
-    if (load_cursor &lt; load_queue.length) {
-      loadScript();
-    }
-  }
-
-  function loadError (oError) {
-    console.error(&quot;The script &quot; + oError.target.src + &quot; is not accessible.&quot;);
-  }
-
-
-  var loadScript = function() {
-    var url = load_queue[load_cursor];
-    var script = document.createElement(&apos;script&apos;);
-    script.type = &quot;text/javascript&quot;;
-
-    if (script.readyState){  //IE
-        script.onreadystatechange = function(){
-            if (script.readyState == &quot;loaded&quot; ||
-                    script.readyState == &quot;complete&quot;){
-                script.onreadystatechange = null;
-                loadFinished();
-            }
-        };
-    } else {  //Others
-        script.onload = function(){
-            loadFinished();
-        };
-    }
-
-    script.onerror = loadError;
-
-    script.src = url+&apos;?&apos;+&apos;time=&apos;+Date.parse(new Date());
-    document.body.appendChild(script);
-  };
-
-  var loadMultiScript = function(url_array) {
-    load_cursor = 0;
-    load_queue = url_array;
-    loadScript();
-  }
-
-  return {
-    load: loadMultiScript,
-  };
-
-})();  // end Loader
-
-//loading ...
-Loader.load([
-            &apos;script1.js&apos;, 
-            &apos;script2.js&apos;,
-            &apos;script3.js&apos;
-             ]);
-load_queue是一个队列，保存需要依次加载的js的url。当一个js加载完毕后，load_cursor++用来模拟出队操作，然后加载下一个脚本。
-
-onerror事件也添加了回调，用来处理无法加载的js文件。当遇到无法加载的js文件时停止加载，剩下的文件也不会加载了。
-</code></pre><p>还有许多实现动态加载js文件的方式：</p>
-<blockquote>
-<p><a href="https://github.com/someus/how-to-load-dynamic-script" target="_blank" rel="external">https://github.com/someus/how-to-load-dynamic-script</a></p>
-</blockquote>
-
-          
+<li>合并脚本，减少http请求，减少每个<code>&lt;script&gt;</code> 标签初始下载，执行带来的迟延。
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/27/无阻塞的脚本/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1343,8 +949,7 @@ onerror事件也添加了回调，用来处理无法加载的js文件。当遇�
 
       
         
-          
-            <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
+          <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
 <h2 id="一-关于this"><a href="#一-关于this" class="headerlink" title="一. 关于this"></a>一. 关于this</h2><h3 id="消除对this的误解"><a href="#消除对this的误解" class="headerlink" title="消除对this的误解"></a>消除对this的误解</h3><p>在解释this之前，我们需要先消除一些关于this的错误认识。  </p>
 <ul>
 <li><h4 id="指向自身"><a href="#指向自身" class="headerlink" title="指向自身"></a>指向自身</h4><p>　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。</p>
@@ -1374,190 +979,12 @@ foo函数。
 console.log( window.count );  //NAN
 这里其实this引用的是全局，生成一个window对象下的全局
 变量，值为NAN。
-</code></pre></li>
-<li><h4 id="this的作用域"><a href="#this的作用域" class="headerlink" title="this的作用域"></a>this的作用域</h4><p>　　第二种常见的误解，this指向函数的作用域。这个观点在某种情况下是正确的，但在其他情况下确实错误的。<br>　　ths和词法作用域的查找是无法实现的。</p>
-<pre><code>function foo(){
-    var a = 2;
-    this.bar();
-}
-function bar(){
-    console.log(&quot;bar 引用成功。&quot;)
-    console.log(this.a);
-}
-foo();
-输出结果：
-// bar 引用成功。
-// undefined
-</code></pre></li>
-</ul>
-<p>　　这段代码的看起来好像是我们故意写的错误，但其实诠释的是this的误导性。<br>　　《你不知道的javascript》一书中说this.bar(),无法调用bar函数，我们在bar函数中加入console.log(“bar 引用成功”);而实际中会输出“bar 引用成功”，说明bar调用成功。　<br>　　<strong>可能的原因是现在的浏览器引擎已经修补了这个错误。　</strong><br>　　this.a 输出为undefined，这里代码尝试将foo和bar的作用与连接，是错误的做法，无法实现。</p>
-<h3 id="this到底是什么？"><a href="#this到底是什么？" class="headerlink" title="this到底是什么？"></a>this到底是什么？</h3><p>　　当一个函数被调用时，会创建一个活动记录（也称为执行上下问）。这个记录会包含函数在哪里被调用（调用栈），函数的调用方法，传入的参数等信息。<strong>this就是记录的其中一个属性，会在函数执行的过程中用到</strong>。</p>
-<h2 id="二-this全面解析"><a href="#二-this全面解析" class="headerlink" title="二. this全面解析"></a>二. this全面解析</h2><h3 id="绑定规则"><a href="#绑定规则" class="headerlink" title="绑定规则"></a>绑定规则</h3><ul>
-<li><h4 id="默认绑定"><a href="#默认绑定" class="headerlink" title="默认绑定"></a>默认绑定</h4><pre><code>function foo(){
-    console.log(this.a);
-}
-var a = 2;
-foo();  //2
-</code></pre><p>我们调用foo()函数，this.a被解析成 全局变量中的a，为什么？因为在这个例子中，函数调用的时候，<strong>this指向了全局对象。<br>this.a 即 window.a;</strong><br>总结来说：<br>　　默认绑定就是没有进行任何修饰的调用，谁调用this绑定谁。</p>
-<pre><code>function foo(){
-    &quot;use strict&quot;;
-
-    console.log(this.a);
-}
-var a = 2;
-foo();　　
-//TypeError: Cannot read property &apos;a&apos; of undefined
-</code></pre><p>在严格模式下，全局对象无法使用默认绑定。所以报错。        </p>
-</li>
-<li><h4 id="隐式绑定"><a href="#隐式绑定" class="headerlink" title="隐式绑定"></a>隐式绑定</h4>　　 一个需要考虑的规则是 调用位置是否有上下文对象，或者说某个对象拥有或者包含。<br>　　思考以下代码：<pre><code>function foo(){
-    console.log(this.a);
-}
-var obj = {
-    a:2,
-    foo:foo
-}
-obj.foo();  //2
-</code></pre>这里会使用obj上下文引用函数，即函数被调用时obj对象“拥有”或者“包含”。当foo()被调用的时候，<strong>隐式绑定规则会把函数调用中的this绑定到这个对象。</strong>因此foo()的this绑定到obj对象上，因此输入2。</li>
-<li><p>隐式丢失：（隐式绑定的函数会）<br>看下面的代码：</p>
-<pre><code>function foo(){
-    console.log(this.a);
-}
-var obj = {
-    a:2,
-    foo:foo
-}
-var bar = obj.foo;
-var a = &quot;global&quot;
-bar();   //global
-</code></pre><p>这里输出的global，说明bar()调用的时候，this绑定的是全局对象， 这里造成的原因其实是 bar 赋值得到是 foo函数的一个引用。所以bar调用的时候不带任何的修饰，因此应用了默认绑定。</p>
-<pre><code>function foo(){
-    console.log(this.a);
-}
-function dofoo(fn){
-    fu();
-}
-var obj = {
-    a:2,
-    foo:foo
-}
-var a = &quot;global&quot;
-dofoo(obj.foo);   //global
-</code></pre><p>这里同样输出的是global，参数传递是一种隐式赋值，所以和上个例子一样。</p>
-<blockquote>
-<p>除去上面的情况，调用回调函数也可能会修改this。在一些流行的javascript库中，会把回调函数的this强制绑定到触发事件的DOM元素上。所以使用的时候要注意小心。</p>
-</blockquote>
-</li>
-<li><h4 id="显式绑定"><a href="#显式绑定" class="headerlink" title="显式绑定"></a>显式绑定</h4><p>call()和apply()方法的第一参数为对象。它们会把这个对象绑定到this，接着在调用函数事指定这个this。我们称之为显式绑定。</p>
-</li>
-</ul>
-<blockquote>
-<p>可惜显式绑定不可以解决上面说的绑定丢失，但是显式绑定的一个变形（硬绑定）可以解决。</p>
-</blockquote>
-<h5 id="硬绑定"><a href="#硬绑定" class="headerlink" title="硬绑定"></a>硬绑定</h5><pre><code>function foo(){
-    console.log(this.a);
-}
-var obj = {
-    a:2,
-}
-var bar = function(){
-    foo.call( obj );
-}
-bar();  //2
-setTimeout( bar , 100); //2
-//硬绑定的bar 不可能在外部改变它的this了
-bar.call(window);
-</code></pre><p>这里我们创建了bar函数，并在它的内部手动调用了foo.call(obj),因此强制把foo的this值绑定到了 obj。无论如何调用函数bar函数，总会手动在obj调用foo。  </p>
-<pre><code>创建一个辅助绑定函数，参数为要被绑定的函数和对象。  
-函数返回被绑定的函数。
-function bind(fn,obj){
-    return function(){
-        return fn.apply(obj,arguments);
-    }
-}        
-</code></pre><p>由于硬绑定是一种非常常用的模式，所以在ES5中提供内置的方法，Function.prototype.bind,用法如下，</p>
-<pre><code>function foo(something){
-    console.log(this.a , something);
-    return this.a + something;
-}
-var obj = {
-    a:2
-}
-var bar = foo.bind(obj);
-var b = bar(3);
-console.log(b); //5
-</code></pre><p>bind(…)会返回一个硬编码的新函数，它会把参数设置为this的上下问并调用原始函数。    </p>
-<ul>
-<li><h4 id="new绑定"><a href="#new绑定" class="headerlink" title="new绑定"></a>new绑定</h4>　　首先声明以下，javascript中new的机制和面向类的语言完全不同。<br>　　在javascript中的“构造函数”，只是一些使用new操作符被调用的函数，它们并不会属于某个类，也不会实例化一个类，只是一个被new操作符调用的普通函数。<br>　　使用new来调用那个函数，或者说发生构造函数调用时，会执行下面的操作：<pre><code>1. 创建（或者说构造）一个全新的对象。
-2. 这个新对象会被执行[[原型]]连接。
-3. 这个新函数会绑定到函数被调用的this。
-4. 如果函数没有返回其他对象，那么new表达式的函数调用会自动返回这个新对象。
-</code></pre></li>
-</ul>
-<p>我们会构造一个对象，并把它绑定到 函数 调用中的this上，这就叫new绑定。</p>
-<ul>
-<li><h4 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h4>这里不详细讲解测试优先级的过程，直接说结果，有兴趣的读者可以可尝试，测试需要注意的是<pre><code>1. new和call/apply无法一起使用，无法通过new foo.call（obj）来直接测试。
-2.  判断硬绑定函数是否被new调用，是的话使用新this替代硬绑定的this。
-</code></pre>**优先级：new绑定 &gt; 显示绑定 &gt; 隐式绑定 &gt; 默认绑定</li>
-</ul>
-<h3 id="绑定例外"><a href="#绑定例外" class="headerlink" title="绑定例外"></a>绑定例外</h3><ul>
-<li><h4 id="被忽略的this"><a href="#被忽略的this" class="headerlink" title="被忽略的this"></a>被忽略的this</h4>　　如果 null 或者 undefined 作为this的绑定对象传入 apply，call或者bind，这些值在函数调用的时候被忽略，实际应用的是默认绑定规则。<pre><code>function foo(){
-    console.log(this.a);
-}
-var a = 2;
-foo.call( null );  //2
-</code></pre></li>
-</ul>
-<p>　　　　一种常见的做法就是使用apply(..)来展开一个数组，类似地，bind(..)可以对参数进行柯里化。</p>
-<pre><code>function foo(){
-    console.log(this.a);
-}
-var a = 2;
-foo.call( null );  //2
-
-function foo(a,b){
-    console.log(&quot;a: &quot; + a +&quot;,b: &quot; + b)
-}
-// 把数组展开
-foo.apply(null,[2,3]);  //a: 2,b: 3
-// 使用bind(..)进行柯里化
-var bar = foo.bind(null,2);
-bar(3);  //a: 2,b: 3
-</code></pre><p>　　然而总使用null可能会产生一个副作用，如果某个函数确实使用了this，而默认绑定则会把this绑定到全局对象，这将导致错误。</p>
-<p><strong> 　　更好的做法是传入一个空对象</strong>，使用Object.create(null),会创建一个比{}更空的对象。</p>
-<pre><code>function foo(a,b){
-    console.log(&quot;a: &quot; + a +&quot;,b: &quot; + b)
-}
-// 我们的DMZ对象
-var nullObj = Object.create(null);
-// 把数组展开
-foo.apply(nullObj,[2,3]);  //a: 2,b: 3
-// 使用bind(..)进行柯里化
-var bar = foo.bind(nullObj,2);
-bar(3);  //a: 2,b: 3
-</code></pre><ul>
-<li><h4 id="间接引用"><a href="#间接引用" class="headerlink" title="间接引用"></a>间接引用</h4><p>　　你可能有意或者无意创建一个函数的“间接引用”，这种情况下，函数的调用应用默认绑定。</p>
-<pre><code>function foo(){
-    console.log(this.a);
-}
-var a = 2;
-var o = {
-    a:3,
-    foo:foo
-};
-var p = {
-    a:4
-};
-o.foo();  //3
-(p.foo = o.foo)();  //2
-</code></pre><blockquote>
-<p>这里(p.foo = o.foo）这个赋值操作返回的是 foo 的引用，应用默认绑定，调用时绑定到全局对象，所以为this.a 为 2.</p>
-</blockquote>
-</li>
-</ul>
-<h3 id="三-this词法"><a href="#三-this词法" class="headerlink" title="三.this词法"></a>三.this词法</h3><p>　　前面介绍的四条规则可以包含所有正常的函数。但是 ES6 中出现的一种无法使用这些规则的特殊函数类型：箭头函数。  ==&gt;</p>
-<p>　　</p>
-
-          
+</code></pre>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/23/你不知道的javascript（this）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1650,165 +1077,18 @@ o.foo();  //3
 
       
         
-          
-            <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
+          <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
 <h2 id="一-作用域"><a href="#一-作用域" class="headerlink" title="一. 作用域"></a>一. 作用域</h2><h3 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h3><blockquote>
 <p>&#160; &#160; &#160; &#160;虽然通常把javascript分类为“动态”或“解释执行”语言，但事实上是一门编译语言。<br>&#160; &#160; &#160; &#160;对于传统编译语言，一段源代码在执行之前会经历三个步骤：  </p>
 <ul>
 <li>分词/词法分析</li>
 <li>解析、语法分析</li>
-<li>代码生成<br>&#160; &#160; &#160; &#160;相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br>&#160; &#160; &#160; &#160;这里我们只需要知道<strong>任何javascript代码片段在执行前都要进行编译。</strong></li>
-</ul>
-</blockquote>
-<h3 id="理解作用域"><a href="#理解作用域" class="headerlink" title="理解作用域"></a>理解作用域</h3><blockquote>
-<p>例：处理  <code>var a = 2 ;</code> 代码过程。<br>    <strong>在这之前我们我先介绍三个参与处理的角色</strong></p>
-<pre><code>* 引擎：从头到尾负责整个javascript程序的编译以及执行过程。
-* 编译器：负责语词分析以及代码生成等脏活累活。
-* 作用域：负责收集并维护有所有声明的标识符（变量）注册后能够的一系列查询。
-</code></pre><p>开始介绍：<br>&#160; &#160; &#160; &#160;先是<strong>引擎</strong> 遇到var a = 2;这段代码，进行解析，然后将 <code>var a;</code>给到 <strong>编译器</strong> =&gt;<br>&#160; &#160; &#160; &#160;<strong>编译器</strong> 拿到 <code>var a;</code>就会向 <strong>作用域</strong> 询问是否有已经有该名称的变量存在在作用域的集合中。<br>&#160; &#160; &#160; &#160;如果是 <strong>编译器</strong> 就会忽略该声明，否则它会要求 <strong>作用域</strong> 在当前作用域的集合中声明一个新的变量。<br>&#160; &#160; &#160; &#160;接下来 <strong>编译器</strong> 就会为 <strong>引擎</strong> 生成运行需要的代码，用来处理 <code>a = 2</code> 这个赋值操作。 <strong>引擎</strong> 运行时会询问作用域是否存在 a 变量，如果是，则使用这个变量；否则 <strong>引擎</strong> 会继续查找下去。如果查找不到就抛出异常。</p>
-<p>####<strong>为了进一步理解，接下来我们介绍编译器的一些术语。</strong><br>&#160; &#160; &#160; &#160;在我们上面的例子中，<code>var a=2;</code>中，引擎会为变量 a 进行 LHS查询 和 RHS查询 。  </p>
-<ul>
-<li>LHS：试图找到变量容器本身。（<strong>赋值操作的目标是谁</strong>）</li>
-<li>RHS：获取值。（<strong>随时赋值操作的源头</strong>）<br>考虑下面的代码：（这里的代码既有LHS也有RHS引用。）<pre><code>function foo(a){
-   console.log(a);
-}
-foo(2);  
-</code></pre>这里最后一行foo函数的调用需要对foo进行 <strong>RHS</strong> 引用，意味着“去找到foo的值，并把它给我”。<br>这里还有一个很重要又很容易被忽略的细节，代码中隐式的 <code>a=2</code> 操作发生在2被当做参数传递到foo()函数，为了给参数a分配值，需进行一次 <strong>LHS</strong>。<br>这里<code>console.log(a)</code>也对a进行 <strong>RHS</strong> 引用。</li>
-</ul>
-</blockquote>
-<p>   <strong>&#160; &#160; &#160; &#160;LHS和RHS查询都会从当前执行作用域开始查找，如果没有找到所需的标识符，就上向上级作用域查找目标标识符，这样每次升级一次作用域，直到到达全局作用域，无论有无找到都会停止查找。</strong><br>   <strong>&#160; &#160; &#160; &#160;不成功的RHS引用会抛出异常，在非严格模式下，会隐式地创建一个全局变量；在严格模式下，抛出ReferenceError异常。</strong>  </p>
-<pre><code>小测：
-    function foo(a){
-        var b = a;
-        return a+b;
-    }
-    var c = foo(2);
-请问这里有多少处LHS和RHS？  
-
-
-
-所有的LHS（有三处）
-c = ..； a = 2 ;b = ..
-所有的RHS（有四处）
-foo（2.. 、 =a 、 a.. 、 ..b）
-</code></pre><h2 id="二-词法作用域"><a href="#二-词法作用域" class="headerlink" title="二.词法作用域"></a>二.词法作用域</h2><ol>
-<li><h3 id="对比动态作用域"><a href="#对比动态作用域" class="headerlink" title="对比动态作用域"></a>对比动态作用域</h3><p> &#160; &#160; &#160; &#160;这里需要明确的是：<strong> javascript只有词法作用域，没有动态作用域。this机制只是某种程度像动态作用域。 </strong><br> &#160; &#160; &#160; &#160;这里是说明两者的区别，不细说动态作用域。<br> &#160; &#160; &#160; &#160;主要区别：词法作用域是在写代码或者说定义的时候确定的，而动态作用域实在运行时定义的；词法作用域关注函数在何处声明，而动态作用域光柱函数从何处调用。</p>
-<pre><code>例子：
-function foo(a){
-    console.log(a); //2
-}
-function bar(){
-    var a=3;
-    foo();    
-}
-var a=2;
-bar();
-
-这里词法作用域让foo（）中的 a 通过RHS引用到全局作用域总的 a ，因此会输出 2 。
-</code></pre></li>
-<li><h3 id="词法阶段"><a href="#词法阶段" class="headerlink" title="词法阶段"></a>词法阶段</h3><p> &#160; &#160; &#160; &#160;词法作用域就是定义在词法阶段的作用域。由写代码时变量和快作用域的位置决定。</p>
-</li>
-<li><h3 id="欺骗词法"><a href="#欺骗词法" class="headerlink" title="欺骗词法"></a>欺骗词法</h3><p> &#160; &#160; &#160; &#160;词法作用域完全有写代码期间函数所声明的位置来定义，怎样才能在运行时来“欺骗”词法作用域。<br> &#160; &#160; &#160; &#160;这里有两种机制可以实现欺骗词法，但需要注意的，<strong>这两种机制会导致性能下降。</strong></p>
-<h4 id="eval"><a href="#eval" class="headerlink" title="eval"></a>eval</h4><p> （<strong>严格模式下不可用</strong>）</p>
-<pre><code>javascript中 eval()函数可以接收一个字符串为参数，并将其中的内容视为写在当前位置的代码。
-考虑以下的代码：
-function foo(str,a){
-    eval(str);
-    console.log(a,b);
-}
-var b = 2;
-foo(&quot;var b=3;&quot; , 1);   
-//输出结果为 1，3；
-eval()调用中的 var b=3 这段代码会被当在本来的位置处理，因此在foo()函数中就声明了 b；并遮蔽了全局作用域中的 b；
-</code></pre><h4 id="with（）"><a href="#with（）" class="headerlink" title="with（）"></a>with（）</h4><p> （<strong>严格模式下不可用</strong>）</p>
-<pre><code>with相对比较难以掌握。同时也可以用多种方法解释with，但由于其也不推荐使用。所以这里并不进行详细解释和介绍。
-（其实就是笔者能力有限，就不进行解释误导读者。）
-</code></pre></li>
-</ol>
-<h2 id="三-块作用域"><a href="#三-块作用域" class="headerlink" title="三.块作用域"></a>三.块作用域</h2><ol>
-<li><h3 id="介绍启示"><a href="#介绍启示" class="headerlink" title="介绍启示"></a>介绍启示</h3><p> 一般来说，我们讲javascript没有块作用域。我们先来看一段代码：</p>
-<pre><code>for(var i=1;i&lt;10;i++){
-    console.log(i);
-}
-</code></pre><p> 对于已经入门js的开发者来说，对这段代码一定十分熟悉了。其输出 10次 10。虽然对于大多数开发者对这段代码的解释是console.log()是异步操作，但笔者认为，这必然也跟块作用域脱不了关系。ES6中新声明的 let 语法，实现块作用域结果便不同了。在下文会介绍 let 语法。</p>
-</li>
-<li><h3 id="实现javascript中块作用域的功能"><a href="#实现javascript中块作用域的功能" class="headerlink" title="实现javascript中块作用域的功能"></a>实现javascript中块作用域的功能</h3><h4 id="with"><a href="#with" class="headerlink" title="with"></a>with</h4><pre><code>用with从对象中创建的作用域仅在with声明中而非外部作用域中有效。
-</code></pre><h4 id="try-catch"><a href="#try-catch" class="headerlink" title="try/catch"></a>try/catch</h4><p> 很少人会注意ES3 规范中规定try/catch的catch分句会创建一个块作用域，其中声明的变量仅在catch内部有效。</p>
-<pre><code>例如；
-try{
-    undefined(); //执行一个非法操作强行制造一个异常。    
-}
-catch(err){
-    console.log(err);  //正常运行
-}
-console.log(err);     //ReferenceError： err not found
-err 仅仅存在catch分句内部，当试图从别处引用它会抛出错误。
-</code></pre><h4 id="let（ES6）"><a href="#let（ES6）" class="headerlink" title="let（ES6）"></a>let（ES6）</h4><p> <strong>let关键字可以将变量绑定到所在的任意作用域上（通常是｛…｝内部）</strong></p>
-<pre><code>var foo = 1;
-if(foo){
-    let bar = foo *2;
-    console.log(bar);  //2
-}
-console.log(bar);  //ReferenceError
-</code></pre><p> let循环：</p>
-<pre><code>for(let i=0;i&lt;10;i++){
-    console.log(i);    // 0,1,2,3,4,5,6,7,8,9        
-}
-for循环头部的let不仅将 i 绑定到for循环的快中，
-事实上它将其重新绑定到了循环的每一个迭代中，确保使用上一次循环迭代结束时值重新进行赋值。
-</code></pre><p> ####const（ES6）</p>
-<pre><code>同样可以创建块作用域变量。但其值是固定的（常量），试图修改值的操作会报错。
-</code></pre></li>
-</ol>
-<h2 id="四-提升"><a href="#四-提升" class="headerlink" title="四.提升"></a>四.提升</h2><pre><code>思考一段代码：  
-    console.log(a);
-    var a = 2;
-输出结果为undefined。
-
-其实这段代码处理流程是：
-var a;
-console.log(a);
-a = 2;
-只有声明本身会被提升，而赋值或其他运行逻辑会留在原地。
-</code></pre><p><strong>函数声明会被提升，而函数表达式却不会被提升。</strong></p>
-<h4 id="函数优先"><a href="#函数优先" class="headerlink" title="函数优先"></a>函数优先</h4><pre><code>foo();
-var foo;
-function foo(){
-    console.log(1);
-}
-foo = function(){
-    console.log(2);
-}
-输出的结果为1而不是2；
-函数声明优先原则。
-</code></pre><h2 id="五-作用域闭包"><a href="#五-作用域闭包" class="headerlink" title="五.作用域闭包"></a>五.作用域闭包</h2><pre><code>提前说明：闭包是js中一块重要，高明的内容，有许多比我优秀的笔者写过更多有关闭包的文章。这里也仅对闭包进行引导性的理解和学习。
-</code></pre><h4 id="实质问题"><a href="#实质问题" class="headerlink" title="实质问题"></a>实质问题</h4><pre><code>认识：当函数可以记住并访问所在的词法作用域时，就产生了闭包，即使函数实在当前词法作用域外执行。
-function foo(){
-    var a=2;
-    function bar(){
-        console.log(a);
-    }    
-}
-var baz = foo();
-baz();  //结果为2   --这就是闭包的效果。
-</code></pre><p>通常来说，foo()执行后，就会期待foo()的整个内部作用域被销毁，因为引擎有垃圾回收机制用来释放不再使用的内存空间。<br>而闭包却可以阻止这样的事情发生，由于bar()所声明的位置，他拥有涵盖foo()内部作用域的闭包，使得这一作用域一直存活。</p>
-<p>记住一句话：<strong>无论通过何种手段将内部函数传递到所在的词法作用域以外，他都会持有对原始定义作用域的引用，无论在何处执行这个函数都会使用闭包。</strong><br>本质上，无论何时何地，如果将函数当做以及的值类型并到处传递，就能看到闭包在这些函数中的引用。在定时器，事件监听器，Ajax请求，跨窗口通信，Web Workers或者任何其他的异步（同步）任务中，只要使用了函数回调，实际上就是使用闭包。</p>
-<h4 id="循环和闭包"><a href="#循环和闭包" class="headerlink" title="循环和闭包"></a>循环和闭包</h4><pre><code>for(var i = 1; i&lt;=5 ; i++){
-    (function(){
-        setTimeout(function timer(){
-            console.log(i);
-        },i*1000)
-    })(i);
-}
-</code></pre><p>在迭代中使用自运行函数（IIFE）会为每一个迭代都生成一个新的作用域，是的延迟函数的回调可以将新的作用域封闭在每个迭代内部，每个迭代中都会含有一个具有正确值供我们访问。</p>
-<h4 id="重返块作用域"><a href="#重返块作用域" class="headerlink" title="重返块作用域"></a>重返块作用域</h4><pre><code>闭包和let的联合。
-for(let i = 1; i&lt;=5 ; i++){
-    setTimeout(function(){
-        console.log(i);
-    },j*1000)
-}
-</code></pre>
-          
+<li>代码生成<br>&#160; &#160; &#160; &#160;相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br>&#160; &#160; &#160; &#160;这里我们只需要知道<strong>任何javascript代码片段在执行前都要进行编译。</strong>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/14/你不知道的javascript（作用域）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>

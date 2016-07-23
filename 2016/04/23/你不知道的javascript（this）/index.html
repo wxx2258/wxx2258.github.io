@@ -75,7 +75,7 @@ function foo(num){
 我们想要记录以下函数foo被调用的次数，思考以下代码：
 function foo(num){
     console">
-<meta property="og:updated_time" content="2016-04-23T13:59:42.778Z">
+<meta property="og:updated_time" content="2016-07-23T08:50:42.025Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="你不知道的javascript（this）">
 <meta name="twitter:description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
@@ -348,9 +348,8 @@ foo函数。
 console.log( window.count );  //NAN
 这里其实this引用的是全局，生成一个window对象下的全局
 变量，值为NAN。
-</code></pre></li>
-<li><h4 id="this的作用域"><a href="#this的作用域" class="headerlink" title="this的作用域"></a>this的作用域</h4><p>　　第二种常见的误解，this指向函数的作用域。这个观点在某种情况下是正确的，但在其他情况下确实错误的。<br>　　ths和词法作用域的查找是无法实现的。</p>
-<pre><code>function foo(){
+</code></pre><a id="more"></a>        </li>
+<li><h4 id="this的作用域"><a href="#this的作用域" class="headerlink" title="this的作用域"></a>this的作用域</h4>　　第二种常见的误解，this指向函数的作用域。这个观点在某种情况下是正确的，但在其他情况下确实错误的。<br>　　ths和词法作用域的查找是无法实现的。<pre><code>function foo(){
     var a = 2;
     this.bar();
 }

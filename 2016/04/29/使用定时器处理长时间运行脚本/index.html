@@ -71,7 +71,7 @@
 这时候最理想的方法就是让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。创建一个 定时器 会造成UI线程暂停。
 
 使用定时器处">
-<meta property="og:updated_time" content="2016-04-29T03:29:59.525Z">
+<meta property="og:updated_time" content="2016-07-23T08:51:29.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用定时器处理长时间运行脚本">
 <meta name="twitter:description" content="长时间运行的javascript任务　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。
@@ -323,7 +323,8 @@
 for (var i = 0 , len = items.length; i &lt; len; i++) {
   process(items[i]);
 }
-</code></pre><p>是否可以用定时器取代循环的两个决定性因素：</p>
+</code></pre><a id="more"></a>
+<p>是否可以用定时器取代循环的两个决定性因素：</p>
 <ol>
 <li>处理过程不需要同步</li>
 <li><p>数据是不需要按顺序处理</p>

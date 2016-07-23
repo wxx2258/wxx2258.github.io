@@ -73,7 +73,7 @@
 
 分词/词法分析
 解析">
-<meta property="og:updated_time" content="2016-04-23T14:22:55.666Z">
+<meta property="og:updated_time" content="2016-07-23T08:50:33.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="你不知道的javascript（作用域）">
 <meta name="twitter:description" content="说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。
@@ -321,15 +321,15 @@
 <ul>
 <li>分词/词法分析</li>
 <li>解析、语法分析</li>
-<li>代码生成<br>&#160; &#160; &#160; &#160;相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br>&#160; &#160; &#160; &#160;这里我们只需要知道<strong>任何javascript代码片段在执行前都要进行编译。</strong></li>
+<li>代码生成<br>&#160; &#160; &#160; &#160;相对只有这三个步骤的语言，javascript引擎要复杂的多。例如其在分词等有特定的步骤对运行性能进行优化。<br>&#160; &#160; &#160; &#160;这里我们并不对javascript引擎的编译原理进行深入的探讨，有兴趣的读者可以谷歌查询更详细的资料。<br>&#160; &#160; &#160; &#160;这里我们只需要知道<strong>任何javascript代码片段在执行前都要进行编译。</strong><a id="more"></a>
+<h3 id="理解作用域"><a href="#理解作用域" class="headerlink" title="理解作用域"></a>理解作用域</h3>例：处理  <code>var a = 2 ;</code> 代码过程。<br>  <strong>在这之前我们我先介绍三个参与处理的角色</strong><ul>
+<li>引擎：从头到尾负责整个javascript程序的编译以及执行过程。</li>
+<li>编译器：负责语词分析以及代码生成等脏活累活。</li>
+<li>作用域：负责收集并维护有所有声明的标识符（变量）注册后能够的一系列查询。</li>
 </ul>
-</blockquote>
-<h3 id="理解作用域"><a href="#理解作用域" class="headerlink" title="理解作用域"></a>理解作用域</h3><blockquote>
-<p>例：处理  <code>var a = 2 ;</code> 代码过程。<br>    <strong>在这之前我们我先介绍三个参与处理的角色</strong></p>
-<pre><code>* 引擎：从头到尾负责整个javascript程序的编译以及执行过程。
-* 编译器：负责语词分析以及代码生成等脏活累活。
-* 作用域：负责收集并维护有所有声明的标识符（变量）注册后能够的一系列查询。
-</code></pre><p>开始介绍：<br>&#160; &#160; &#160; &#160;先是<strong>引擎</strong> 遇到var a = 2;这段代码，进行解析，然后将 <code>var a;</code>给到 <strong>编译器</strong> =&gt;<br>&#160; &#160; &#160; &#160;<strong>编译器</strong> 拿到 <code>var a;</code>就会向 <strong>作用域</strong> 询问是否有已经有该名称的变量存在在作用域的集合中。<br>&#160; &#160; &#160; &#160;如果是 <strong>编译器</strong> 就会忽略该声明，否则它会要求 <strong>作用域</strong> 在当前作用域的集合中声明一个新的变量。<br>&#160; &#160; &#160; &#160;接下来 <strong>编译器</strong> 就会为 <strong>引擎</strong> 生成运行需要的代码，用来处理 <code>a = 2</code> 这个赋值操作。 <strong>引擎</strong> 运行时会询问作用域是否存在 a 变量，如果是，则使用这个变量；否则 <strong>引擎</strong> 会继续查找下去。如果查找不到就抛出异常。</p>
+</li>
+</ul>
+<p>开始介绍：<br>&#160; &#160; &#160; &#160;先是<strong>引擎</strong> 遇到var a = 2;这段代码，进行解析，然后将 <code>var a;</code>给到 <strong>编译器</strong> =&gt;<br>&#160; &#160; &#160; &#160;<strong>编译器</strong> 拿到 <code>var a;</code>就会向 <strong>作用域</strong> 询问是否有已经有该名称的变量存在在作用域的集合中。<br>&#160; &#160; &#160; &#160;如果是 <strong>编译器</strong> 就会忽略该声明，否则它会要求 <strong>作用域</strong> 在当前作用域的集合中声明一个新的变量。<br>&#160; &#160; &#160; &#160;接下来 <strong>编译器</strong> 就会为 <strong>引擎</strong> 生成运行需要的代码，用来处理 <code>a = 2</code> 这个赋值操作。 <strong>引擎</strong> 运行时会询问作用域是否存在 a 变量，如果是，则使用这个变量；否则 <strong>引擎</strong> 会继续查找下去。如果查找不到就抛出异常。</p>
 <p>####<strong>为了进一步理解，接下来我们介绍编译器的一些术语。</strong><br>&#160; &#160; &#160; &#160;在我们上面的例子中，<code>var a=2;</code>中，引擎会为变量 a 进行 LHS查询 和 RHS查询 。  </p>
 <ul>
 <li>LHS：试图找到变量容器本身。（<strong>赋值操作的目标是谁</strong>）</li>

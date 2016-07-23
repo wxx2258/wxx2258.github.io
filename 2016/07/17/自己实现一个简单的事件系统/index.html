@@ -75,7 +75,7 @@ nodejs官方api文档
 nodejs中的事件模块，是用来给其他对象提供绑定事件，触发事件等能力。
 官方的一个小demo，可以看出，将一个宿主对象集成 events 模块提供的对象，那么这个宿主对象拥有了这个方法。
   123456789const EventEmitter = require(&amp;apos;events&amp;apos;);class MyEm">
-<meta property="og:updated_time" content="2016-07-17T10:02:30.449Z">
+<meta property="og:updated_time" content="2016-07-23T08:51:16.814Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自己实现一个简单的事件系统">
 <meta name="twitter:description" content="事件系统nodejs的事件模块
@@ -326,6 +326,9 @@ nodejs中的事件模块，是用来给其他对象提供绑定事件，触发�
 <li><p>官方的一个小demo，可以看出，将一个宿主对象集成 events 模块提供的对象，那么这个宿主对象拥有了这个方法。</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const EventEmitter = require(&apos;events&apos;);</span><br><span class="line"></span><br><span class="line">class MyEmitter extends EventEmitter &#123;&#125;</span><br><span class="line"></span><br><span class="line">const myEmitter = new MyEmitter();</span><br><span class="line">myEmitter.on(&apos;event&apos;, () =&gt; &#123;</span><br><span class="line">  console.log(&apos;an event occurred!&apos;);</span><br><span class="line">&#125;);</span><br><span class="line">myEmitter.emit(&apos;event&apos;);</span><br></pre></td></tr></table></figure>
 </li>
+</ul>
+<a id="more"></a>
+<ul>
 <li><p>我们再看一个官网上的一段代码：</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const myEmitter = new MyEmitter();</span><br><span class="line">myEmitter.on(&apos;event&apos;, function(a, b) &#123;</span><br><span class="line">  console.log(a, b, this);</span><br><span class="line">    // Prints:</span><br><span class="line">    //   a b MyEmitter &#123;</span><br><span class="line">    //     domain: null,</span><br><span class="line">    //     _events: &#123; event: [Function] &#125;,</span><br><span class="line">    //     _eventsCount: 1,</span><br><span class="line">    //     _maxListeners: undefined &#125;</span><br><span class="line">&#125;);</span><br><span class="line">myEmitter.emit(&apos;event&apos;, &apos;a&apos;, &apos;b&apos;);</span><br></pre></td></tr></table></figure>
 </li>
