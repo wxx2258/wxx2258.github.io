@@ -1,0 +1,905 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript,前端知识总结," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="ajax介绍
+ajax是一种无刷新网页得和服务器交换数据的一种技术。
+AJAX是不能跨域的，如需跨域，可以使用document.domain=’a.com’；或者使用服务器代理，代理XMLHttpRequest文件。  
+跨域有许多解决方案，jsonp、   iframe、window.name、window.postMessage、服务器上设置代理页面。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原生ajax总结">
+<meta property="og:url" content="http://yoursite.com/2016/07/25/原生ajax总结/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="ajax介绍
+ajax是一种无刷新网页得和服务器交换数据的一种技术。
+AJAX是不能跨域的，如需跨域，可以使用document.domain=’a.com’；或者使用服务器代理，代理XMLHttpRequest文件。  
+跨域有许多解决方案，jsonp、   iframe、window.name、window.postMessage、服务器上设置代理页面。">
+<meta property="og:image" content="https://segmentfault.com/image?src=http://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2015/08/1439883644cache_busting_vanilla_ajax.jpg&objectId=1190000004100271&token=21b36194c5557719dc1d1914b9f88a3e">
+<meta property="og:updated_time" content="2016-07-25T05:14:30.732Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="原生ajax总结">
+<meta name="twitter:description" content="ajax介绍
+ajax是一种无刷新网页得和服务器交换数据的一种技术。
+AJAX是不能跨域的，如需跨域，可以使用document.domain=’a.com’；或者使用服务器代理，代理XMLHttpRequest文件。  
+跨域有许多解决方案，jsonp、   iframe、window.name、window.postMessage、服务器上设置代理页面。">
+<meta name="twitter:image" content="https://segmentfault.com/image?src=http://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2015/08/1439883644cache_busting_vanilla_ajax.jpg&objectId=1190000004100271&token=21b36194c5557719dc1d1914b9f88a3e">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 原生ajax总结 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                原生ajax总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-25T13:13:13+08:00" content="2016-07-25">
+              2016-07-25
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/25/原生ajax总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/25/原生ajax总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="ajax介绍"><a href="#ajax介绍" class="headerlink" title="ajax介绍"></a>ajax介绍</h2><ol>
+<li>ajax是一种无刷新网页得和服务器交换数据的一种技术。</li>
+<li>AJAX是不能跨域的，如需跨域，可以使用document.domain=’a.com’；或者使用服务器代理，代理XMLHttpRequest文件。  <ul>
+<li>跨域有许多解决方案，jsonp、   iframe、window.name、window.postMessage、服务器上设置代理页面。<a id="more"></a></li>
+</ul>
+</li>
+<li>其由来和历史原因我们这里我们不探讨，我们来看下ajax的优缺点<ul>
+<li>优点：<ul>
+<li>通过异步模式，提升了用户体验</li>
+<li>优化了浏览器和服务器之间的传输，减少不必要的数据往返，减少了带宽占用</li>
+<li>Ajax在客户端运行，承担了一部分本来由服务器承担的工作，减少了大用户量下的服务器负载。</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>ajax不支持浏览器back按钮。</li>
+<li>安全问题 AJAX暴露了与服务器交互的细节。</li>
+<li>对搜索引擎的支持比较弱。</li>
+<li>破坏了程序的异常机制。</li>
+<li>不容易调试。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>这里我们再来看看http状态码，以便于我们分析ajax请求的结果。<ul>
+<li>100  Continue  继续，一般在发送post请求时，已发送了http    header之后服务端将返回此信息，表示确认，之后发送具体参数信息</li>
+<li>200  OK   正常返回信息</li>
+<li>201  Created  请求成功并且服务器创建了新的资源</li>
+<li>202  Accepted  服务器已接受请求，但尚未处理</li>
+<li>301  Moved Permanently  请求的网页已永久移动到新位置。</li>
+<li>302 Found  临时性重定向。</li>
+<li>303 See Other  临时性重定向，且总是使用 GET 请求新的 URI。</li>
+<li>304  Not Modified  自从上次请求后，请求的网页未修改过。</li>
+<li></li>
+<li>400 Bad Request  服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求。</li>
+<li>401 Unauthorized  请求未授权。</li>
+<li>403 Forbidden  禁止访问。</li>
+<li>404 Not Found  找不到如何与 URI 相匹配的资源。</li>
+<li></li>
+<li>500 Internal Server Error  最常见的服务器端错误。</li>
+<li>503 Service Unavailable 服务器端暂时无法处理请求（可能是过载或维护）。  </li>
+</ul>
+</li>
+</ol>
+<h2 id="原生ajax请求数据："><a href="#原生ajax请求数据：" class="headerlink" title="原生ajax请求数据："></a>原生ajax请求数据：</h2><h3 id="创建-XMLHttpRequest-对象"><a href="#创建-XMLHttpRequest-对象" class="headerlink" title="创建 XMLHttpRequest 对象"></a>创建 XMLHttpRequest 对象</h3><p>所有现代浏览器（IE7+、Firefox、Chrome、Safari 以及 Opera）均内建 XMLHttpRequest 对象。</p>
+<p>创建Ajax对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//IE6以上</span><br><span class="line">var oAjax = new XMLHttpRequest();</span><br><span class="line"></span><br><span class="line">//IE6</span><br><span class="line">var oAjax =new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>鉴于IE6浏览器基本已经淘汰，我们后面的内容都不考虑其情况。</p>
+</blockquote>
+<h3 id="连接服务器"><a href="#连接服务器" class="headerlink" title="连接服务器"></a>连接服务器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oAjax.open(方法, url, isAsyn)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>isAsyn（是否异步）<ul>
+<li>true：发送方发出数据后，不等接收方发回响应，接着发送下个数据包的通讯方式。</li>
+<li>false：发送方发出数据后，等接收方发回响应以后才发下一个数据包的通讯方式。 </li>
+</ul>
+</li>
+</ul>
+<h3 id="发送请求send"><a href="#发送请求send" class="headerlink" title="发送请求send()"></a>发送请求send()</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oAjax.send(data);</span><br></pre></td></tr></table></figure>
+<h4 id="GET-还是-POST？两者的区别？何时使用-post"><a href="#GET-还是-POST？两者的区别？何时使用-post" class="headerlink" title="GET 还是 POST？两者的区别？何时使用 post"></a>GET 还是 POST？两者的区别？何时使用 post</h4><ul>
+<li>GET：一般用于信息获取，使用URL传递参数，对所发送信息的数量也有限制，一般在2000个字符</li>
+<li>POST：一般用于修改服务器上的资源，对所发送的信息没有限制。</li>
+<li>GET方式需要使用Request.QueryString来取得变量的值，而POST方式通过Request.Form来获取变量的值，也就是说Get是通过地址栏来传值，而Post是通过提交表单来传值。</li>
+<li>然而，在以下情况中，请使用 POST 请求：<ul>
+<li>无法使用缓存文件（更新服务器上的文件或数据库）</li>
+<li>向服务器发送大量数据（POST 没有数据量限制）</li>
+<li>发送包含未知字符的用户输入时，POST 比 GET 更稳定也更可靠</li>
+</ul>
+</li>
+</ul>
+<h4 id="setRequestHeader-添加http-头"><a href="#setRequestHeader-添加http-头" class="headerlink" title="setRequestHeader()添加http 头"></a>setRequestHeader()添加http 头</h4><ul>
+<li>如果需要像 HTML 表单那样 POST 数据，请使用 setRequestHeader() 来添加 HTTP 头。然后在 send() 方法中规定您希望发送的数据：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xmlhttp.open(&quot;POST&quot;,&quot;ajax_test.asp&quot;,true);</span><br><span class="line">xmlhttp.setRequestHeader(&quot;Content-type&quot;,&quot;application/x-www-form-urlencoded&quot;);</span><br><span class="line">xmlhttp.send(&quot;fname=Bill&amp;lname=Gates&quot;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>这里method，上传方式只能选择 post 。  </li>
+<li>enctype这个属性管理的是表单的MIME，参数规定了在发送到服务器之前应该如何对表单数据进行编码方式。</li>
+<li>常见的参数有<strong>application/x-www-form-urlencoded</strong>、<strong>text/plain</strong>和示例中的<strong>multipart/form-data</strong>，因为上传的文件都是非纯文本传输，所以指定的类型必须只能是<strong>multipart/form-data</strong>。<ul>
+<li>其中①application/x-www-form-urlencoded是默认值，<br>  大家可能在AJAX里见过这个：xmlHttp.setRequestHeader(“Content-Type”,”application/x-www-form-urlencoded”);<br>  这两个要做的是同一件事情，就是设置表单传输的编码。在AJAX里不写有可能会报错，但是在HTML的form表单里是可以不写enctype=”application/x-www-form-urlencoded”的，因为默认HTML表单就是这种传输编码类型。<ul>
+<li>而②multipart-form-data是用来指定传输数据的特殊类型的，主要就是我们上传的非文本的内容，比如图片或者mp3等等。</li>
+<li>③text/plain是纯文本传输的意思，在发送邮件时要设置这种编码类型，否则会出现接收时编码混乱的问题，网络上经常拿text/plain和text/html做比较，其实这两个很好区分，前者用来传输纯文本文件，后者则是传递html代码的编码类型，在发送头文件时才用得上。</li>
+<li>①和③都不能用于上传文件，只有multipart/form-data才能完整的传递文件数据。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>setRequestHeader(header,value)</td>
+<td>向请求添加 HTTP 头。</td>
+</tr>
+<tr>
+<td> 。</td>
+<td>* header: 规定头的名称</td>
+</tr>
+<tr>
+<td> 。</td>
+<td>* value: 规定头的值。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="接收返回的数据"><a href="#接收返回的数据" class="headerlink" title="接收返回的数据"></a>接收返回的数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">oAjax.onreadystatechange = function()&#123;</span><br><span class="line">    console.log(oAajax.readyState)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>readyState属性 状态 有5个可取值： 0=未初始化 ，1=启动 2=发送，3=接收，4=完成。<br>当readyState属性发生变化的时候，便会触发一次readystatechange 事件。我们可以通过监听这个事件，当数据准备完毕之后，处理数据。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var xhr = new XMLHttpRequest();</span><br><span class="line">xhr.onreadystatechange = function () &#123;</span><br><span class="line">    if (xhr.readyState == 4) &#123;</span><br><span class="line">        if ((xhr.status &gt;= 200 &amp;&amp; xhr.status &lt; 300) || xhr.status == 304) &#123;</span><br><span class="line">            console.log(xhr.statusText);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            console.log(&quot;Request was unsuccessful: &quot; + xhr.status);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">xhr.open(&quot;get&quot;, &quot;example.txt&quot;, true);</span><br><span class="line">xhr.send(null);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>XHR对象    </p>
+<ul>
+<li>XMLHttpRequest这个对象的属性：  <ul>
+<li>onreadystatechange  每次状态改变所触发事件的事件处理程序。</li>
+<li>responseText     从服务器进程返回数据的字符串形式。</li>
+<li>responseXML    从服务器进程返回的DOM兼容的文档数据对象。</li>
+<li>status           从服务器返回的数字代码，比如常见的404（未找到）和200（已就绪）</li>
+<li>statusText       伴随状态码的字符串信息</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="避免缓存"><a href="#避免缓存" class="headerlink" title="避免缓存"></a>避免缓存</h3><p>对 Ajax 请求进行缓存的浏览器特性都快被我们忘记了。例如，IE 就默认是这样。jQuery 默认清除浏览器缓存。在纯 Ajax 也能达到该目的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var bustCache = &apos;?&apos; + new Date().getTime();</span><br><span class="line">oReq.open(&apos;GET&apos;, url , true);</span><br></pre></td></tr></table></figure>
+<p>查看 jQuery 文档，可知道 jQuery 在每个请求（GET）后面追加一个时间戳作为查询字符串。<br>这在某个程度上让请求变得独一无二，并避免浏览器缓存。每当你触发 HTTP Ajax 请求，你能看到类似如下请求：<br><img src="https://segmentfault.com/image?src=http://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2015/08/1439883644cache_busting_vanilla_ajax.jpg&amp;objectId=1190000004100271&amp;token=21b36194c5557719dc1d1914b9f88a3e" alt="image"></p>
+<h2 id="封装ajax"><a href="#封装ajax" class="headerlink" title="封装ajax"></a>封装ajax</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * AJAX函数封装</span><br><span class="line"> * @param &#123;string&#125; url     请求地址（必须）</span><br><span class="line"> * @param &#123;object&#125; options 发送请求的选项参数</span><br><span class="line"> *   @config &#123;string&#125; [options.type] 请求发送的类型。默认为GET。</span><br><span class="line"> *   @config &#123;Object&#125; [options.data] 需要发送的数据。</span><br><span class="line"> *   @config &#123;Function&#125; [options.onsuccess] 请求成功时触发，function(oAjax.responseText, oAjax)。（必须）</span><br><span class="line"> *   @config &#123;Function&#125; [options.onfail] 请求失败时触发，function(oAjax)。(oAJax为XMLHttpRequest对象)</span><br><span class="line"> *</span><br><span class="line"> *@returns &#123;XMLHttpRequest&#125; 发送请求的XMLHttpRequest对象</span><br><span class="line"> */</span><br><span class="line">function ajax(url, options) &#123;</span><br><span class="line">    //1.创建ajax对象</span><br><span class="line">    var oAjax = null;</span><br><span class="line">        /**</span><br><span class="line">         * 此处必须需要使用window.的方式,表示为window对象的一个属性.不存在时值为undefined,进入else</span><br><span class="line">         * 若直接使用XMLHttpRequest,在不支持的情况下会报错</span><br><span class="line">         **/</span><br><span class="line">    if (window.XMLHttpRequest) &#123;</span><br><span class="line">        //IE6以上</span><br><span class="line">        oAjax = new XMLHttpRequest();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        oAjax = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //2.连接服务器</span><br><span class="line">    //open(方法,url,是否异步)</span><br><span class="line">    var param = &quot;&quot;; //请求参数。</span><br><span class="line">    //只有data存在，且为对象使才执行</span><br><span class="line">    var data = options.data ? options.data : -1; //缓存data</span><br><span class="line">    if (typeof (data) === &quot;object&quot;) &#123;</span><br><span class="line">        for (var key in data) &#123; //请求参数拼接</span><br><span class="line">            if (data.hasOwnProperty(key)) &#123;</span><br><span class="line">                param += key + &quot;=&quot; + data[key] + &quot;&amp;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        param.replace(/&amp;$/, &quot;&quot;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        param = &quot;timestamp=&quot; + new Date().getTime();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //3.发送请求</span><br><span class="line">    var type = options.type ? options.type.toUpperCase() : &quot;GET&quot;;</span><br><span class="line">    if (type === &quot;GET&quot;) &#123;</span><br><span class="line">        oAjax.open(&quot;GET&quot;, url + &quot;?&quot; + param, true);</span><br><span class="line">        oAjax.send();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        oAjax.open(&quot;POST&quot;, url, true);</span><br><span class="line">        oAjax.setRequestHeader(&quot;Content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);</span><br><span class="line">        oAjax.send(param);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //4.接收返回</span><br><span class="line">    //OnRedayStateChange事件</span><br><span class="line">    oAjax.onreadystatechange = function () &#123;</span><br><span class="line">        if (oAjax.readyState === 4) &#123;</span><br><span class="line">            if (oAjax.status === 200) &#123;</span><br><span class="line">                //请求成功。形参为获取到的字符串形式的响应数据</span><br><span class="line">                options.onsuccess(oAjax.responseText, oAjax);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                //先判断是否存在请求失败函数</span><br><span class="line">                //存在时，形参为XMLHttpRequest对象，便于进行错误进行处理</span><br><span class="line">                if (options.onfail) &#123;</span><br><span class="line">                    options.onfail(oAjax);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    return oAjax;//发送请求的XMLHttpRequest对象</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag">#javascript</a>
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/25/文件上传/" rel="next" title="文件上传">
+                <i class="fa fa-chevron-left"></i> 文件上传
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/25/原生ajax总结/"
+           data-title="原生ajax总结" data-url="http://yoursite.com/2016/07/25/原生ajax总结/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ajax介绍"><span class="nav-number">1.</span> <span class="nav-text">ajax介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原生ajax请求数据："><span class="nav-number">2.</span> <span class="nav-text">原生ajax请求数据：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-XMLHttpRequest-对象"><span class="nav-number">2.1.</span> <span class="nav-text">创建 XMLHttpRequest 对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接服务器"><span class="nav-number">2.2.</span> <span class="nav-text">连接服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发送请求send"><span class="nav-number">2.3.</span> <span class="nav-text">发送请求send()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GET-还是-POST？两者的区别？何时使用-post"><span class="nav-number">2.3.1.</span> <span class="nav-text">GET 还是 POST？两者的区别？何时使用 post</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setRequestHeader-添加http-头"><span class="nav-number">2.3.2.</span> <span class="nav-text">setRequestHeader()添加http 头</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接收返回的数据"><span class="nav-number">2.4.</span> <span class="nav-text">接收返回的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#避免缓存"><span class="nav-number">2.5.</span> <span class="nav-text">避免缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#封装ajax"><span class="nav-number">3.</span> <span class="nav-text">封装ajax</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>

@@ -256,6 +256,107 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/25/原生ajax总结/" itemprop="url">
+                  原生ajax总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-25T13:13:13+08:00" content="2016-07-25">
+              2016-07-25
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/25/原生ajax总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/25/原生ajax总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="ajax介绍"><a href="#ajax介绍" class="headerlink" title="ajax介绍"></a>ajax介绍</h2><ol>
+<li>ajax是一种无刷新网页得和服务器交换数据的一种技术。</li>
+<li>AJAX是不能跨域的，如需跨域，可以使用document.domain=’a.com’；或者使用服务器代理，代理XMLHttpRequest文件。  <ul>
+<li>跨域有许多解决方案，jsonp、   iframe、window.name、window.postMessage、服务器上设置代理页面。
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/25/原生ajax总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/25/文件上传/" itemprop="url">
                   文件上传
                 </a>
@@ -1188,134 +1289,6 @@ for (var i = 0 , len = items.length; i &lt; len; i++) {
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/04/23/你不知道的javascript（this）/" itemprop="url">
-                  你不知道的javascript（this）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-04-23T00:50:22+08:00" content="2016-04-23">
-              2016-04-23
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/04/23/你不知道的javascript（this）/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/23/你不知道的javascript（this）/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><code>说明：本系列是本人读完《你不知道的javascript》的总结和感想。有兴趣的读者可以去看原书籍。</code></p>
-<h2 id="一-关于this"><a href="#一-关于this" class="headerlink" title="一. 关于this"></a>一. 关于this</h2><h3 id="消除对this的误解"><a href="#消除对this的误解" class="headerlink" title="消除对this的误解"></a>消除对this的误解</h3><p>在解释this之前，我们需要先消除一些关于this的错误认识。  </p>
-<ul>
-<li><h4 id="指向自身"><a href="#指向自身" class="headerlink" title="指向自身"></a>指向自身</h4><p>　　人们常常容易把this理解指向函数自身，现在我们来看一个例子。</p>
-<pre><code>我们想要记录以下函数foo被调用的次数，思考以下代码：
-function foo(num){
-    console.log(&quot;foo :&quot; + num);
-    //记录foo被调用的次数
-    this.count++;
-}
-foo.count = 0;
-var i;
-for(var i = 0;i&lt;10;i++){
-    if( i &gt; 5){
-        foo(i);
-    }
-}
-//foo :6
-//foo :7
-//foo :8
-//foo :9        
-console.log( foo.count );  //0        
-
-console.log语句输出四次，可点foo()函数调用了四次，
-而foo.count仍然为0，说明foo()函数中的this并非指向
-foo函数。
-
-console.log( window.count );  //NAN
-这里其实this引用的是全局，生成一个window对象下的全局
-变量，值为NAN。
-</code></pre>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/04/23/你不知道的javascript（this）/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1361,7 +1334,7 @@ console.log( window.count );  //NAN
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-count">12</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
