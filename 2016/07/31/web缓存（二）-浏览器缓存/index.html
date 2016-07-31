@@ -1,0 +1,952 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端知识总结,web缓存," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="web缓存
+什么是web缓存：
+Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。
+本篇只着重介绍浏览器缓存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web缓存（二）-浏览器缓存">
+<meta property="og:url" content="http://yoursite.com/2016/07/31/web缓存（二）-浏览器缓存/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="web缓存
+什么是web缓存：
+Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。
+本篇只着重介绍浏览器缓存">
+<meta property="og:image" content="http://thumbsnap.com/i/4ltwyuXH.png?0809">
+<meta property="og:image" content="http://thumbsnap.com/i/TYHrxqQt.png?0809">
+<meta property="og:image" content="http://ww2.sinaimg.cn/mw690/6941baebgw1eukzzx2kocj208o0570t8.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/mw690/6941baebgw1eukzzwcvnij20gi089jvb.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/6941baebgw1eukzzrmsijj20al0a7wfu.jpg">
+<meta property="og:updated_time" content="2016-07-31T13:53:41.628Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="web缓存（二）-浏览器缓存">
+<meta name="twitter:description" content="web缓存
+什么是web缓存：
+Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。
+本篇只着重介绍浏览器缓存">
+<meta name="twitter:image" content="http://thumbsnap.com/i/4ltwyuXH.png?0809">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> web缓存（二）-浏览器缓存 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                web缓存（二）-浏览器缓存
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T21:50:46+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/31/web缓存（二）-浏览器缓存/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/31/web缓存（二）-浏览器缓存/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="web缓存"><a href="#web缓存" class="headerlink" title="web缓存"></a>web缓存</h2><ul>
+<li>什么是web缓存：<ul>
+<li>Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。<blockquote>
+<p>本篇只着重介绍浏览器缓存</p>
+<a id="more"></a></blockquote>
+</li>
+</ul>
+</li>
+<li>web缓存的好处：<ul>
+<li>减少网络带宽消耗</li>
+<li>降低服务器压力</li>
+<li>减少网络延迟，加快页面打开速度。</li>
+<li>。。。。。</li>
+</ul>
+</li>
+<li><p>web缓存政策：</p>
+<ul>
+<li>服务器缓存：<ul>
+<li>CDN缓存</li>
+<li>代理服务器缓存</li>
+<li>Combo服务</li>
+</ul>
+</li>
+<li><p>浏览器缓存</p>
+<ul>
+<li>http缓存机制：<ul>
+<li>本地缓存阶段<ul>
+<li>Cache-COntrol</li>
+<li>Expires</li>
+</ul>
+</li>
+<li>协商缓存阶段<ul>
+<li>Last-Modified&amp;if-modified-since</li>
+<li>ETag&amp;If-None-Match</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>HTML5缓存思路</p>
+<ul>
+<li>离线存储manifest</li>
+<li>本地存储localStorage</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="浏览器缓存"><a href="#浏览器缓存" class="headerlink" title="浏览器缓存"></a>浏览器缓存</h2><h3 id="浏览器端的缓存规则"><a href="#浏览器端的缓存规则" class="headerlink" title="浏览器端的缓存规则"></a>浏览器端的缓存规则</h3><p>对于浏览器端的缓存来讲，这些规则是在HTTP协议头和HTML页面的Meta标签中定义的。他们分别从<strong>新鲜度</strong>和<strong>校验值</strong>两个维度来规定浏览器是否可以直接使用缓存中的副本，还是需要去源服务器获取更新的版本。</p>
+<ul>
+<li>新鲜度（过期机制）：也就是缓存副本有效期。一个缓存副本必须满足以下条件，浏览器会认为它是有效的，足够新的：<ul>
+<li>含有完整的过期时间控制头信息（HTTP协议报头），并且仍在有效期内；</li>
+<li>浏览器已经使用过这个缓存副本，并且在一个会话中已经检查过新鲜度</li>
+<li>满足以上两个情况的一种，浏览器会直接从缓存中获取副本并渲染。</li>
+</ul>
+</li>
+<li>校验值（验证机制）：服务器返回资源的时候有时在控制头信息带上这个资源的实体标签Etag（Entity Tag），它可以用来作为浏览器再次请求过程的校验标识。如过发现校验标识不匹配，说明资源已经被修改或过期，浏览器需求重新获取资源内容。</li>
+</ul>
+<blockquote>
+<p>一个重要的概念</p>
+<ul>
+<li>缓存命中率：一个缓存的有效性是依照缓存的命中率来度量。它是根据得到数据请求次数与所有请求次数的比率。缓存命中率高意味着有很高的比率数据是从缓存中获取到数据的。</li>
+</ul>
+</blockquote>
+<p>在HTTP请求和响应的消息报头中，常见的与缓存有关的消息报头有：<br><img src="http://thumbsnap.com/i/4ltwyuXH.png?0809" alt="image"></p>
+<h3 id="HTTP缓存机制"><a href="#HTTP缓存机制" class="headerlink" title="HTTP缓存机制"></a>HTTP缓存机制</h3><ul>
+<li><p>缓存行为主要由缓存策略决定，而缓存策略由内容拥有者设置。这些策略主要通过特定的HTTP头部来清晰地表达。</p>
+</li>
+<li><p>当一个用户发起一个静态资源请求的时候，浏览器会通过以下几步来获取资源：</p>
+<ul>
+<li><strong>本地缓存阶段</strong>：先在本地查找该资源，如果有发现该资源，而且该资源还没有过期，就使用这一个资源，完全不会发送http请求到服务器；</li>
+<li><strong>协商缓存阶段</strong>：如果在本地缓存找到对应的资源，但是不知道该资源是否过期或者已经过期，则发一个http请求到服务器,然后服务器判断这个请求，如果请求的资源在服务器上没有改动过，则返回304，让浏览器使用本地找到的那个资源；</li>
+<li><strong>缓存失败阶段</strong>：当服务器发现请求的资源已经修改过，或者这是一个新的请求(在本来没有找到资源)，服务器则返回该资源的数据，并且返回200， 当然这个是指找到资源的情况下，如果服务器上没有这个资源，则返回404。</li>
+</ul>
+</li>
+</ul>
+<h3 id="用户操作行为与缓存"><a href="#用户操作行为与缓存" class="headerlink" title="用户操作行为与缓存"></a>用户操作行为与缓存</h3><p><img src="http://thumbsnap.com/i/TYHrxqQt.png?0809" alt="image"></p>
+<p>浏览器中的操作对缓存的影响:</p>
+<ul>
+<li>强制刷新 – 当按下ctrl+F5来刷新页面的时候, 浏览器将绕过各种缓存(本地缓存和协商缓存), 直接让服务器返回最新的资源;</li>
+<li>普通刷新 – 当按下F5来刷新页面的时候,浏览器将绕过本地缓蹲来发送请求到服务器, 此时, 协商缓存是有效的</li>
+<li>回车或转向 – 当在地址栏上输入回车或者按下跳转按钮的时候, 所有缓存都生效</li>
+</ul>
+<h3 id="本地缓存阶段"><a href="#本地缓存阶段" class="headerlink" title="本地缓存阶段"></a>本地缓存阶段</h3><ol>
+<li>Expires  </li>
+</ol>
+<ul>
+<li>指定缓存到期GMT的绝对时间，如果设了max-age，max-age就会覆盖expires。如果expires到期需要重新请求。</li>
+</ul>
+<ol>
+<li>Cache-Control</li>
+</ol>
+<ul>
+<li>Cache-Control:这个是http 1.1中为了弥补 Expires 缺陷新加入的。</li>
+</ul>
+<ol>
+<li><p>Expires和Cache-Control就是服务端用来约定和客户端的有效时间的。<br><img src="http://ww2.sinaimg.cn/mw690/6941baebgw1eukzzx2kocj208o0570t8.jpg" alt="image"></p>
+<ul>
+<li>Expires是HTTP1.0的东西，而Cache-Control是HTTP1.1的，<strong>规定如果max-age和Expires同时存在，前者优先级高于后者</strong>。</li>
+</ul>
+</li>
+<li><p>Cache-Control的参数可以设置很多值，譬如<br><img src="http://ww3.sinaimg.cn/mw690/6941baebgw1eukzzwcvnij20gi089jvb.jpg" alt="image"></p>
+</li>
+<li><p>用法举例: </p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Cache-Control: max-age=3600, must-revalidate</span><br><span class="line">cache:使用本地缓存，不发生请求。</span><br></pre></td></tr></table></figure>
+<h3 id="协商缓存阶段"><a href="#协商缓存阶段" class="headerlink" title="协商缓存阶段"></a>协商缓存阶段</h3><h4 id="Last-Modified-If-Modified-Since"><a href="#Last-Modified-If-Modified-Since" class="headerlink" title="Last-Modified/If-Modified-Since"></a>Last-Modified/If-Modified-Since</h4><p>而Last-Modified/If-Modified-Since就是上面说的当有效期过后，check服务端文件是否更新的第一种方式，要配合Cache-Control使用。</p>
+<ul>
+<li><p>比如第一次访问一个网站，会请求一个jquery文件，响应头返回如下信息：</p>
+<pre><code>![image](http://ww1.sinaimg.cn/mw690/6941baebgw1eukzzson9tj209904g74n.jpg)
+</code></pre></li>
+<li><p>然后我在主页按下<strong>ctrl+r刷新</strong>，因为ctrl+r会默认跳过max-age和Expires的检验直接去向服务器发送请求（下文再探讨各种刷新后如何读取缓存），我们看看请求截图：</p>
+<pre><code>![image](http://ww2.sinaimg.cn/mw690/6941baebgw1eukzzrythmj20c708b756.jpg)
+</code></pre></li>
+<li><p>请求头中包含了<strong>If-Modified-Since</strong>项，而它的值和上次请求响应头中的Last-Modified一致，我们发现这个日期是在遥远的2013年，也就是说这个jquery文件自从2013年的那个日期后就没有再被修改过了。</p>
+</li>
+<li>将If-Modified-Since的日期和服务端该文件的最后修改日期对比，<ul>
+<li>如果相同，则响应HTTP304，从缓存读数据；</li>
+<li>如果不相同文件更新了，HTTP200，返回数据，同时通过响应头更新last-Modified的值（以备下次对比）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="ETag-If-None-Match"><a href="#ETag-If-None-Match" class="headerlink" title="ETag/If-None-Match"></a>ETag/If-None-Match</h4><ul>
+<li>而ETag/If-None-Match则是上文大话中说的第二种check服务端文件是否更新的方式，也要配合Cache-Control使用。</li>
+<li>实际上<strong>ETag</strong>并不是文件的版本号，而是一串可以<strong>代表该文件唯一的字符串</strong>（Apache中，ETag的值，默认是对文件的索引节（INode），大小（Size）和最后修改时间（MTime）进行Hash后得到的。），</li>
+<li><p>当客户端发现和服务器约定的直接读取缓存的时间过了，就在请求中发送If-None-Match选项，值即为上次请求后响应头的ETag值，该值在服务端和服务端代表该文件唯一的字符串对比（如果服务端该文件改变了，该值就会变），</p>
+<ul>
+<li>如果相同，则相应HTTP304，客户端直接读取缓存，</li>
+<li><p>如果不相同，HTTP200，下载正确的数据，更新ETag值。</p>
+<p>  <img src="http://ww1.sinaimg.cn/mw690/6941baebgw1eukzzrmsijj20al0a7wfu.jpg" alt="image"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>看如上截图，</p>
+<ul>
+<li>与服务器约定的直接读取本地缓存的时间过了，</li>
+<li>就会向服务器发送新的请求，</li>
+<li>请求头中带If-None-Match项，该字符串值会在服务端进行匹配，很显然，并没有什么变化（看响应头的ETag值），</li>
+<li>于是响应HTTP304，直接读取缓存。</li>
+<li><p>或许你会发送该请求也有If-Modified-Since项，<strong>如果两者同时存在，If-None-Match优先，忽略If-Modified-Since。</strong>或许你会问为什么它优先？</p>
+</li>
+<li><p>HTTP1.1中ETag的出现主要是为了解决几个Last-Modified比较难解决的问题：</p>
+<ul>
+<li>Last-Modified标注的最后修改只能精确到秒级，如果某些文件在1秒钟以内，被修改多次的话，它将不能准确标注文件的修改时间</li>
+<li>如果某些文件会被定期生成，但有时内容并没有任何变化（仅仅改变了时间），但Last-Modified却改变了，导致文件没法使用缓存</li>
+<li>有可能存在服务器没有准确获取文件修改时间，或者与代理服务器时间不一致等情形</li>
+</ul>
+</li>
+</ul>
+<h3 id="不能缓存的请求"><a href="#不能缓存的请求" class="headerlink" title="不能缓存的请求"></a>不能缓存的请求</h3><ul>
+<li><p>当然并不是所有请求都能被缓存。</p>
+</li>
+<li><p>无法被浏览器缓存的请求：</p>
+<ul>
+<li>HTTP信息头中包含Cache-Control:no-cache，pragma:no-cache（HTTP1.0），或Cache-Control:max-age=0等告诉浏览器不用缓存的请求</li>
+<li>需要根据Cookie，认证信息等决定输入内容的动态请求是不能被缓存的</li>
+<li>经过HTTPS安全加密的请求（有人也经过测试发现，ie其实在头部加入Cache-Control：max-age信息，firefox在头部加入Cache-Control : Public之后，能够对HTTPS的资源进行缓存，参考《<a href="http://www.ruanyifeng.com/blog/2011/02/seven_myths_about_https.html" target="_blank" rel="external">HTTPS的七个误解</a>》）</li>
+<li>POST请求无法被缓存</li>
+<li>HTTP响应头中不包含Last-Modified/Etag，也不包含Cache-Control/Expires的请求无法被缓存</li>
+</ul>
+</li>
+</ul>
+<p>资料参考：</p>
+<ul>
+<li>web缓存机制：<a href="http://www.alloyteam.com/2012/03/web-cache-1-web-cache-overview/" target="_blank" rel="external">http://www.alloyteam.com/2012/03/web-cache-1-web-cache-overview/</a></li>
+<li>缓存策略：<a href="http://imweb.io/topic/55c6f9bac222e3af6ce235b9" target="_blank" rel="external">http://imweb.io/topic/55c6f9bac222e3af6ce235b9</a></li>
+<li>浏览器缓存机制浅析：<a href="http://web.jobbole.com/82997/" target="_blank" rel="external">http://web.jobbole.com/82997/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/web缓存/" rel="tag">#web缓存</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/31/web缓存（一）-服务器缓存/" rel="next" title="web缓存（一）-服务器缓存">
+                <i class="fa fa-chevron-left"></i> web缓存（一）-服务器缓存
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/31/web缓存（三）-HTML5缓存/" rel="prev" title="web缓存（三）-HTML5缓存">
+                web缓存（三）-HTML5缓存 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/31/web缓存（二）-浏览器缓存/"
+           data-title="web缓存（二）-浏览器缓存" data-url="http://yoursite.com/2016/07/31/web缓存（二）-浏览器缓存/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#web缓存"><span class="nav-number">1.</span> <span class="nav-text">web缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器缓存"><span class="nav-number">2.</span> <span class="nav-text">浏览器缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#浏览器端的缓存规则"><span class="nav-number">2.1.</span> <span class="nav-text">浏览器端的缓存规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP缓存机制"><span class="nav-number">2.2.</span> <span class="nav-text">HTTP缓存机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用户操作行为与缓存"><span class="nav-number">2.3.</span> <span class="nav-text">用户操作行为与缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地缓存阶段"><span class="nav-number">2.4.</span> <span class="nav-text">本地缓存阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协商缓存阶段"><span class="nav-number">2.5.</span> <span class="nav-text">协商缓存阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Last-Modified-If-Modified-Since"><span class="nav-number">2.5.1.</span> <span class="nav-text">Last-Modified/If-Modified-Since</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ETag-If-None-Match"><span class="nav-number">2.5.2.</span> <span class="nav-text">ETag/If-None-Match</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不能缓存的请求"><span class="nav-number">2.6.</span> <span class="nav-text">不能缓存的请求</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>

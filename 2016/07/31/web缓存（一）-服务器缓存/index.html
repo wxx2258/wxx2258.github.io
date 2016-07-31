@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javascript,前端知识总结," />
+  <meta name="keywords" content="前端知识总结,web缓存," />
 
 
 
@@ -57,22 +57,25 @@
 
 
 
-<meta name="description" content="函数节流
-处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。
-函数节流：利用定时器使其降低频率和操作，提高性能">
+<meta name="description" content="web缓存
+什么是web缓存：
+Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。
+本篇只着重介绍服务器缓存">
 <meta property="og:type" content="article">
-<meta property="og:title" content="函数节流">
-<meta property="og:url" content="http://yoursite.com/2016/07/23/函数节流/index.html">
+<meta property="og:title" content="web缓存（一）-服务器缓存">
+<meta property="og:url" content="http://yoursite.com/2016/07/31/web缓存（一）-服务器缓存/index.html">
 <meta property="og:site_name" content="Wxx's blog">
-<meta property="og:description" content="函数节流
-处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。
-函数节流：利用定时器使其降低频率和操作，提高性能">
-<meta property="og:updated_time" content="2016-07-23T13:30:47.086Z">
+<meta property="og:description" content="web缓存
+什么是web缓存：
+Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。
+本篇只着重介绍服务器缓存">
+<meta property="og:updated_time" content="2016-07-31T13:52:47.886Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="函数节流">
-<meta name="twitter:description" content="函数节流
-处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。
-函数节流：利用定时器使其降低频率和操作，提高性能">
+<meta name="twitter:title" content="web缓存（一）-服务器缓存">
+<meta name="twitter:description" content="web缓存
+什么是web缓存：
+Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。
+本篇只着重介绍服务器缓存">
 
 
 
@@ -90,7 +93,7 @@
   };
 </script>
 
-  <title> 函数节流 | Wxx's blog </title>
+  <title> web缓存（一）-服务器缓存 | Wxx's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -260,7 +263,7 @@
             
             
               
-                函数节流
+                web缓存（一）-服务器缓存
               
             
           </h1>
@@ -272,8 +275,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-23T21:29:30+08:00" content="2016-07-23">
-              2016-07-23
+            <time itemprop="dateCreated" datetime="2016-07-31T21:50:28+08:00" content="2016-07-31">
+              2016-07-31
             </time>
           </span>
 
@@ -283,8 +286,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/07/23/函数节流/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/23/函数节流/" itemprop="commentsCount"></span>
+                <a href="/2016/07/31/web缓存（一）-服务器缓存/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/31/web缓存（一）-服务器缓存/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -306,20 +309,116 @@
       
 
       
-        <h3 id="函数节流"><a href="#函数节流" class="headerlink" title="函数节流"></a>函数节流</h3><ul>
-<li>处理的问题：  1. 短时间内连续多次重复触发 ; 2. 大量的 DOM 操作。</li>
-<li>函数节流：利用定时器使其降低频率和操作，提高性能<a id="more"></a></li>
-<li>param：  fn ：需要执行的函数 <pre><code>delay :  延迟执行的时间 
-mustRunDelay : 可选，必须等待的时间
-</code></pre></li>
-<li>主要思想：通过定时器，让函数延迟执行，如果在这个延迟的时间也有函数要执行，就阻止并清楚他。<ul>
-<li>其次，闭包保存第一次函数开始执行的时间戳。</li>
-<li>第一个判断就是保存开始的时间</li>
-<li>第二个判断是查看是否超出必须等待的时间，如果超出，则立即执行函数，如果没有超出，重新设置定时器。</li>
+        <h2 id="web缓存"><a href="#web缓存" class="headerlink" title="web缓存"></a>web缓存</h2><ul>
+<li>什么是web缓存：<ul>
+<li>Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。<blockquote>
+<p>本篇只着重介绍服务器缓存</p>
+<a id="more"></a></blockquote>
+</li>
+</ul>
+</li>
+<li>web缓存的好处：<ul>
+<li>减少网络带宽消耗</li>
+<li>降低服务器压力</li>
+<li>减少网络延迟，加快页面打开速度。</li>
+<li>。。。。。</li>
+</ul>
+</li>
+<li><p>web缓存政策：</p>
+<ul>
+<li>服务器缓存：<ul>
+<li>CDN缓存</li>
+<li>代理服务器缓存</li>
+<li>Combo服务</li>
+</ul>
+</li>
+<li><p>浏览器缓存</p>
+<ul>
+<li>http缓存机制：<ul>
+<li>本地缓存阶段<ul>
+<li>Cache-COntrol</li>
+<li>Expires</li>
+</ul>
+</li>
+<li>协商缓存阶段<ul>
+<li>Last-Modified&amp;if-modified-since</li>
+<li>ETag&amp;If-None-Match</li>
 </ul>
 </li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">var throttleV = function(fn, delay, mustRunDelay)&#123;</span><br><span class="line"> 	var timer = null;</span><br><span class="line"> 	var t_start ;</span><br><span class="line"> 	// 闭包</span><br><span class="line"> 	return function()&#123;</span><br><span class="line"> 		var context = this, args = arguments, t_curr = +new Date();</span><br><span class="line"> 		clearTimeout(timer); //清除前面的定时器，以在延迟中最后一次函数准</span><br><span class="line"></span><br><span class="line"> 		// console.log(t_start);</span><br><span class="line"> 		if(!t_start)&#123;</span><br><span class="line"> 			t_start = t_curr;</span><br><span class="line"> 		&#125;</span><br><span class="line"></span><br><span class="line"> 		if(t_curr - t_start &gt;= mustRunDelay)&#123;</span><br><span class="line"> 			fn.apply(context, args);</span><br><span class="line"> 			t_start = t_curr;</span><br><span class="line"> 		&#125;</span><br><span class="line"> 		else &#123;</span><br><span class="line"> 			// console.log(t_curr - t_start);</span><br><span class="line"> 			timer = setTimeout(function()&#123;</span><br><span class="line"> 				fn.apply(context, args);</span><br><span class="line"> 			&#125;, delay);</span><br><span class="line"> 		&#125;</span><br><span class="line"> 	&#125;;</span><br><span class="line"> &#125;;</span><br><span class="line"></span><br><span class="line"> // example</span><br><span class="line"> var a= throttleV(function()&#123;</span><br><span class="line"> 	console.log(&quot;1&quot;);</span><br><span class="line"> &#125;,200,100)</span><br><span class="line"> //  var b=throttleV(function()&#123;</span><br><span class="line"> // 	console.log(t_start);</span><br><span class="line"> // &#125;,200,300)</span><br><span class="line">a();a();a();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>HTML5缓存思路</p>
+<ul>
+<li>离线存储manifest</li>
+<li>本地存储localStorage</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="服务器缓存"><a href="#服务器缓存" class="headerlink" title="服务器缓存"></a>服务器缓存</h2><h3 id="CDN缓存"><a href="#CDN缓存" class="headerlink" title="CDN缓存"></a>CDN缓存</h3><p>CDN缓存，也叫<strong>网关缓存、反向代理缓存</strong>。浏览器先向CDN网关发起WEB请求，网关服务器后面对应着一台或多台负载均衡源服务器，会根据它们的负载请求，动态地请求转发到合适的源服务器上。</p>
+<p>####<br>启用CDN缓存后浏览器访问的全过程：</p>
+<p>1.用户输入URL，浏览器将解析过后的域名发给DNS服务器</p>
+<p>2.CDN返回该域名对应的CNAME，此时浏览器需要再次对获得的CNAME进行解析，才能得到CDN缓存服务器的IP地址。<br>在此过程中全局负载均衡DNS解析服务器会将用户的访问请求定位到离用户最近、负载最轻的CDN缓存服务器上。这种技术也被称为“DNS重定向”，<br>DNS服务器不是为每个请求返回相同的IP地址，比如在悉尼的一个客户请求解析www.cdn.com，DNS服务器根据地理位置，计算出距离这个用户最近的CDN服务器，于是返回一个悉尼CDN节点的IP地址。这种方法也不一定是最优的，因为地理位置上最近的两个点，延迟可能反而很高。<br>还有一种方法是通过估计节点间的样本延迟。</p>
+<p>3.再次解析后，浏览器得到CDN缓存服务器的实际IP地址，向缓存服务器发起请求。</p>
+<p>4.缓存服务器根据浏览器提供的域名，通过内部DNS解析得到此域名源服务器的真实IP地址，再由缓存服务器向该服务器发起访问请求。</p>
+<p>5.缓存服务器拿到数据后，一方面将数据发回浏览器，另一方面进行本地保存，以备后用。之后再次访问，数据将从CDN缓存服务器中被返回。CDN不会永久保存数据，可以设置CDN的刷新频率，来达到数据的更新。</p>
+<p>6.浏览器得到由缓存服务器发回的数据，并将其显示出来。至此，完成整个域名访问的过程。</p>
+<p>上面相关CDN缓存原理的介绍转自：</p>
+<blockquote>
+<p>文／苏星河（简书作者）<br>原文链接：<a href="http://www.jianshu.com/p/e086e7e9c82b" target="_blank" rel="external">http://www.jianshu.com/p/e086e7e9c82b</a></p>
+</blockquote>
+<h4 id="CDN缓存策略"><a href="#CDN缓存策略" class="headerlink" title="CDN缓存策略"></a>CDN缓存策略</h4><ul>
+<li><p>CDN边缘节点缓存策略因服务商不同而不同，但一般都会遵循http标准协议，通过http响应头中的<strong>Cache-control: max-age</strong>的字段来设置CDN边缘节点数据缓存时间。</p>
+</li>
+<li><p>当客户端向CDN节点请求数据时，CDN节点会判断缓存数据是否过期，</p>
+<ul>
+<li>若缓存数据并没有过期，则直接将缓存数据返回给客户端；</li>
+<li>否则，CDN节点就会向源站发出回源请求（back to the source request），从源站拉取最新数据，更新本地缓存，并将最新数据返回给客户端。</li>
+</ul>
+</li>
+<li><p>CDN服务商一般会<strong>提供基于文件后缀、目录多个维度来指定CDN缓存时间，为用户提供更精细化的缓存管理。</strong></p>
+</li>
+<li><p>CDN缓存时间会对“回源率”产生直接的影响。</p>
+<ul>
+<li>若CDN缓存时间较短，CDN边缘节点上的数据会经常失效，导致频繁回源，增加了源站的负载，同时也增大的访问延时；</li>
+<li>若CDN缓存时间太长，会带来数据更新时间慢的问题。开发者需要增对特定的业务，来做特定的数据缓存时间管理。</li>
+</ul>
+</li>
+<li>CDN缓存刷新CDN边缘节点对开发者是透明的，相比于浏览器Ctrl+F5的强制刷新来使浏览器本地缓存失效，开发者可以通过CDN服务商提供的“刷新缓存”接口来达到清理CDN边缘节点缓存的目的。这样开发者在更新数据后，可以使用“刷新缓存”功能来强制CDN节点上的数据缓存过期，保证客户端在访问时，拉取到最新的数据。</li>
+</ul>
+<h4 id="CDN的优势"><a href="#CDN的优势" class="headerlink" title="CDN的优势"></a>CDN的优势</h4><ul>
+<li>CDN节点解决了跨运营商和跨地域访问的问题，访问延时大大降低；<br>大部分请求在CDN边缘节点完成，CDN起到了分流作用，减轻了源站的负载。</li>
+</ul>
+<h4 id="CDN缓存的缺点"><a href="#CDN缓存的缺点" class="headerlink" title="CDN缓存的缺点"></a>CDN缓存的缺点</h4><ul>
+<li>当网站更新时，如果CDN节点上数据没有及时更新，即便用户再浏览器使用Ctrl +F5的方式使浏览器端的缓存失效，也会因为CDN边缘节点没有同步最新数据而导致用户访问异常。</li>
+</ul>
+<blockquote>
+<p>CDN架构及原理参见<a href="http://blog.yemou.net/article/query/info/tytfjhfascvhzxcytp61" target="_blank" rel="external">CDN架构以及原理分析</a><br><a href="http://www.jianshu.com/p/e086e7e9c82b" target="_blank" rel="external">CDN缓存原理</a></p>
+</blockquote>
+<h3 id="代理服务器缓存"><a href="#代理服务器缓存" class="headerlink" title="代理服务器缓存"></a>代理服务器缓存</h3><p>代理服务器是浏览器和源服务器之间的中间服务器，浏览器先向这个中间服务器发起Web请求，经过处理后（比如权限验证，缓存匹配等），再将请求转发到源服务器。代理服务器缓存的运作原理跟浏览器的运作原理差不多，只是规模更大。可以把它理解为一个共享缓存，不只为一个用户服务，一般为大量用户提供服务，因此在减少相应时间和带宽使用方面很有效，同一个副本会被重用多次。常见代理服务器缓存解决方案有Squid等，这里不再详述。 </p>
+<h3 id="Conbo服务"><a href="#Conbo服务" class="headerlink" title="Conbo服务"></a>Conbo服务</h3><ul>
+<li><p>Combo服务，也就是我们在最终拼接生成页面资源引用的时候，并不是生成多个独立的link标签，而是将资源地址拼接成一个url路径，请求一种线上的动态资源合并服务，从而实现减少HTTP请求的需求。</p>
+</li>
+<li><p><strong>/??fle1,file2,file3,…</strong>的url请求响应就是动态combo服务提供的，它的原理很简单，就是根据url找到对应的多个文件，合并成一个文件来响应请求，并将其缓存，以加快访问速度。</p>
+</li>
+<li><p>但它也存在一些缺陷：</p>
+<ul>
+<li>浏览器有url长度限制，因此不能无限制的合并资源。</li>
+<li>如果用户在网站内有公共资源的两个页面间跳转访问，由于两个页面的combo的url不一样导致用户不能利用浏览器缓存来加快对公共资源的访问速度。如果combo的url中任何一个文件发生改变，都会导致整个url缓存失效，从而导致浏览器缓存利用率降低。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Combo其他资料服务<br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2012/07/18/combo.html" target="_blank" rel="external">前端优化：淘宝的Combo Handler和新浪微博的link标签includes属性</a></p>
+</blockquote>
+<p>资料参考：</p>
+<ul>
+<li>web缓存机制：<a href="http://www.alloyteam.com/2012/03/web-cache-1-web-cache-overview/" target="_blank" rel="external">http://www.alloyteam.com/2012/03/web-cache-1-web-cache-overview/</a></li>
+<li>缓存策略：<a href="http://imweb.io/topic/55c6f9bac222e3af6ce235b9" target="_blank" rel="external">http://imweb.io/topic/55c6f9bac222e3af6ce235b9</a></li>
+</ul>
 
       
     </div>
@@ -334,9 +433,9 @@ mustRunDelay : 可选，必须等待的时间
       
         <div class="post-tags">
           
-            <a href="/tags/javascript/" rel="tag">#javascript</a>
-          
             <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/web缓存/" rel="tag">#web缓存</a>
           
         </div>
       
@@ -345,16 +444,16 @@ mustRunDelay : 可选，必须等待的时间
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/23/this的应用场景/" rel="next" title="this的应用场景">
-                <i class="fa fa-chevron-left"></i> this的应用场景
+              <a href="/2016/07/28/javascript模块化的初步探索/" rel="next" title="javascript模块化的初步探索">
+                <i class="fa fa-chevron-left"></i> javascript模块化的初步探索
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/07/25/文件上传/" rel="prev" title="文件上传">
-                文件上传 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/07/31/web缓存（二）-浏览器缓存/" rel="prev" title="web缓存（二）-浏览器缓存">
+                web缓存（二）-浏览器缓存 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -381,8 +480,8 @@ mustRunDelay : 可选，必须等待的时间
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/07/23/函数节流/"
-           data-title="函数节流" data-url="http://yoursite.com/2016/07/23/函数节流/">
+      <div class="ds-thread" data-thread-key="2016/07/31/web缓存（一）-服务器缓存/"
+           data-title="web缓存（一）-服务器缓存" data-url="http://yoursite.com/2016/07/31/web缓存（一）-服务器缓存/">
       </div>
     
   </div>
@@ -481,7 +580,7 @@ mustRunDelay : 可选，必须等待的时间
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数节流"><span class="nav-number">1.</span> <span class="nav-text">函数节流</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#web缓存"><span class="nav-number">1.</span> <span class="nav-text">web缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务器缓存"><span class="nav-number">2.</span> <span class="nav-text">服务器缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CDN缓存"><span class="nav-number">2.1.</span> <span class="nav-text">CDN缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CDN缓存策略"><span class="nav-number">2.1.1.</span> <span class="nav-text">CDN缓存策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CDN的优势"><span class="nav-number">2.1.2.</span> <span class="nav-text">CDN的优势</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CDN缓存的缺点"><span class="nav-number">2.1.3.</span> <span class="nav-text">CDN缓存的缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代理服务器缓存"><span class="nav-number">2.2.</span> <span class="nav-text">代理服务器缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Conbo服务"><span class="nav-number">2.3.</span> <span class="nav-text">Conbo服务</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
