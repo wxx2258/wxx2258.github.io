@@ -1,0 +1,1010 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端知识总结,性能优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="前端图片优化方案：
+使用base64编码代替图片
+合并图片sprite
+图片延迟加载
+使用css、svg、canvas或iconfont代替图片
+加载对应尺寸图片
+预加载
+压缩图片
+更好的图片格式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端图片优化">
+<meta property="og:url" content="http://yoursite.com/2016/08/02/前端图片优化/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="前端图片优化方案：
+使用base64编码代替图片
+合并图片sprite
+图片延迟加载
+使用css、svg、canvas或iconfont代替图片
+加载对应尺寸图片
+预加载
+压缩图片
+更好的图片格式">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1430231-5695f1afa5f760d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1430231-48ca36c7bea0cdfa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1430231-09d984e52c61689a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/10855f68513248a6a0ad168addccd298/C50EDDB356C641C5833BC4C659FE3E11">
+<meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FnRWuq6-ElyEqZIw0MrUiXaSL3e7">
+<meta property="og:updated_time" content="2016-08-02T15:29:45.956Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端图片优化">
+<meta name="twitter:description" content="前端图片优化方案：
+使用base64编码代替图片
+合并图片sprite
+图片延迟加载
+使用css、svg、canvas或iconfont代替图片
+加载对应尺寸图片
+预加载
+压缩图片
+更好的图片格式">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1430231-5695f1afa5f760d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 前端图片优化 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                前端图片优化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-02T23:28:06+08:00" content="2016-08-02">
+              2016-08-02
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/02/前端图片优化/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/02/前端图片优化/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前端图片优化方案："><a href="#前端图片优化方案：" class="headerlink" title="前端图片优化方案："></a>前端图片优化方案：</h2><ol>
+<li>使用base64编码代替图片</li>
+<li>合并图片sprite</li>
+<li>图片延迟加载</li>
+<li>使用css、svg、canvas或iconfont代替图片</li>
+<li>加载对应尺寸图片</li>
+<li>预加载</li>
+<li>压缩图片</li>
+<li>更好的图片格式<a id="more"></a>
+<h3 id="使用base64编码代替图片"><a href="#使用base64编码代替图片" class="headerlink" title="使用base64编码代替图片"></a>使用base64编码代替图片</h3></li>
+</ol>
+<ul>
+<li>场景：适用于图片大小小于2KB，页面上引用图片总数不多的情况。</li>
+<li>原理：将图片转换为base64编码字符串inline到页面或css中 。</li>
+<li>优势：<ul>
+<li>减少http的请求次数，并可以放到后台数据库中，只传输字符串，有较多的构建工具可以直接实现 。</li>
+<li>没有跨域问题，无需考虑缓存、文件头或者cookies问题 。</li>
+<li>可以被gzip。</li>
+<li>降低css维护难度。</li>
+</ul>
+</li>
+<li>劣势：这种方法仅限于图片总数较少，而且图片大小小于2KB的情况。否则图片字符串会变得很长很长。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1430231-5695f1afa5f760d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></p>
+<h3 id="合并图片sprite"><a href="#合并图片sprite" class="headerlink" title="合并图片sprite"></a>合并图片sprite</h3><ul>
+<li>场景：<ul>
+<li>页面具有多种风格，需要换肤功能，可使用CssSprites</li>
+<li>网站已经趋于完美，不会再三天两头的改动（例如button大小、颜色等）</li>
+<li>使用时无需重复图形内容</li>
+<li>没有base64编码成本，降低图片更新的维护难度。（但注意Sprites同时修改css和图片某些时候可能造成负担）</li>
+</ul>
+</li>
+<li>原理：将多个页面上用到的背景图片合并成一个大的图片在页面中引用。</li>
+<li>优势：可以有效的较少请求个数，而且，而不影响开发体验，使用构建插件可以做到对开发者透明。适用于页面图片多且丰富的场景。</li>
+<li>劣势：生成的图片体积较大，减少请求个数同时也增加了图片大小，不合理拆分将不利于并行加载。</li>
+</ul>
+<h3 id="图片延迟加载"><a href="#图片延迟加载" class="headerlink" title="图片延迟加载"></a>图片延迟加载</h3><ul>
+<li>场景：对应图片比较多的页面，可以考虑通过js来实现图片的延迟加载，先让一部分图片优先请求下来，当用户滚动页面的时候进一步加载图片。</li>
+<li>原理：现在img src 中放一张占位符图片，而真实的图片地址存放在相对应一个属性data-img中，这样的话，页面加载的时候，只加载了src地址，不会对属性的图片真正地址加载，然后再适当和需要的时候在吧data-img 值给src，否则不加载。</li>
+<li><p>优点：减少在某个时刻不需要的请求，减少请求量。</p>
+</li>
+<li><p>实例：看一下淘宝首页的实现，你打开chrome控制台，然后滚动页面，就会发现新的滚动就会导致大量图片的新请求<br><img src="http://upload-images.jianshu.io/upload_images/1430231-48ca36c7bea0cdfa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></p>
+</li>
+</ul>
+<h3 id="使用css、svg、canvas或iconfont代替图片"><a href="#使用css、svg、canvas或iconfont代替图片" class="headerlink" title="使用css、svg、canvas或iconfont代替图片"></a>使用css、svg、canvas或iconfont代替图片</h3><h4 id="css代替图片"><a href="#css代替图片" class="headerlink" title="css代替图片"></a>css代替图片</h4><ul>
+<li>场景：适用于移动端或较高级的浏览器，而且绘制的图案较为简单。</li>
+<li>原理：css方式可以用来绘制相对简单的团来代替图片，一般使用before或者after伪元素来丰富图案的复杂度。</li>
+<li>优势：具有实现简单，图片体积小的特点，可以实现简单的动态效果</li>
+<li>劣势：也受限于css的兼容性特点，绘制复杂图案困难</li>
+</ul>
+<h4 id="svg-代替图片"><a href="#svg-代替图片" class="headerlink" title="svg 代替图片"></a>svg 代替图片</h4><ul>
+<li>场景：是一种矢量图片，支持透明，缩放，动画，除了android2.3的手机，其它场景都支持，是一种比较好的图片代替方案。 </li>
+<li>优势：<ul>
+<li>矢量图形，不受像素影响——SVG的这个特性使得它在不同的平台或者媒体下表现良好，无论屏幕分辨率如何SVG对动画的支持较好；</li>
+<li>其DOM结构可以被其特定语法或者Javascript控制，从而轻松的实现动画</li>
+<li>Javascript可以完全控制SVG Dom 元素</li>
+<li>SVG的结构是 XML，其可访问性（盲文、声音朗读等）、可操作性、可编程性、可被CSS样式化完胜Canvas。另外，其支持 ARIA 属性，使其如虎添翼。</li>
+</ul>
+</li>
+<li>劣势：<ul>
+<li>DOM比正常的图形慢，而且如果其结点多而杂，就更慢了</li>
+<li>不适合网页游戏等；当然，我们可以结合 Canvas + SVG来实现</li>
+</ul>
+</li>
+</ul>
+<h4 id="canvas代替图片"><a href="#canvas代替图片" class="headerlink" title="canvas代替图片"></a>canvas代替图片</h4><ul>
+<li>场景：需要高性能的图片或动画 原理：适用html5的canvas元素绘制创建图片</li>
+<li>优势：<ul>
+<li>整个就是画2D图形时，页面渲染性能比较高，页面渲染性能受图形复杂度影响小，性能只受图形的分辨率的影响，</li>
+<li>画出来的图形可以直接保存为 .png 或者 .jpg的图形，适合于画光栅图像或者不规则图形</li>
+</ul>
+</li>
+<li>劣势：没有dom操作，必须依赖定时器，文字渲染性能差，不能添加描述(title属性什么的)，兼容性限制。</li>
+</ul>
+<h4 id="iconfont是一种web字体来代替图片的解决方案："><a href="#iconfont是一种web字体来代替图片的解决方案：" class="headerlink" title="iconfont是一种web字体来代替图片的解决方案："></a>iconfont是一种web字体来代替图片的解决方案：</h4><ul>
+<li>场景：代替页面上色彩单一的图片 </li>
+<li>优势：兼容性好，应用广，目前使用也很广泛 </li>
+<li>劣势：但是由于字体的颜色设置单一，只能用于代替颜色单一的图片，对于色彩复杂的图片，iconfont处理起来比较困难。</li>
+</ul>
+<h3 id="加载对应尺寸"><a href="#加载对应尺寸" class="headerlink" title="加载对应尺寸"></a>加载对应尺寸</h3><ul>
+<li>场景：不同终端对同一个图片需求不一样，可以根据终端加载不同的图片来节省没必要的流量 。</li>
+<li>这里我们还需要了解的点就是css像素和设备像素，对于图片来说，高DPI的屏幕上需要使用分辨率更高的图片。</li>
+<li>原理：通过picture元素，picturefill或平台判断来为不同终端平台输出不同的图片</li>
+<li>优势：<ul>
+<li>减少没必要的图片加载，灵活控制，</li>
+<li>慢速用户加载小图片不至于加载失败，移动端没必要加载大尺寸图片等，可以通过不同方式兼容所有浏览器 </li>
+</ul>
+</li>
+<li>劣势：无法避免图片的加载过程，图片本身没优化</li>
+</ul>
+<h3 id="压缩图片"><a href="#压缩图片" class="headerlink" title="压缩图片"></a>压缩图片</h3><ul>
+<li>场景：在不得不加载图片的前提下，要进一步提升优化效果，只能通过有损或无损压缩来减少图片的大小， </li>
+<li>原理：对图片进行无损、有损压缩或格式转换，转为压缩后图片或压缩率更高的图片格式来实现 </li>
+<li>优势：减少图片加载流量，效果比较明显</li>
+<li>劣势：服务器和浏览器压力增大，而且服务器需要额外的服务支持，格式转换要考虑浏览器的兼容性。</li>
+</ul>
+<h3 id="预加载"><a href="#预加载" class="headerlink" title="预加载"></a>预加载</h3><ul>
+<li>场景：<ul>
+<li>默认情况下浏览器会对页面中和当前域名（正在浏览网页的域名）不在同一个域的域名进行预获取，并且缓存结果，这就是隐式的DNS Prefetch。</li>
+<li>如果想对页面中没有出现的域进行预获取，那么就要使用显示的DNS Prefetch了，也就是使用link标签。</li>
+<li>我们在查看淘宝网的前端代码可以看到前端加上了dns-prefetch，因为前端静态资源的域名和主域名<a href="http://taobao.com" target="_blank" rel="external">http://taobao.com</a> 不一致<br><img src="http://upload-images.jianshu.io/upload_images/1430231-09d984e52c61689a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></li>
+</ul>
+</li>
+</ul>
+<h3 id="选择正确的图片格式"><a href="#选择正确的图片格式" class="headerlink" title="选择正确的图片格式"></a>选择正确的图片格式</h3><p><img src="http://note.youdao.com/yws/public/resource/10855f68513248a6a0ad168addccd298/C50EDDB356C641C5833BC4C659FE3E11" alt="image"></p>
+<p>几种文件的特点  </p>
+<ul>
+<li>aseline-jpeg <ul>
+<li>这种类型的JPEG文件存储方式是按从上到下的扫描方式，把每一行顺序的保存在JPEG文件中。</li>
+<li>打开这个文件显示它的内容时，数据将按照存储时的顺序从上到下一行一行的被显示出来，直到所有的数据都被读完，就完成了整张图片的显示。</li>
+<li>如果文件较大或者网络下载速度较慢，那么就会看到图片被一行行加载的效果，这种格式的JPEG没有什么优点，因此，一般都推荐使用Progressive JPEG</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>preogressive-jpeg <ul>
+<li>preogressive-jpeg 和Baseline一遍扫描不同，Progressive JPEG文件包含多次扫描，这些扫描顺寻的存储在JPEG文件中。</li>
+<li>打开文件过程中，会先显示整个图片的模糊轮廓，随着扫描次数的增加，图片变得越来越清晰。</li>
+<li>这种格式的主要优点是在网络较慢的情况下，可以看到图片的轮廓知道正在加载的图片大概是什么。 </li>
+<li>__这两种jpeg格式文件的效果对比如下：<ul>
+<li>jpeg优势： 非常通用，JPEG在色调及颜色平滑变化的相片或是写实绘画（painting）上可以达到它最佳的效果。</li>
+<li>jpeg劣势： 它并不适合于线条绘图（drawing）和其他文字或图示（iconic）的图形,因为它的压缩方法用在这些图形的型态上,会得到不适当的结果；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>gif <ul>
+<li>GIF(Graphics Interchange Format)的原义是“图像互换格式”。</li>
+<li>GIF文件的数据，是一种基于LZW算法(串表压缩算法)连续色调的无损压缩格式。是目前web网页中十分常用的一种动画文件格式。 </li>
+<li>优势：<ul>
+<li>优秀的压缩算法使其在一定程度上保证图像质量的同时将体积变得很小<br>可插入多帧,从而实现动画效果</li>
+<li>可设置透明色以产生对象浮现于背景之上的效果</li>
+</ul>
+</li>
+<li>劣势： 　<ul>
+<li>由于采用了8位压缩,最多只能处理256种颜色（2的8次方）,故不宜应用于真彩图像。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>png <ul>
+<li>png文件分为png8(8位透明png)、png24(256色png)、png32(多阶透明png)，png的有点在于使用位图实现web上的透明图片，以实现比较好的体验。<br><img src="http://7tszky.com1.z0.glb.clouddn.com/FnRWuq6-ElyEqZIw0MrUiXaSL3e7" alt="image"></li>
+</ul>
+<ul>
+<li>支持256色调色板技术以产生小体积文件</li>
+<li>最高支持48位真彩色图像以及16位灰度图像。</li>
+<li>支持Alpha通道的半透明特性。</li>
+<li>支持图像亮度的gamma校正信息。- 支持存储附加文本信息,以保留图像名称、作者、版权、创作时间、注释等信息。</li>
+<li>使用无损压缩。</li>
+<li>渐近显示和流式读写,适合在网络传输中快速显示预览效果后再展示全貌。</li>
+<li>使用CRC循环冗余编码防止文件出错。</li>
+</ul>
+</li>
+</ul>
+<p>最新的PNG标准允许在一个文件内存储多幅图像。</p>
+<pre><code>* 劣势：但也有一些软件不能使用适合的预测，生成的文件较大(IE6只支持PNG8)
+</code></pre><ul>
+<li><p>webp</p>
+<blockquote>
+<p><a href="http://www.webpagetest.org/video/view.php?id=130125_7b15e676f5fa0b736f247ff0ed36517e64d9c9ea" target="_blank" rel="external">图片加载测试样例</a></p>
+<ul>
+<li>目前移动端Android4.0以上、PC端chorme 10+（14 ~ 16 有渲染bug）、opera 11+ 、safri均支持webp格式图片。</li>
+<li>WEBP与JPG相比较，编码速度慢10倍，解码速度慢1.5倍，而绝大部分的网络应用中，图片都是静态文件，所以对于用户使用只需要关心解码速度即可。</li>
+<li>但实际上，webp虽然会增加额外的解码时间，但是由于减少了文件体积，缩短了加载的时间，实际上文件的渲染速度反而变快了。</li>
+<li>webp上目前可行的应用场景：<br>  1.客户端软件，内嵌了基于Chromium的webview，这类浏览器中应用的网页是可以完全使用webp格式，提升加载渲染速度，不考虑兼容。<br>  2.用node-webkit开发的程序，用webp可以减少文件包的体积。<br>  3.移动应用 或 网页游戏,界面需要大量图片,可以嵌入webp的解码包,能够节省用户流量，提升访问速度</li>
+</ul>
+</blockquote>
+<ul>
+<li>优势：对于png图片,webp比png小了45%,但是缺点是你压缩的时候需要的时间更久了；</li>
+<li>劣势：兼容性不太好, 只有opera,和chrome支持;</li>
+</ul>
+</li>
+<li><p>apng</p>
+<ul>
+<li>简单来讲apng格式图片使用多个单张png连接起来的动画图片格式，支持全透明通道动画。</li>
+<li>相比于gif动画，没有毛刺，质量更高，但目前支持的浏览器并不完全。</li>
+<li>可以去can i use查看其兼容性。目前可用性相对较低，适用于对动画质量要求很高的情况</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>svg<ul>
+<li>上面讲诉使用svg代替图片的时候已经讲解了。这里不再赘述。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>bpg</li>
+<li><a href="http://blog.ibireme.com/2015/11/02/mobile_image_benchmark/" target="_blank" rel="external">图片画质比较 性能测试对比</a><ul>
+<li>BPG (Better Portable Graphics)是一个新的图片格式。用来代替jpeg和webp的方案。这种格式主要有以下特点 优势：<ul>
+<li>高压缩比。在画质相同的情况下比jpeg小的多</li>
+<li>使用一个很小的js解码器就可以被浏览器支持</li>
+<li>基于高清视频压缩标准 (HEVC) 一个子集开发</li>
+<li>支持和jpeg相同的色值，并且在有损压缩的通知支持透明，</li>
+<li>单通道支持8到14位色值区域</li>
+<li>支持有损压缩</li>
+<li>可以添加更多的元数据编码</li>
+<li>支持动画</li>
+<li>相近画质前提下比webp更小</li>
+</ul>
+</li>
+<li>性能：<ul>
+<li>根据mozilla的研究，bpg使用的HEVC编码比原生的HEVC性能更好，因为BPG的头部比HEVC的头部更小</li>
+<li>支持4:2:2和4:2:0的色值设置</li>
+</ul>
+</li>
+<li>BPG可以用于硬件上支持HEVC编解码器</li>
+<li>这种图片格式目前还没有被浏览器支持，需要js解码，但其优势非常明显</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>资料参考：<br><a href="http://imweb.io/topic/568b20194c44bcc56092e415" target="_blank" rel="external">前端图片优化机制</a><br><a href="http://www.jianshu.com/p/55e48032b30e" target="_blank" rel="external">前端图片优化的方案</a><br><a href="http://www.cnblogs.com/wizcabbit/p/web-image-optimization.html" target="_blank" rel="external">Web性能优化：图片优化</a><br>如本篇内容有所损害他人利益，请积极联系我。</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/性能优化/" rel="tag">#性能优化</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/02/16ms的优化-渲染优化/" rel="next" title="16ms的优化-渲染优化">
+                <i class="fa fa-chevron-left"></i> 16ms的优化-渲染优化
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/02/前端图片优化/"
+           data-title="前端图片优化" data-url="http://yoursite.com/2016/08/02/前端图片优化/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前端图片优化方案："><span class="nav-number">1.</span> <span class="nav-text">前端图片优化方案：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用base64编码代替图片"><span class="nav-number">1.1.</span> <span class="nav-text">使用base64编码代替图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合并图片sprite"><span class="nav-number">1.2.</span> <span class="nav-text">合并图片sprite</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图片延迟加载"><span class="nav-number">1.3.</span> <span class="nav-text">图片延迟加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用css、svg、canvas或iconfont代替图片"><span class="nav-number">1.4.</span> <span class="nav-text">使用css、svg、canvas或iconfont代替图片</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#css代替图片"><span class="nav-number">1.4.1.</span> <span class="nav-text">css代替图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#svg-代替图片"><span class="nav-number">1.4.2.</span> <span class="nav-text">svg 代替图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#canvas代替图片"><span class="nav-number">1.4.3.</span> <span class="nav-text">canvas代替图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iconfont是一种web字体来代替图片的解决方案："><span class="nav-number">1.4.4.</span> <span class="nav-text">iconfont是一种web字体来代替图片的解决方案：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载对应尺寸"><span class="nav-number">1.5.</span> <span class="nav-text">加载对应尺寸</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩图片"><span class="nav-number">1.6.</span> <span class="nav-text">压缩图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预加载"><span class="nav-number">1.7.</span> <span class="nav-text">预加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择正确的图片格式"><span class="nav-number">1.8.</span> <span class="nav-text">选择正确的图片格式</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
