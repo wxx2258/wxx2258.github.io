@@ -1,0 +1,973 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端知识总结,性能优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="此篇是根据16毫秒的优化Web前端性能优化的微观分析来自舜子的分享，以及PPT资料学习整理。如对本篇内容有所疑问的，可以发表评论，或者查看源资料视频。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="16ms的优化-渲染优化">
+<meta property="og:url" content="http://yoursite.com/2016/08/02/16ms的优化-渲染优化/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="此篇是根据16毫秒的优化Web前端性能优化的微观分析来自舜子的分享，以及PPT资料学习整理。如对本篇内容有所疑问的，可以发表评论，或者查看源资料视频。">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/54E14647202941BCBCD40752092BC516">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/AE35F70FEC214696A6A4FADFC13E7348">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/7139B7C74BA14F3FA89A5336B411E768">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/B8B6658642B244D2937CB27D23172F54">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/9E8B09ECC5E84890825BFAC665629959">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/5D97997055C34FFEB5B5BCBDEEF8C5FD">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/7652A5AE627545A984C255E9514833BC">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/E3E6685B4BFE4982BA080CBB472A85C4">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/19259575A20A44E485564593A774B5E9">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/BEDC3EDF1BC247BFACBA760103D7A61E">
+<meta property="og:updated_time" content="2016-08-02T06:04:38.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="16ms的优化-渲染优化">
+<meta name="twitter:description" content="此篇是根据16毫秒的优化Web前端性能优化的微观分析来自舜子的分享，以及PPT资料学习整理。如对本篇内容有所疑问的，可以发表评论，或者查看源资料视频。">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/54E14647202941BCBCD40752092BC516">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 16ms的优化-渲染优化 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                16ms的优化-渲染优化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-02T14:02:56+08:00" content="2016-08-02">
+              2016-08-02
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/02/16ms的优化-渲染优化/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/02/16ms的优化-渲染优化/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>此篇是根据<br><a href="http://v.youku.com/v_show/id_XNjIxNzg5Nzk2.html?f=20115067" target="_blank" rel="external">16毫秒的优化Web前端性能优化的微观分析</a>来自舜子的分享，以及<a href="http://velocity.oreilly.com.cn/2013/ppts/16_ms_optimization--web_front-end_performance_optimization.pdf" target="_blank" rel="external">PPT资料</a>学习整理。如对本篇内容有所疑问的，可以发表评论，或者查看源资料视频。<br><a id="more"></a></p>
+</blockquote>
+<h2 id="web前端性能优化的前提背景"><a href="#web前端性能优化的前提背景" class="headerlink" title="web前端性能优化的前提背景"></a>web前端性能优化的前提背景</h2><ul>
+<li>移动端的普及，如今前端人员在开发的时候越来越要考虑开发一套适用于PC端和移动终端的应用。</li>
+<li>然而对于现在来说，这并不是一项简单的任务。PC端和移动终端的一系列差异。也导致我们在开发过程中需要考虑更多的问题。</li>
+<li>Google提出1s完成终端页面首屏的渲染<ol>
+<li>服务器响应应该小于200ms</li>
+<li>尽量少的重定向</li>
+<li>尽量少的第一次渲染的请求数</li>
+<li>避免过多堵塞的JS和CSS的堵塞</li>
+<li>给浏览器留200ms的渲染时间</li>
+<li>优化我们的JS执行效率和渲染时间</li>
+</ol>
+</li>
+<li>其实，在性能优化中，我们主要分为网络优化和渲染优化，其中，网络优化在现今是比较重要也比较完善的一项，我们也有了许多经验，如<ul>
+<li>DNS Lookup</li>
+<li>减少重定向</li>
+<li>并行请求</li>
+<li>压缩</li>
+<li>缓存</li>
+<li>按需加载</li>
+<li>前端模块化</li>
+<li>…</li>
+</ul>
+</li>
+<li>本篇主要讲的是渲染优化，可能你会问了，为什么网络优化才是主要的，还要花心思在渲染优化上么，然浏览器去做就行了。  <ul>
+<li>其实不然，虽然在庞大的网络优化面前，渲染优化显得杯水车薪，但依然值得我们去探索。</li>
+<li>其次移动终端和PC端性能存在很大的差异，甚至不同的手机之间性能都存在不小的差异，同一套应用在不同的设备上运行就有了很大的差异。</li>
+<li>最后，不要认为渲染优化就只是浏览器的责任，前端开发人员也要重视，而浏览器开发人员也是积极响应前端开发人员的。</li>
+</ul>
+</li>
+</ul>
+<h2 id="学习渲染优化"><a href="#学习渲染优化" class="headerlink" title="学习渲染优化"></a>学习渲染优化</h2><p><strong>一切性能优化都建立在可衡量的<br>数据分析基础之上。</strong>  </p>
+<ul>
+<li>我相信并不会有人对这句话有所疑问吧，为此，在正式学习相关知识前，我们需要三个准备工作：  <ul>
+<li>确定渲染性能的分析标准</li>
+<li>准备尺子去衡量渲染性能标准</li>
+<li>了解浏览器基础的渲染的工作原理<br>下面我们一一分析和简述这三个工作的重要性。</li>
+</ul>
+</li>
+</ul>
+<h3 id="确定渲染性能的分析标准"><a href="#确定渲染性能的分析标准" class="headerlink" title="确定渲染性能的分析标准"></a>确定渲染性能的分析标准</h3><ul>
+<li>帧数：<ul>
+<li>显示设备的刷新率，通常为 50-60HZ</li>
+<li>1000ms / 60 ≈ 16.6ms（1毫秒的优化意味着6%的性能提升）</li>
+<li>那么在这16ms中浏览器需要做什么事情呢？<ul>
+<li>脚本执行 –&gt; 渲染 –&gt; 绘制/合成</li>
+<li>如何这浏览器无法在这16.6ms中完成这三件事件，会出现什么情况呢？就会出现卡顿，无反应等不良现象。</li>
+</ul>
+</li>
+<li>所以我们的Web渲染性能优化目标就是：<ul>
+<li>脚本时间+渲染时间+绘制时间 &lt; 16.6ms(每帧)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="准备好尺子去衡量渲染性能标准"><a href="#准备好尺子去衡量渲染性能标准" class="headerlink" title="准备好尺子去衡量渲染性能标准"></a>准备好尺子去衡量渲染性能标准</h3><ul>
+<li>DevTools （chrome/safari）<ul>
+<li>Timeline</li>
+<li>Profiles</li>
+</ul>
+</li>
+<li>IE11 DevTools<ul>
+<li>UI Responsiveness</li>
+<li>Profiler</li>
+</ul>
+</li>
+<li>这里我们介绍和使用Timeline，其他工具感兴趣的自行学习。<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/54E14647202941BCBCD40752092BC516" alt="image"></li>
+<li>Timeline 两个常用的模式<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/AE35F70FEC214696A6A4FADFC13E7348" alt="image"><ul>
+<li>event ：查看事件的数量和性能影响。</li>
+<li>Frames ： 针对每一帧情况的详解。</li>
+<li>TIPs：</li>
+</ul>
+<ol>
+<li>Timeline记录行为的快捷键是 Ctrl+E (Mac:Cmd+E)</li>
+<li>灰色区域是非渲染引擎发生的渲染行为。</li>
+<li>透明的线框,是在两次显示器刷新周期中的等待时间</li>
+</ol>
+</li>
+</ul>
+<h3 id="了解浏览器渲染引擎"><a href="#了解浏览器渲染引擎" class="headerlink" title="了解浏览器渲染引擎"></a>了解浏览器渲染引擎</h3><ul>
+<li><p>浏览器的渲染过程：<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/7139B7C74BA14F3FA89A5336B411E768" alt="image"></p>
+</li>
+<li><p>浏览器渲染的丢帧现象<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/B8B6658642B244D2937CB27D23172F54" alt="image"></p>
+</li>
+</ul>
+<h3 id="需要优化的点"><a href="#需要优化的点" class="headerlink" title="需要优化的点"></a>需要优化的点</h3><ul>
+<li>Rendering/Reflow<ul>
+<li>重新计算样式(Recalculate Style)</li>
+<li>计算布局(Layout)</li>
+</ul>
+</li>
+<li>Painting/Repaint<ul>
+<li>绘制(Paint Setup/Paint(size x size))</li>
+</ul>
+</li>
+</ul>
+<h2 id="案例分析和内容学习"><a href="#案例分析和内容学习" class="headerlink" title="案例分析和内容学习"></a>案例分析和内容学习</h2><h3 id="不要在16ms内多次发生重复的渲染行为"><a href="#不要在16ms内多次发生重复的渲染行为" class="headerlink" title="不要在16ms内多次发生重复的渲染行为"></a>不要在16ms内多次发生重复的渲染行为</h3><ul>
+<li>使用RAF来动画逻辑在合理的刷新时间内</li>
+<li>保证渲染引擎的原子操作, 分离批量dom的读写行为</li>
+<li>高端浏览器中尽量使用原生的classList操作样式的切换</li>
+</ul>
+<h4 id="不要使用setTimeout-setInterval，使用requestAnimationFrame"><a href="#不要使用setTimeout-setInterval，使用requestAnimationFrame" class="headerlink" title="不要使用setTimeout / setInterval，使用requestAnimationFrame"></a>不要使用setTimeout / setInterval，使用requestAnimationFrame</h4><ul>
+<li><p>为什么不要使用setTimeout<br>在一个渲染周期中，会出现多次重新计算，布局问题。然而内容并不会在显示屏中显示出来。浪费多余的layout计算。<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/9E8B09ECC5E84890825BFAC665629959" alt="image"></p>
+</li>
+<li><p>requestAnimationFrame 的高阶用法</p>
+</li>
+<li>有时候，会出现这么一种情况，<strong>在PC电脑和手机终端. 操作系统对用户行为响应时间差是小于16ms的</strong>，这是什么意思呢？<ul>
+<li>在16ms内，用户可能会触发多次events</li>
+<li>每次events会带来没必要的js callback</li>
+<li>举个例子，我们在手机触摸事件中，处理滚动，点击等多个事件，而这每个事件的回调函数中js的执行带来不必要的计算。</li>
+</ul>
+</li>
+<li><p>我们通过实例来看一下这种16ms内的多事件的性能浪费。<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/5D97997055C34FFEB5B5BCBDEEF8C5FD" alt="image"></p>
+</li>
+<li><p>使用RAF来保证事件行为选择正确的时间进行渲染</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">// 注意：这里实例代码并不完善。仅用于示范用法。</span><br><span class="line">var _drag = document.getElementById(&apos;drag&apos;);</span><br><span class="line">var _clientX,_clientY,rAF;</span><br><span class="line"></span><br><span class="line">var _mousedown = function (evt) &#123;</span><br><span class="line">	_clientX = evt.clientX - (_drag._x || 0);</span><br><span class="line">	_clientY = evt.clientY - (_drag._y || 0);</span><br><span class="line"></span><br><span class="line">	document.addEventListener(&quot;mousemove&quot;,update,true);</span><br><span class="line">	document.addEventListener(&quot;mouseup&quot;,clearEvent,true);</span><br><span class="line"></span><br><span class="line">	draw();//鼠标点击开始，以及开始监听RAF</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 只用来计算对话框新的位置，不做表现渲染</span><br><span class="line">var update = function(evt)&#123;</span><br><span class="line">	_drag._x = evt.clientX - _clientX;</span><br><span class="line">	_drag._y = evt.clientY - _clientY;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 获取最新的坐标，绘制对话框位置</span><br><span class="line">var draw = function()&#123;</span><br><span class="line">	_drag.style.webkitTransform = &quot;translate3D(&quot; + _drag._x + &quot;px,&quot; + _drag._y + &quot;px,0px)&quot; ;</span><br><span class="line">	rAF = requestAnimationFrame(draw)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="不要破坏DOM操作应有的“原子性”"><a href="#不要破坏DOM操作应有的“原子性”" class="headerlink" title="不要破坏DOM操作应有的“原子性”"></a>不要破坏DOM操作应有的“原子性”</h4><ul>
+<li><p>糟糕的DOM操作<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/7652A5AE627545A984C255E9514833BC" alt="image"></p>
+</li>
+<li><p>读写分离，批量操纵<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/E3E6685B4BFE4982BA080CBB472A85C4" alt="image"></p>
+</li>
+</ul>
+<h4 id="使用classList代替className"><a href="#使用classList代替className" class="headerlink" title="使用classList代替className"></a>使用classList代替className</h4><ul>
+<li>className 只要一赋值，就一定出现一次rendering计算。</li>
+<li>classList的add 和 remove ，浏览器会进行样式名是否存在的判断，以减少重复的rendering</li>
+<li>classList需要注意浏览器兼容问题。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function addClassName(name) &#123;</span><br><span class="line">	aDiv.classList.add(name);</span><br><span class="line">&#125;</span><br><span class="line">function removeClassName(name)&#123;</span><br><span class="line">	aDiv.classList.remove();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="构造渲染树的渲染行为的触发条件"><a href="#构造渲染树的渲染行为的触发条件" class="headerlink" title="构造渲染树的渲染行为的触发条件"></a>构造渲染树的渲染行为的触发条件</h4><p><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/19259575A20A44E485564593A774B5E9" alt="image"></p>
+<h3 id="painting优化"><a href="#painting优化" class="headerlink" title="painting优化"></a>painting优化</h3><h4 id="GPU加速"><a href="#GPU加速" class="headerlink" title="GPU加速"></a>GPU加速</h4><p>什么是GPU，其实就是一个渲染器 。 高端浏览器中(webkit,chrome) ，Painting行为是CPU为GPU准备纹理素材。然后GPU对素材进行渲染处理。</p>
+<ul>
+<li><p>可以利用的GPU优势：</p>
+<ul>
+<li>纹理缓存</li>
+<li>图形层</li>
+</ul>
+</li>
+<li><p>GPU Hack</p>
+<ul>
+<li><p>强制把需要进行动画行为的dom对象，在GPU中创建Layout缓存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">-webkit-transform: translateZ(0);</span><br><span class="line">-webkit-backface-visibility: hidden;</span><br><span class="line">• TranslateZ</span><br><span class="line">• Perspective</span><br><span class="line">• backface-visibility</span><br><span class="line">• ScaleZ</span><br><span class="line">• RotateX</span><br><span class="line">• RotateY</span><br><span class="line">• RotateZ</span><br><span class="line">• Translate3D</span><br><span class="line">• Scale3D</span><br><span class="line">• Rotate3D</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>虽然GPU加速很强大，但并非银弹，我们仍然需要在合适的地方使用</strong>。</p>
+</li>
+</ul>
+</li>
+<li>合理使用GPU加速<ul>
+<li>使用GPU加速, 其实是利用了GPU层的缓存,让渲染资源可以重复利用。</li>
+<li>GPU加速是把双刃剑, 过多的GPU层同样会带来性能开销, 请留意Composite Layouts是否超出了16ms。</li>
+<li>只在用户行为和动画需要的场景去创建GPU层，但是需要及时回收。</li>
+</ul>
+</li>
+</ul>
+<h4 id="平滑的动画"><a href="#平滑的动画" class="headerlink" title="平滑的动画"></a>平滑的动画</h4><ul>
+<li><p>做动画效果应注意的几个点：</p>
+<ul>
+<li>需要被脚本控制的动画，合理利用GPU缓存，减少Painting</li>
+<li>使用 CSS transition 完成一次性动画</li>
+<li>动画过程避免布局渲染</li>
+</ul>
+</li>
+<li><p>不同位移变化带来的渲染和绘制的运算量<br><img src="http://note.youdao.com/yws/public/resource/88fb163004bd8f33db2d0be62faf6103/BEDC3EDF1BC247BFACBA760103D7A61E" alt="image"></p>
+</li>
+<li><p>使用CSS3动画需要知道这些事情</p>
+</li>
+<li>单独使用 translate2D 并不会独立产生GPU层，不会在GPU中进行合成。</li>
+<li>CSS的补间动画配合translate2D，可以在GPU中产生一次临时的层以进行运算，但是遇到“布局计算”的变化则无效。</li>
+<li>CSS3动画通常是不被阻塞的。你可以获得独立的线程进行绘制。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>避免重复更新渲染树<ul>
+<li>16ms内最多出现一次Recalculate Style 和 Render Layout<ul>
+<li>使用RequestAnimationFrame</li>
+<li>Dom的批量操作读/写</li>
+<li>使用classList</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>绘制优化：使用GPU加速<ul>
+<li>位置变化的 Render Layout 计算可以在GPU里完成</li>
+<li>GPU使用也需要注意缓存回收</li>
+<li>一次性动画使用CSS transition 完成</li>
+</ul>
+</li>
+<li>16ms内还可以考虑其他事情 <ul>
+<li>CPU资源合理调度</li>
+<li>避免内存回收</li>
+<li>如果需要完全避免渲染树的计算，可以考虑Canvas</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>PPT和案例地址：<a href="https://github.com/puterjam/speed_render" target="_blank" rel="external">https://github.com/puterjam/speed_render</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/性能优化/" rel="tag">#性能优化</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/31/web缓存（三）-HTML5缓存/" rel="next" title="web缓存（三）-HTML5缓存">
+                <i class="fa fa-chevron-left"></i> web缓存（三）-HTML5缓存
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/02/16ms的优化-渲染优化/"
+           data-title="16ms的优化-渲染优化" data-url="http://yoursite.com/2016/08/02/16ms的优化-渲染优化/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#web前端性能优化的前提背景"><span class="nav-number">1.</span> <span class="nav-text">web前端性能优化的前提背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习渲染优化"><span class="nav-number">2.</span> <span class="nav-text">学习渲染优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定渲染性能的分析标准"><span class="nav-number">2.1.</span> <span class="nav-text">确定渲染性能的分析标准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备好尺子去衡量渲染性能标准"><span class="nav-number">2.2.</span> <span class="nav-text">准备好尺子去衡量渲染性能标准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#了解浏览器渲染引擎"><span class="nav-number">2.3.</span> <span class="nav-text">了解浏览器渲染引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需要优化的点"><span class="nav-number">2.4.</span> <span class="nav-text">需要优化的点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例分析和内容学习"><span class="nav-number">3.</span> <span class="nav-text">案例分析和内容学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不要在16ms内多次发生重复的渲染行为"><span class="nav-number">3.1.</span> <span class="nav-text">不要在16ms内多次发生重复的渲染行为</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#不要使用setTimeout-setInterval，使用requestAnimationFrame"><span class="nav-number">3.1.1.</span> <span class="nav-text">不要使用setTimeout / setInterval，使用requestAnimationFrame</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不要破坏DOM操作应有的“原子性”"><span class="nav-number">3.1.2.</span> <span class="nav-text">不要破坏DOM操作应有的“原子性”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用classList代替className"><span class="nav-number">3.1.3.</span> <span class="nav-text">使用classList代替className</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#构造渲染树的渲染行为的触发条件"><span class="nav-number">3.1.4.</span> <span class="nav-text">构造渲染树的渲染行为的触发条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#painting优化"><span class="nav-number">3.2.</span> <span class="nav-text">painting优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GPU加速"><span class="nav-number">3.2.1.</span> <span class="nav-text">GPU加速</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#平滑的动画"><span class="nav-number">3.2.2.</span> <span class="nav-text">平滑的动画</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
