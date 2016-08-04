@@ -1,0 +1,961 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端知识总结,react,源码解读系类," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="本篇的相关参考代码地址：https://github.com/livoras/simple-virtual-dom自己的代码整理：https://github.com/wxx2258/front-end-knowledge/tree/master/js%E6%A1%86%E6%9E%B6/react.js
+目录：
+前言
+对前端应用状态管理思考
+Virtual DOM 算法
+算法实现：
+用js对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React.js源码学习-Vitural Dom">
+<meta property="og:url" content="http://yoursite.com/2016/08/04/React-js源码学习-Vitural-Dom/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="本篇的相关参考代码地址：https://github.com/livoras/simple-virtual-dom自己的代码整理：https://github.com/wxx2258/front-end-knowledge/tree/master/js%E6%A1%86%E6%9E%B6/react.js
+目录：
+前言
+对前端应用状态管理思考
+Virtual DOM 算法
+算法实现：
+用js对象">
+<meta property="og:image" content="https://camo.githubusercontent.com/ac106f4ec3a61bb86f6e94d5f6dda8da668e5415/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f736f72742d7461626c652e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/99c6493c947b4b543e47cca917303af5c876a7f8/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f646f6d2d617474726962757465732e706e67">
+<meta property="og:image" content="https://pic1.zhimg.com/0c08dbb6b1e0745780de4d208ad51d34_b.png">
+<meta property="og:image" content="https://pic2.zhimg.com/d712a73769688afe1ef1a055391d99ed_b.png">
+<meta property="og:image" content="https://pic1.zhimg.com/52654992aba15fc90e2dac8b2387d0c4_b.png">
+<meta property="og:image" content="https://pic2.zhimg.com/7541670c089b84c59b84e9438e92a8e9_b.png">
+<meta property="og:image" content="https://pic4.zhimg.com/c0aa97d996de5e7f1069e97ca3accfeb_r.png">
+<meta property="og:image" content="https://camo.githubusercontent.com/6cdc35026bcbb6aa0f8fb4aaca3596963192a7f3/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f6466732d77616c6b2e706e67">
+<meta property="og:updated_time" content="2016-08-04T03:59:56.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React.js源码学习-Vitural Dom">
+<meta name="twitter:description" content="本篇的相关参考代码地址：https://github.com/livoras/simple-virtual-dom自己的代码整理：https://github.com/wxx2258/front-end-knowledge/tree/master/js%E6%A1%86%E6%9E%B6/react.js
+目录：
+前言
+对前端应用状态管理思考
+Virtual DOM 算法
+算法实现：
+用js对象">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/ac106f4ec3a61bb86f6e94d5f6dda8da668e5415/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f736f72742d7461626c652e706e67">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> React.js源码学习-Vitural Dom | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                React.js源码学习-Vitural Dom
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-04T11:58:20+08:00" content="2016-08-04">
+              2016-08-04
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/04/React-js源码学习-Vitural-Dom/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/04/React-js源码学习-Vitural-Dom/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本篇的相关参考代码地址：<a href="https://github.com/livoras/simple-virtual-dom" target="_blank" rel="external">https://github.com/livoras/simple-virtual-dom</a><br>自己的代码整理：<a href="https://github.com/wxx2258/front-end-knowledge/tree/master/js%E6%A1%86%E6%9E%B6/react.js" target="_blank" rel="external">https://github.com/wxx2258/front-end-knowledge/tree/master/js%E6%A1%86%E6%9E%B6/react.js</a></p>
+<h1 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h1><ol>
+<li>前言</li>
+<li>对前端应用状态管理思考</li>
+<li>Virtual DOM 算法</li>
+<li>算法实现：<ul>
+<li>用js对象模拟DOM树</li>
+<li>比较两棵虚拟DOM树的差异</li>
+<li>把差异应用到真正的DOM树上</li>
+</ul>
+</li>
+<li>结语</li>
+<li>Refernces<a id="more"></a>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1></li>
+</ol>
+<ul>
+<li>个人在大一下学期开始接触和学习前端，在工作室师兄师姐的帮助下，在前端的道路上不断前行，到现在，自己已经自学了一年半的前端了。从jq的使用到对js的基础学习，再到学习backbone，react.js的使用，对于react.js的使用和学习，从一开始的新奇， 疑问，到惊叹。  </li>
+<li>随着时间的推进，自己使用框架的同时，也开始发现，使用一个框架不能单单的去用就算了，对其中的原理和思想的学习也是很重要的。</li>
+<li>react.js 的核心部分大概为：<ul>
+<li>虚拟dom对象 （Vitual Dom）</li>
+<li>虚拟dom差异化算法 （diff algorithm）</li>
+<li>单向数据流渲染（Data Flow）</li>
+<li>组件生命周期</li>
+<li>事件处理</li>
+</ul>
+</li>
+<li>本篇章主要讲述 虚拟dom对象 和 dom diff算法 。</li>
+</ul>
+</blockquote>
+<h1 id="对前端应用状态管理的思考"><a href="#对前端应用状态管理的思考" class="headerlink" title="对前端应用状态管理的思考"></a>对前端应用状态管理的思考</h1><p>假如现在你需要写一个像下面一样的表格的应用程序，这个表格可以根据不同的字段进行升序或者降序的展示。<br><img src="https://camo.githubusercontent.com/ac106f4ec3a61bb86f6e94d5f6dda8da668e5415/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f736f72742d7461626c652e706e67" alt="image"></p>
+<p>这个应用程序看起来很简单，你可以想出好几种不同的方式来写。最容易想到的可能是，在你的 JavaScript 代码里面存储这样的数据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var sortKey = &quot;new&quot; // 排序的字段，新增（new）、取消（cancel）、净关注（gain）、累积（cumulate）人数</span><br><span class="line">var sortType = 1 // 升序还是逆序</span><br><span class="line">var data = [&#123;...&#125;, &#123;...&#125;, &#123;..&#125;, ..] // 表格数据</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>用三个字段分别存储当前排序的字段、排序方向、还有表格数据；<br>–&gt; 然后给表格头部加点击事件：当用户点击特定的字段的时候，根据上面几个字段存储的内容来对内容进行排序，<br>–&gt; 然后用 JS 或者 jQuery 操作DOM，更新页面的排序状态（表头的那几个箭头表示当前排序状态，也需要更新）和表格内容。</p>
+</blockquote>
+<p>这样做会导致的后果就是：随着应用程序越来越负载，需要在js里面维护的代码也越来越多，需要监听事件和在事件回调更新dom操作越来越多，应用程序越来越难以维护。  </p>
+<p>一旦视图中的状态有所改变，那就需要dom操作，在MVC框架中，我们还是无法减少维护的状态，需要操作的dom操作还是一样多，只是换了个地方而已。在MVVM中，就是在状态发生改变后，使用模板引擎重新构造整棵树，但这样会很慢，性价比太低。所以我们需要的是状态改变对应局部的更新。  </p>
+<p>React.js中，其实Virtual DOm 就是维护状态，更新试图，而且策略的避免了整棵DOM树变更。</p>
+<h1 id="Virtual-DOM算法"><a href="#Virtual-DOM算法" class="headerlink" title="Virtual DOM算法"></a>Virtual DOM算法</h1><ul>
+<li><p>DOM是很慢的。如果我们把一个简单的div元素的属性都打印出来，你会看到：<br><img src="https://camo.githubusercontent.com/99c6493c947b4b543e47cca917303af5c876a7f8/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f646f6d2d617474726962757465732e706e67" alt="image"></p>
+<blockquote>
+<p>可以看出，真正的DOM元素非常庞大，这是因为标准就是这么设计的。而且操作他们的时候要小心，一旦经常触碰重排，性能就将受到影响。  </p>
+</blockquote>
+</li>
+<li><p>相对于DOM对象，原声的javascript对象处理起来更快，也更简单，属性信息可以通过javascript对象表现。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">var element = &#123;</span><br><span class="line">  tagName: &apos;ul&apos;, // 节点标签名</span><br><span class="line">  props: &#123; // DOM的属性，用一个对象存储键值对</span><br><span class="line">    id: &apos;list&apos;</span><br><span class="line">  &#125;,</span><br><span class="line">  children: [ // 该节点的子节点</span><br><span class="line">    &#123;tagName: &apos;li&apos;, props: &#123;class: &apos;item&apos;&#125;, children: [&quot;Item 1&quot;]&#125;,</span><br><span class="line">    &#123;tagName: &apos;li&apos;, props: &#123;class: &apos;item&apos;&#125;, children: [&quot;Item 2&quot;]&#125;,</span><br><span class="line">    &#123;tagName: &apos;li&apos;, props: &#123;class: &apos;item&apos;&#125;, children: [&quot;Item 3&quot;]&#125;,</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">上面对应的HTML写法是：</span><br><span class="line"></span><br><span class="line">&lt;ul id=&apos;list&apos;&gt;</span><br><span class="line">  &lt;li class=&apos;item&apos;&gt;Item 1&lt;/li&gt;</span><br><span class="line">  &lt;li class=&apos;item&apos;&gt;Item 2&lt;/li&gt;</span><br><span class="line">  &lt;li class=&apos;item&apos;&gt;Item 3&lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>既然DOM树的信息都可以用javascript对象来表示，那就可以用javascript对象表示的树结构来构建一棵真正的DOM树。而Virtual DOM 算法这是实现这个事情的。</p>
+</blockquote>
+<ul>
+<li><p>Virtual DOM 算法，包括几个步骤：</p>
+<ul>
+<li>用javascript对象结构表示DOM 树的结构，然后用这个树构造一个真正的DOM 树，插到文档</li>
+<li>当状态变更的时候，重新构造一颗新的对象树，然后用新的树和旧的树进行比较，记录两棵树的差异</li>
+<li>把上面一步记录的差异应用到原先构建真正的DOM树上，试图就更新了。</li>
+</ul>
+</li>
+<li><p>Virtual DOM 本质上就是js和DOM之间做了一个缓存。</p>
+</li>
+</ul>
+<h1 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h1><h2 id="步骤一：用JS对象模拟DOM树。"><a href="#步骤一：用JS对象模拟DOM树。" class="headerlink" title="步骤一：用JS对象模拟DOM树。"></a>步骤一：用JS对象模拟DOM树。</h2><ol>
+<li>用javascript来表示一个DOM节点，只需要记录它的节点类型，属性，还有子节点:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//注意：之后的代码使用了ES6 一些语法。有不明之处请读者自行了解。</span><br><span class="line">//element.js</span><br><span class="line">function Element (tagName, props, children) &#123;</span><br><span class="line">  this.tagName = tagName</span><br><span class="line">  this.props = props</span><br><span class="line">  this.children = children</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">module.exports = function (tagName, props, children) &#123;</span><br><span class="line">  return new Element(tagName, props, children)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如上面的DOM结构就可以简单的表示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var el = require(&apos;./element&apos;)</span><br><span class="line"></span><br><span class="line">var ul = el(&apos;ul&apos;, &#123;id: &apos;list&apos;&#125;, [</span><br><span class="line">  el(&apos;li&apos;, &#123;class: &apos;item&apos;&#125;, [&apos;Item 1&apos;]),</span><br><span class="line">  el(&apos;li&apos;, &#123;class: &apos;item&apos;&#125;, [&apos;Item 2&apos;]),</span><br><span class="line">  el(&apos;li&apos;, &#123;class: &apos;item&apos;&#125;, [&apos;Item 3&apos;])</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<ol>
+<li>现在的ul只是一个javascript对象表示的DOM结构，页面上并没有这个结构，我们可以根据这个ul 构建真正的<ul>:</ul></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Element.prototype.render = function () &#123;</span><br><span class="line">  var el = document.createElement(this.tagName) // 根据tagName构建</span><br><span class="line">  var props = this.props</span><br><span class="line"></span><br><span class="line">  for (var propName in props) &#123; // 设置节点的DOM属性</span><br><span class="line">    var propValue = props[propName]</span><br><span class="line">    el.setAttribute(propName, propValue)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  var children = this.children || []</span><br><span class="line"></span><br><span class="line">  children.forEach(function (child) &#123;</span><br><span class="line">    var childEl = (child instanceof Element)</span><br><span class="line">      ? child.render() // 如果子节点也是虚拟DOM，递归构建DOM节点</span><br><span class="line">      : document.createTextNode(child) // 如果字符串，只构建文本节点</span><br><span class="line">    el.appendChild(childEl)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  return el</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>render 方法可以根据tagName构建一个真正的Dom节点，然后设置这个节点的属性，最后递归吧自己的子节点也构建起来。只需要：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var ulRoot = ul.render()</span><br><span class="line">document.body.appendChild(ulRoot)</span><br></pre></td></tr></table></figure>
+<h2 id="步骤二：比较两棵虚拟DOM树的差异"><a href="#步骤二：比较两棵虚拟DOM树的差异" class="headerlink" title="步骤二：比较两棵虚拟DOM树的差异"></a>步骤二：比较两棵虚拟DOM树的差异</h2><h3 id="差异比较的优化"><a href="#差异比较的优化" class="headerlink" title="差异比较的优化"></a>差异比较的优化</h3><p>正如很多人斗志到，比较两棵DOM 数的差异是 Virtual DOM 算法最核心的地方，也就是 Dom diff算法。</p>
+<ul>
+<li>传统的diff算法，通过循环递归对节点进行依次对比，算法复杂度达到O(n^3)，其中 n 是树中节点的总数。稍微对算法的有一定学习的人都知道，O(n^3)这样的算法复杂度效率究竟低下。</li>
+<li>React diff，<strong>React通过制定大胆的策略，将O(n^3) 复杂度的问题转换成 O(n) 复杂度的问题。</strong><blockquote>
+<p>diff策略</p>
+</blockquote>
+</li>
+</ul>
+<ol>
+<li>Web UI 中 DOM 节点跨层级的移动操作特别少，可以忽略不计。</li>
+<li>拥有相同类的两个组件将会生成相似的树形结构，拥有不同类的两个组件将会生成不同的树形结构。</li>
+<li>对于同一层级的一组子节点，它们可以通过唯一 id 进行区分。</li>
+</ol>
+<h4 id="tree-diff"><a href="#tree-diff" class="headerlink" title="tree diff"></a>tree diff</h4><blockquote>
+<p>基于策略一，React 对树的算法进行了简洁明了的优化，即对树进行分层比较，两棵树只会对同一层次的节点进行比较。</p>
+</blockquote>
+<p>既然 DOM 节点跨层级的移动操作少到可以忽略不计，针对这一现象，<strong>React 通过 updateDepth 对 Virtual DOM 树进行层级控制</strong>，只会对相同颜色方框内的 DOM 节点进行比较，即同一个父节点下的所有子节点。当发现节点已经不存在，则该节点及其子节点会被完全删除掉，不会用于进一步的比较。这样只需要对树进行一次遍历，便能完成整个 DOM 树的比较。<br><img src="https://pic1.zhimg.com/0c08dbb6b1e0745780de4d208ad51d34_b.png" alt="image"></p>
+<blockquote>
+<p>如果出现了 DOM 节点跨层级的移动操作，React diff 会有怎样的表现呢？<br>由于React只考虑同层级节点的位置变换，而对于不同级层，只有创建和删除。<br><img src="https://pic2.zhimg.com/d712a73769688afe1ef1a055391d99ed_b.png" alt="image"></p>
+</blockquote>
+<h4 id="component-diff"><a href="#component-diff" class="headerlink" title="component diff"></a>component diff</h4><p>React 是基于组件构建应用的，对于组件间的比较所采取的策略也是简洁高效。</p>
+<ul>
+<li><p>如果是同一类型的组件，按照原策略继续比较 virtual DOM tree。</p>
+</li>
+<li><p>如果不是，则将该组件判断为 dirty component，从而替换整个组件下的所有子节点。</p>
+</li>
+<li><p>对于同一类型的组件，有可能其 Virtual DOM 没有任何变化，如果能够确切的知道这点那可以节省大量的 diff 运算时间，因此 React 允许用户通过 shouldComponentUpdate() 来判断该组件是否需要进行 diff。</p>
+</li>
+</ul>
+<p>如下图，当 component D 改变为 component G 时，即使这两个 component 结构相似，一旦 React 判断 D 和 G 是不同类型的组件，就不会比较二者的结构，而是直接删除 component D，重新创建 component G 以及其子节点。虽然当两个 component 是不同类型但结构相似时，React diff 会影响性能，但正如 React 官方博客所言：不同类型的 component 是很少存在相似 DOM tree 的机会，因此这种极端因素很难在实现开发过程中造成重大影响的。<br><img src="https://pic1.zhimg.com/52654992aba15fc90e2dac8b2387d0c4_b.png" alt="image"></p>
+<h4 id="element-diff"><a href="#element-diff" class="headerlink" title="element diff"></a>element diff</h4><h5 id="节点操作"><a href="#节点操作" class="headerlink" title="节点操作"></a>节点操作</h5><p>当节点处于同一层级时，React diff 提供了三种节点操作，分别为：INSERT_MARKUP（插入）、MOVE_EXISTING（移动）和 REMOVE_NODE（删除）。</p>
+<ul>
+<li>INSERT_MARKUP，新的 component 类型不在老集合里， 即是全新的节点，需要对新节点执行插入操作。</li>
+<li>MOVE_EXISTING，在老集合有新 component 类型，且 element 是可更新的类型，generateComponentChildren 已调用 receiveComponent，这种情况下 prevChild=nextChild，就需要做移动操作，可以复用以前的 DOM 节点。</li>
+<li>REMOVE_NODE，老 component 类型，在新集合里也有，但对应的 element 不同则不能直接复用和更新，需要执行删除操作，或者老 component 不在新集合里的，也需要执行删除操作。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">function enqueueInsertMarkup(parentInst, markup, toIndex) &#123;</span><br><span class="line">  updateQueue.push(&#123;</span><br><span class="line">    parentInst: parentInst,</span><br><span class="line">    parentNode: null,</span><br><span class="line">    type: ReactMultiChildUpdateTypes.INSERT_MARKUP,</span><br><span class="line">    markupIndex: markupQueue.push(markup) - 1,</span><br><span class="line">    content: null,</span><br><span class="line">    fromIndex: null,</span><br><span class="line">    toIndex: toIndex,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function enqueueMove(parentInst, fromIndex, toIndex) &#123;</span><br><span class="line">  updateQueue.push(&#123;</span><br><span class="line">    parentInst: parentInst,</span><br><span class="line">    parentNode: null,</span><br><span class="line">    type: ReactMultiChildUpdateTypes.MOVE_EXISTING,</span><br><span class="line">    markupIndex: null,</span><br><span class="line">    content: null,</span><br><span class="line">    fromIndex: fromIndex,</span><br><span class="line">    toIndex: toIndex,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function enqueueRemove(parentInst, fromIndex) &#123;</span><br><span class="line">  updateQueue.push(&#123;</span><br><span class="line">    parentInst: parentInst,</span><br><span class="line">    parentNode: null,</span><br><span class="line">    type: ReactMultiChildUpdateTypes.REMOVE_NODE,</span><br><span class="line">    markupIndex: null,</span><br><span class="line">    content: null,</span><br><span class="line">    fromIndex: fromIndex,</span><br><span class="line">    toIndex: null,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="优化情景"><a href="#优化情景" class="headerlink" title="优化情景"></a>优化情景</h5><blockquote>
+<p>如下图，老集合中包含节点：A、B、C、D，更新后的新集合中包含节点：B、A、D、C，<br>此时新老集合进行 diff 差异化对比，发现 B != A，则创建并插入 B 至新集合，删除老集合 A；<br>以此类推，创建并插入 A、D 和 C，删除 B、C 和 D。<br><img src="https://pic2.zhimg.com/7541670c089b84c59b84e9438e92a8e9_b.png" alt="image"></p>
+</blockquote>
+<p>React发现这类操作繁琐冗余，因为这些都是些相同的节点，只是因为位置发生变化，导致需要进行繁杂低效的删除，创建操作。<br>针对这一现象，React提出优化策略：允许开发者对同一层级子节点，添加唯一key进行区分。</p>
+<blockquote>
+<p>新老集合所包含的节点，如下图所示，新老集合进行 diff 差异化对比，<br>通过 key 发现新老集合中的节点都是相同的节点，因此无需进行节点删除和创建，<br>只需要将老集合中节点的位置进行移动，更新为新集合中节点的位置，<br>此时 React 给出的 diff 结果为：B、D 不做任何操作，A、C 进行移动操作，即可。<br><img src="https://pic4.zhimg.com/c0aa97d996de5e7f1069e97ca3accfeb_r.png" alt="image"></p>
+</blockquote>
+<h5 id="优化分析"><a href="#优化分析" class="headerlink" title="优化分析"></a>优化分析</h5><ul>
+<li>首先对新集合的节点进行循环遍历，for (name in nextChildren)，通过唯一 key 可以判断新老集合中是否存在相同的节点，  </li>
+<li>if (prevChild === nextChild)，  <ul>
+<li>如果存在相同节点，则进行移动操作，  <ul>
+<li>但在移动前需要将当前节点在老集合中的位置与 在新集合中的位置lastIndex 进行比较，  </li>
+<li>if (child._mountIndex &lt; lastIndex)，则进行节点移动操作，否则不执行该操作。  </li>
+<li>更新 lastIndex = Math.max(prevChild._mountIndex, lastIndex)</li>
+<li>这是一种顺序优化手段，lastIndex 一直在更新，表示访问过的节点在老集合中最右的位置（即最大的位置），  </li>
+</ul>
+</li>
+<li>如果新集合中当前访问的节点比 lastIndex大， 说明当前访问节点在老集合中就比上一个节点位置靠后，则该节点不会影响其他节点的位置，因此不用添加到差异队列中，即不执行移动操作，只有当访问的节点比 lastIndex 小时，才需要进行移动操作。</li>
+</ul>
+</li>
+</ul>
+<h3 id="步骤2-1：深度优先遍历，记录差异"><a href="#步骤2-1：深度优先遍历，记录差异" class="headerlink" title="步骤2.1：深度优先遍历，记录差异"></a>步骤2.1：深度优先遍历，记录差异</h3><p>在实际的代码中，会对新旧两棵树进行一个深度优先的遍历（学过数据结构或者离散数学的应该都熟知深度优先的遍历，如果你还不知道深度优先的遍历，请自己学习这一算法。），这样每个节点都会有一个唯一的标记：<br><img src="https://camo.githubusercontent.com/6cdc35026bcbb6aa0f8fb4aaca3596963192a7f3/687474703a2f2f6c69766f7261732e6769746875622e696f2f626c6f672f7669727475616c2d646f6d2f6466732d77616c6b2e706e67" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">// diff 函数，对比两棵树</span><br><span class="line">function diff (oldTree, newTree) &#123;</span><br><span class="line">  var index = 0 // 当前节点的标志</span><br><span class="line">  var patches = &#123;&#125; // 用来记录每个节点差异的对象</span><br><span class="line">  dfsWalk(oldTree, newTree, index, patches)</span><br><span class="line">  return patches</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 对两棵树进行深度优先遍历</span><br><span class="line">function dfsWalk (oldNode, newNode, index, patches) &#123;</span><br><span class="line">  // 对比oldNode和newNode的不同，记录下来</span><br><span class="line">  patches[index] = [...]</span><br><span class="line"></span><br><span class="line">  diffChildren(oldNode.children, newNode.children, index, patches)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 遍历子节点</span><br><span class="line">function diffChildren (oldChildren, newChildren, index, patches) &#123;</span><br><span class="line">  var leftNode = null</span><br><span class="line">  var currentNodeIndex = index</span><br><span class="line">  oldChildren.forEach(function (child, i) &#123;</span><br><span class="line">    var newChild = newChildren[i]</span><br><span class="line">    currentNodeIndex = (leftNode &amp;&amp; leftNode.count) // 计算节点的标识</span><br><span class="line">      ? currentNodeIndex + leftNode.count + 1</span><br><span class="line">      : currentNodeIndex + 1</span><br><span class="line">    dfsWalk(child, newChild, currentNodeIndex, patches) // 深度遍历子节点</span><br><span class="line">    leftNode = child</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>例如，上面的div和新的div有差异，当前的标记是0，那么：<br>patches[0] = [{difference}, {difference}, …] // 用数组存储新旧节点的不同<br>同理p是patches[1]，ul是patches[3]，类推。</p>
+</blockquote>
+<h3 id="步骤2-2：差异类型"><a href="#步骤2-2：差异类型" class="headerlink" title="步骤2.2：差异类型"></a>步骤2.2：差异类型</h3><p>上面说的节点的差异指的是什么呢？对 DOM 操作可能会：</p>
+<ul>
+<li>替换掉原来的节点，例如把上面的div换成了section</li>
+<li>移动、删除、新增子节点，例如上面div的子节点，把p和ul顺序互换</li>
+<li>修改了节点的属性</li>
+<li>对于文本节点，文本内容可能会改变。例如修改上面的文本节点2内容为Virtual DOM2 。</li>
+</ul>
+<p>所以我们定义了几种差异类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var REPLACE = 0</span><br><span class="line">var REORDER = 1</span><br><span class="line">var PROPS = 2</span><br><span class="line">var TEXT = 3</span><br></pre></td></tr></table></figure>
+<ol>
+<li>对于节点替换，很简单。判断新旧节点的tagName和是不是一样的，如果不一样的说明需要替换掉。如div换成section，就记录下：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">patches[0] = [&#123;</span><br><span class="line">  type: REPALCE,</span><br><span class="line">  node: newNode // el(&apos;section&apos;, props, children)</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<ol>
+<li>如果给div新增了属性id为container，就记录下：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">patches[0] = [&#123;</span><br><span class="line">  type: REPALCE,</span><br><span class="line">  node: newNode // el(&apos;section&apos;, props, children)</span><br><span class="line">&#125;, &#123;</span><br><span class="line">  type: PROPS,</span><br><span class="line">  props: &#123;</span><br><span class="line">    id: &quot;container&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<ol>
+<li>如果是文本节点，如上面的文本节点2，就记录下：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">patches[2] = [&#123;</span><br><span class="line">  type: TEXT,</span><br><span class="line">  content: &quot;Virtual DOM2&quot;</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<p>那如果把我div的子节点重新排序呢？<br>例如p, ul, div的顺序换成了div, p,ul。<br>这个该怎么对比？如果按照同层级进行顺序对比的话，它们都会被替换掉。如p和div的tagName不同，p会被div所替代。最终，三个节点都会被替换，这样DOM开销就非常大。而实际上是不需要替换节点，而只需要经过节点移动就可以达到，我们只需知道怎么进行移动。</p>
+<blockquote>
+<p>这种情况我们在前面element diff已经有所讨论，不加赘述。</p>
+</blockquote>
+<h3 id="步骤2-3：把差异应用到真正的DOM树上"><a href="#步骤2-3：把差异应用到真正的DOM树上" class="headerlink" title="步骤2.3：把差异应用到真正的DOM树上"></a>步骤2.3：把差异应用到真正的DOM树上</h3><p>因为步骤一所构建的 JavaScript 对象树和render出来真正的DOM树的信息、结构是一样的。所以我们可以对那棵DOM树也进行深度优先的遍历，遍历的时候从步骤二生成的patches对象中找出当前遍历的节点差异，然后进行 DOM 操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">function patch (node, patches) &#123;</span><br><span class="line">  var walker = &#123;index: 0&#125;</span><br><span class="line">  dfsWalk(node, walker, patches)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function dfsWalk (node, walker, patches) &#123;</span><br><span class="line">  var currentPatches = patches[walker.index] // 从patches拿出当前节点的差异</span><br><span class="line"></span><br><span class="line">  var len = node.childNodes</span><br><span class="line">    ? node.childNodes.length</span><br><span class="line">    : 0</span><br><span class="line">  for (var i = 0; i &lt; len; i++) &#123; // 深度遍历子节点</span><br><span class="line">    var child = node.childNodes[i]</span><br><span class="line">    walker.index++</span><br><span class="line">    dfsWalk(child, walker, patches)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (currentPatches) &#123;</span><br><span class="line">    applyPatches(node, currentPatches) // 对当前节点进行DOM操作</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>applyPatches，根据不同类型的差异对当前节点进行 DOM 操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">function applyPatches (node, currentPatches) &#123;</span><br><span class="line">  currentPatches.forEach(function (currentPatch) &#123;</span><br><span class="line">    switch (currentPatch.type) &#123;</span><br><span class="line">      case REPLACE:</span><br><span class="line">        node.parentNode.replaceChild(currentPatch.node.render(), node)</span><br><span class="line">        break</span><br><span class="line">      case REORDER:</span><br><span class="line">        reorderChildren(node, currentPatch.moves)</span><br><span class="line">        break</span><br><span class="line">      case PROPS:</span><br><span class="line">        setProps(node, currentPatch.props)</span><br><span class="line">        break</span><br><span class="line">      case TEXT:</span><br><span class="line">        node.textContent = currentPatch.content</span><br><span class="line">        break</span><br><span class="line">      default:</span><br><span class="line">        throw new Error(&apos;Unknown patch type &apos; + currentPatch.type)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>Virtual DOM 算法主要是实现上面步骤的三个函数：element，diff，patch。然后就可以实际的进行使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 1. 构建虚拟DOM</span><br><span class="line">var tree = el(&apos;div&apos;, &#123;&apos;id&apos;: &apos;container&apos;&#125;, [</span><br><span class="line">    el(&apos;h1&apos;, &#123;style: &apos;color: blue&apos;&#125;, [&apos;simple virtal dom&apos;]),</span><br><span class="line">    el(&apos;p&apos;, [&apos;Hello, virtual-dom&apos;]),</span><br><span class="line">    el(&apos;ul&apos;, [el(&apos;li&apos;)])</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">// 2. 通过虚拟DOM构建真正的DOM</span><br><span class="line">var root = tree.render()</span><br><span class="line">document.body.appendChild(root)</span><br><span class="line"></span><br><span class="line">// 3. 生成新的虚拟DOM</span><br><span class="line">var newTree = el(&apos;div&apos;, &#123;&apos;id&apos;: &apos;container&apos;&#125;, [</span><br><span class="line">    el(&apos;h1&apos;, &#123;style: &apos;color: red&apos;&#125;, [&apos;simple virtal dom&apos;]),</span><br><span class="line">    el(&apos;p&apos;, [&apos;Hello, virtual-dom&apos;]),</span><br><span class="line">    el(&apos;ul&apos;, [el(&apos;li&apos;), el(&apos;li&apos;)])</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">// 4. 比较两棵虚拟DOM树的不同</span><br><span class="line">var patches = diff(tree, newTree)</span><br><span class="line"></span><br><span class="line">// 5. 在真正的DOM元素上应用变更</span><br><span class="line">patch(root, patches)</span><br></pre></td></tr></table></figure>
+<p>当然这是非常粗糙的实践，实际中还需要处理事件监听等；生成虚拟 DOM 的时候也可以加入 JSX 语法。这些事情都做了的话，就可以构造一个简单的ReactJS了。</p>
+<h1 id="Refernces"><a href="#Refernces" class="headerlink" title="Refernces"></a>Refernces</h1><p><a href="https://github.com/livoras/blog/issues/13" target="_blank" rel="external">深度剖析：如何实现一个 Virtual DOM 算法（作者：戴嘉华）</a><br><a href="https://zhuanlan.zhihu.com/p/20346379" target="_blank" rel="external">React 源码剖析系列 － 不可思议的 react diff (作者：twobin)</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/react/" rel="tag">#react</a>
+          
+            <a href="/tags/源码解读系类/" rel="tag">#源码解读系类</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/02/前端图片优化/" rel="next" title="前端图片优化">
+                <i class="fa fa-chevron-left"></i> 前端图片优化
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/04/React-js源码学习-Vitural-Dom/"
+           data-title="React.js源码学习-Vitural Dom" data-url="http://yoursite.com/2016/08/04/React-js源码学习-Vitural-Dom/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录："><span class="nav-number">1.</span> <span class="nav-text">目录：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对前端应用状态管理的思考"><span class="nav-number">3.</span> <span class="nav-text">对前端应用状态管理的思考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Virtual-DOM算法"><span class="nav-number">4.</span> <span class="nav-text">Virtual DOM算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#算法实现"><span class="nav-number">5.</span> <span class="nav-text">算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤一：用JS对象模拟DOM树。"><span class="nav-number">5.1.</span> <span class="nav-text">步骤一：用JS对象模拟DOM树。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤二：比较两棵虚拟DOM树的差异"><span class="nav-number">5.2.</span> <span class="nav-text">步骤二：比较两棵虚拟DOM树的差异</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#差异比较的优化"><span class="nav-number">5.2.1.</span> <span class="nav-text">差异比较的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tree-diff"><span class="nav-number">5.2.1.1.</span> <span class="nav-text">tree diff</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#component-diff"><span class="nav-number">5.2.1.2.</span> <span class="nav-text">component diff</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#element-diff"><span class="nav-number">5.2.1.3.</span> <span class="nav-text">element diff</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#节点操作"><span class="nav-number">5.2.1.3.1.</span> <span class="nav-text">节点操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#优化情景"><span class="nav-number">5.2.1.3.2.</span> <span class="nav-text">优化情景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#优化分析"><span class="nav-number">5.2.1.3.3.</span> <span class="nav-text">优化分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤2-1：深度优先遍历，记录差异"><span class="nav-number">5.2.2.</span> <span class="nav-text">步骤2.1：深度优先遍历，记录差异</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤2-2：差异类型"><span class="nav-number">5.2.3.</span> <span class="nav-text">步骤2.2：差异类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤2-3：把差异应用到真正的DOM树上"><span class="nav-number">5.2.4.</span> <span class="nav-text">步骤2.3：把差异应用到真正的DOM树上</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Refernces"><span class="nav-number">7.</span> <span class="nav-text">Refernces</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
