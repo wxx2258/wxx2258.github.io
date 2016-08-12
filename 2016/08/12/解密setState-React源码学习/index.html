@@ -1,0 +1,831 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端知识总结,react,源码解读系类," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="this.setState() 方法应该是每一个使用 React的同学都熟悉的API。然而，你是否真正了解setState么？先看下面这个小问题，看看是否能够答对。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解密setState-React源码学习">
+<meta property="og:url" content="http://yoursite.com/2016/08/12/解密setState-React源码学习/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="this.setState() 方法应该是每一个使用 React的同学都熟悉的API。然而，你是否真正了解setState么？先看下面这个小问题，看看是否能够答对。">
+<meta property="og:image" content="https://pic1.zhimg.com/4fd1a155faedff00910dfabe5de143fc_b.png">
+<meta property="og:image" content="https://pic3.zhimg.com/961aed5b866146dff1707fb0c43914d2_b.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/444c2862d8bb4be66ab2ceb370dcbe9c_b.jpg">
+<meta property="og:updated_time" content="2016-08-12T09:14:42.070Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="解密setState-React源码学习">
+<meta name="twitter:description" content="this.setState() 方法应该是每一个使用 React的同学都熟悉的API。然而，你是否真正了解setState么？先看下面这个小问题，看看是否能够答对。">
+<meta name="twitter:image" content="https://pic1.zhimg.com/4fd1a155faedff00910dfabe5de143fc_b.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 解密setState-React源码学习 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                解密setState-React源码学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-12T17:11:49+08:00" content="2016-08-12">
+              2016-08-12
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/12/解密setState-React源码学习/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/12/解密setState-React源码学习/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>this.setState() 方法应该是每一个使用 React的同学都熟悉的API。然而，你是否真正了解setState么？先看下面这个小问题，看看是否能够答对。<br><a id="more"></a></p>
+<h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">class Example extends React.Component &#123;</span><br><span class="line">  constructor() &#123;</span><br><span class="line">    super();</span><br><span class="line">    this.state = &#123;</span><br><span class="line">      val: 0</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    this.setState(&#123;val: this.state.val + 1&#125;);</span><br><span class="line">    console.log(this.state.val);    // 第 1 次 log</span><br><span class="line"></span><br><span class="line">    this.setState(&#123;val: this.state.val + 1&#125;);</span><br><span class="line">    console.log(this.state.val);    // 第 2 次 log</span><br><span class="line"></span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      this.setState(&#123;val: this.state.val + 1&#125;);</span><br><span class="line">      console.log(this.state.val);  // 第 3 次 log</span><br><span class="line"></span><br><span class="line">      this.setState(&#123;val: this.state.val + 1&#125;);</span><br><span class="line">      console.log(this.state.val);  // 第 4 次 log</span><br><span class="line">    &#125;, 0);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    return null;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>问上述代码中 4 次 console.log 打印出来的 val 分别是多少？</p>
+<p>不卖关子，先揭晓答案，4 次 log 的值分别是：0、0、2、3。</p>
+<p>下面我们来解析下 setState</p>
+<h2 id="setState-干了什么"><a href="#setState-干了什么" class="headerlink" title="setState 干了什么"></a>setState 干了什么</h2><p><img src="https://pic1.zhimg.com/4fd1a155faedff00910dfabe5de143fc_b.png" alt="image"></p>
+<blockquote>
+<p>上面这个流程图是一个简化的 setState 调用栈，注意其中核心的状态判断，在<a href="https://github.com/facebook/react/blob/35962a00084382b49d1f9e3bd36612925f360e5b/src/renderers/shared/reconciler/ReactUpdates.js#L199" target="_blank" rel="external">源码(ReactUpdates.js)</a>中</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function enqueueUpdate(component) &#123;</span><br><span class="line">  // ...</span><br><span class="line"></span><br><span class="line">  if (!batchingStrategy.isBatchingUpdates) &#123;</span><br><span class="line">    batchingStrategy.batchedUpdates(enqueueUpdate, component);</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  dirtyComponents.push(component);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>若 isBatchingUpdates 为true ，则把当前组件（即调用了setState的组件）放入dirtyComponents数组中；否则batchUpdate所有列队的更新。先不管这个batchingStrategy,从这里可以看出前面一开始的例子中4次setState 调用之所以不同，这里的逻辑判断起了关键性的作用。  </p>
+<ul>
+<li>那么这个batchingStrategy 到底是什么？其实他就是一个对象，定义一个 isBatchUpdates的布尔值，和一个 batchedUpdates 方法。下面一段简化的代码：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var batchingStrategy = &#123;</span><br><span class="line">  isBatchingUpdates: false,</span><br><span class="line"></span><br><span class="line">  batchedUpdates: function(callback, a, b, c, d, e) &#123;</span><br><span class="line">    // ...</span><br><span class="line">    batchingStrategy.isBatchingUpdates = true;</span><br><span class="line">    </span><br><span class="line">    transaction.perform(callback, null, a, b, c, d, e);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意 batchingStrategy 中的 batchedUpdates 方法中，有一个 transaction.perform 调用。这就引出了本文要介绍的核心概念 —— Transaction（事务）。</p>
+</blockquote>
+<h2 id="初识-Transaction"><a href="#初识-Transaction" class="headerlink" title="初识  Transaction"></a>初识  Transaction</h2><p>这里的Transaction 和 MySQL的Transaction 的原理和行为都不一样。</p>
+<p>在 Transaction 的源码中有一幅特别的 ASCII 图，形象的解释了 Transaction 的作用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * &lt;pre&gt;</span><br><span class="line"> *                       wrappers (injected at creation time)</span><br><span class="line"> *                                      +        +</span><br><span class="line"> *                                      |        |</span><br><span class="line"> *                    +-----------------|--------|--------------+</span><br><span class="line"> *                    |                 v        |              |</span><br><span class="line"> *                    |      +---------------+   |              |</span><br><span class="line"> *                    |   +--|    wrapper1   |---|----+         |</span><br><span class="line"> *                    |   |  +---------------+   v    |         |</span><br><span class="line"> *                    |   |          +-------------+  |         |</span><br><span class="line"> *                    |   |     +----|   wrapper2  |--------+   |</span><br><span class="line"> *                    |   |     |    +-------------+  |     |   |</span><br><span class="line"> *                    |   |     |                     |     |   |</span><br><span class="line"> *                    |   v     v                     v     v   | wrapper</span><br><span class="line"> *                    | +---+ +---+   +---------+   +---+ +---+ | invariants</span><br><span class="line"> * perform(anyMethod) | |   | |   |   |         |   |   | |   | | maintained</span><br><span class="line"> * +-----------------&gt;|-|---|-|---|--&gt;|anyMethod|---|---|-|---|-|--------&gt;</span><br><span class="line"> *                    | |   | |   |   |         |   |   | |   | |</span><br><span class="line"> *                    | |   | |   |   |         |   |   | |   | |</span><br><span class="line"> *                    | |   | |   |   |         |   |   | |   | |</span><br><span class="line"> *                    | +---+ +---+   +---------+   +---+ +---+ |</span><br><span class="line"> *                    |  initialize                    close    |</span><br><span class="line"> *                    +-----------------------------------------+</span><br><span class="line"> * &lt;/pre&gt;</span><br><span class="line"> */</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结合图，实际上 一个所谓的Transaction 就是将需要执行的method实用wrapper封装起来，再通过 Trasaction 提供的perform方法执行。<br>在perform之前，需要将所有wrapper 的 initialize 全部执行完， 在perform完成之后，（即method完成之后）在执行所有的close方法。<br>一组initialize 以及 close 成为一个wrapper ，从上图可以看出 transaction 由多个wrapper组成。</p>
+</blockquote>
+<p>具体到代码实现，React中的 Transaction 提供一个 Mixin方便其他模块实现自己需要的事务。但是我们还需要 把 Transaction 的Mixin混入自己的事务实现 ， 还需要额外实现一个抽象的 getTransactionWrappers 接口。<br>这个接口是 Transaction 用来获取所有需要封装的前置方法（initialize）和收尾方法（close）的，因此需要返回一个数组的对象，每个对象分别有key 为 initialize 和 close 方法。</p>
+<ul>
+<li>下面是一个简单使用 Transaction 的 例子</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">var Transaction = require(&apos;./Transaction&apos;);</span><br><span class="line"></span><br><span class="line">// 我们自己定义的 Transaction</span><br><span class="line">var MyTransaction = function() &#123;</span><br><span class="line">  // do sth.</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Object.assign(MyTransaction.prototype, Transaction.Mixin, &#123;</span><br><span class="line">  getTransactionWrappers: function() &#123;</span><br><span class="line">    return [&#123;</span><br><span class="line">      initialize: function() &#123;</span><br><span class="line">        console.log(&apos;before method perform&apos;);</span><br><span class="line">      &#125;,</span><br><span class="line">      close: function() &#123;</span><br><span class="line">        console.log(&apos;after method perform&apos;);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">var transaction = new MyTransaction();</span><br><span class="line">var testMethod = function() &#123;</span><br><span class="line">  console.log(&apos;test&apos;);</span><br><span class="line">&#125;</span><br><span class="line">transaction.perform(testMethod);</span><br><span class="line"></span><br><span class="line">// before method perform</span><br><span class="line">// test</span><br><span class="line">// after method perform</span><br></pre></td></tr></table></figure>
+<p>当然在实际代码中 React 还做了异常处理等工作，这里不详细展开。有兴趣的同学可以参考源码中 <a href="https://github.com/facebook/react/blob/401e6f10587b09d4e725763984957cf309dfdc30/src/shared/utils/Transaction.js" target="_blank" rel="external">Transaction</a> 实现。</p>
+<p>说了这么多 Transaction，它到底是怎么导致上文所述 setState 的各种不同表现的呢？</p>
+<h2 id="解密setState"><a href="#解密setState" class="headerlink" title="解密setState"></a>解密setState</h2><p>那么 Transaction 和 setState有什么关系？下面我么一步步解释开头例子的原因。  </p>
+<ul>
+<li><p>首先我们把4 次setState简单归类。前两次我们分为一类，因为它们在同一个栈中执行； setTimeout中的两次setState属于另一类，原因同上。让我们看一个这两类的调用栈。  </p>
+<ul>
+<li><p>ComponentDidMount 中 setState 的调用栈。</p>
+<blockquote>
+<p>这样的调用栈更加复杂<br><img src="https://pic3.zhimg.com/961aed5b866146dff1707fb0c43914d2_b.jpg" alt="image"></p>
+</blockquote>
+</li>
+<li><p>setTimeout 中 setState 的调用栈</p>
+<blockquote>
+<p>这样调用栈则简单多<br><img src="https://pic1.zhimg.com/444c2862d8bb4be66ab2ceb370dcbe9c_b.jpg" alt="image"></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>让我们重点看看第一类 setState 的调用栈，有没有发现什么熟悉的身影？没错，就是batchedUpdates 方法，<strong>原来早在 setState 调用前，已经处于 batchedUpdates 执行的 transaction 中！</strong></p>
+</li>
+<li><p>那这次 batchedUpdate 方法，又是谁调用的呢？让我们往前再追溯一层，原来是 ReactMount.js 中的_renderNewRootComponent 方法。也就是说，<strong>整个将 React 组件渲染到 DOM 中的过程就处于一个大的 Transaction 中。</strong></p>
+</li>
+<li><p>接下来的解释就顺理成章了，<strong>因为在 componentDidMount 中调用 setState 时，batchingStrategy 的 isBatchingUpdates 已经被设为 true，所以两次 setState 的结果并没有立即生效，而是被放进了 dirtyComponents 中。这也解释了两次打印this.state.val 都是 0 的原因，新的 state 还没有被应用到组件中。</strong></p>
+</li>
+<li><p>再反观 setTimeout 中的两次 setState，<strong>因为没有前置的 batchedUpdate 调用，所以 batchingStrategy 的 isBatchingUpdates 标志位是 false，也就导致了新的 state 马上生效，没有走到 dirtyComponents 分支</strong>。也就是，setTimeout 中第一次 setState 时，this.state.val 为 1，而 setState 完成后打印时 this.state.val 变成了 2。第二次 setState 同理。</p>
+</li>
+</ul>
+<h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>作者：杨森<br>链接：<a href="https://zhuanlan.zhihu.com/p/20328570" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/20328570</a><br>来源：知乎<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。  </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/react/" rel="tag">#react</a>
+          
+            <a href="/tags/源码解读系类/" rel="tag">#源码解读系类</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/12/Vitural-Dom-React-js源码学习/" rel="next" title="Vitural Dom-React.js源码学习">
+                <i class="fa fa-chevron-left"></i> Vitural Dom-React.js源码学习
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/12/生命周期的管理艺术-React-js源码学习/" rel="prev" title="生命周期的管理艺术-React.js源码学习">
+                生命周期的管理艺术-React.js源码学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/12/解密setState-React源码学习/"
+           data-title="解密setState-React源码学习" data-url="http://yoursite.com/2016/08/12/解密setState-React源码学习/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引子"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setState-干了什么"><span class="nav-number">2.</span> <span class="nav-text">setState 干了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-Transaction"><span class="nav-number">3.</span> <span class="nav-text">初识  Transaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解密setState"><span class="nav-number">4.</span> <span class="nav-text">解密setState</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">reference</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
