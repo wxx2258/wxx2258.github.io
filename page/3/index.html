@@ -256,6 +256,431 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/13/javascript继承/" itemprop="url">
+                  javascript继承
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-13T17:53:29+08:00" content="2016-07-13">
+              2016-07-13
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/13/javascript继承/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/13/javascript继承/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="js继承的概念"><a href="#js继承的概念" class="headerlink" title="js继承的概念"></a>js继承的概念</h2><blockquote>
+<p>有如下两种常用的继承方式：</p>
+<ul>
+<li>原型链继承（对象间的继承）</li>
+<li>类式继承（构造函数间的继承）</li>
+</ul>
+</blockquote>
+<h3 id="原型链继承与类式继承"><a href="#原型链继承与类式继承" class="headerlink" title="原型链继承与类式继承"></a>原型链继承与类式继承</h3><p>类式继承是在子类型构造函数的内部调用超类型的构造函数。<br>严格的类式继承并不是很常见，一般都是组合着用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function Super()&#123;</span><br><span class="line">    this.colors=[&quot;red&quot;,&quot;blue&quot;];</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">function Sub()&#123;</span><br><span class="line">    Super.call(this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/13/javascript继承/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/13/javascript数据类型总结/" itemprop="url">
+                  javascript数据类型总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-13T15:48:34+08:00" content="2016-07-13">
+              2016-07-13
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/13/javascript数据类型总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/13/javascript数据类型总结/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><h2 id="es5数据类型："><a href="#es5数据类型：" class="headerlink" title="es5数据类型："></a>es5数据类型：</h2><h3 id="非引用型："><a href="#非引用型：" class="headerlink" title="非引用型："></a>非引用型：</h3><ul>
+<li>“Undefined” : 顾名思义，无法确定。值未定义，很多情况是引用的变量没有明确的值。</li>
+<li>“Boolean” ： 布尔值，只有”true” 和 “false”两个值。</li>
+<li>“String” ：字符串。</li>
+<li>“Number” ：数值。其中”NAN” 属于这个数据类型<h3 id="引用型："><a href="#引用型：" class="headerlink" title="引用型："></a>引用型：</h3></li>
+<li>“Object” ： “Null”属于对象类型。<ul>
+<li>Array类型</li>
+<li>Data类型</li>
+<li>RegExp类型</li>
+<li>Function类型</li>
+<li>……
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/13/javascript数据类型总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/04/29/使用定时器处理长时间运行脚本/" itemprop="url">
+                  使用定时器处理长时间运行脚本
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-29T10:13:33+08:00" content="2016-04-29">
+              2016-04-29
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/29/使用定时器处理长时间运行脚本/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/29/使用定时器处理长时间运行脚本/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="长时间运行的javascript任务"><a href="#长时间运行的javascript任务" class="headerlink" title="长时间运行的javascript任务"></a>长时间运行的javascript任务</h2><p>　　对于浏览器来说，一些复杂的javascript不能在100毫秒或更短时间内完成。这时候，UI线程被长时间占用，页面UI得不到更新，对于用户来说是非常不好的体验。</p>
+<blockquote>
+<p>这时候最理想的方法就是<strong>让出UI线程的控制权，让出控制权意味着停止执行javascript，使得UI有机会更新。然后再执行javascript。</strong><br>创建一个 定时器 会造成UI线程暂停。</p>
+</blockquote>
+<h2 id="使用定时器处理数组"><a href="#使用定时器处理数组" class="headerlink" title="使用定时器处理数组"></a>使用定时器处理数组</h2><blockquote>
+<p>一种常见的造成长时间运行脚本的起因是耗时过长的循环。  </p>
+</blockquote>
+<pre><code>典型的简单循环模式：
+for (var i = 0 , len = items.length; i &lt; len; i++) {
+  process(items[i]);
+}
+</code></pre>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/29/使用定时器处理长时间运行脚本/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/04/27/无阻塞的脚本/" itemprop="url">
+                  无阻塞的脚本
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-27T15:46:15+08:00" content="2016-04-27">
+              2016-04-27
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/27/无阻塞的脚本/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/27/无阻塞的脚本/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="为什么需要无阻塞的脚本？"><a href="#为什么需要无阻塞的脚本？" class="headerlink" title="为什么需要无阻塞的脚本？"></a>为什么需要无阻塞的脚本？</h2><p>　　由于javascript的阻塞特性，浏览器在执行js脚本代码的时候不能做其他任何事情。简单来说，就是 <code>&lt;script&gt;</code> 标签每次出现都会让页面等待脚本的解析和执行。<br>　　下面是两种比较简单的提高性能的做法：</p>
+<blockquote>
+<ol>
+<li>在页面整个渲染过程，由于脚本会阻塞页面其他资源的下载，因此推荐<code>将所有的&lt;script&gt;标签尽可能的放到&lt;body&gt;标签的底部。</code></li>
+<li>合并脚本，减少http请求，减少每个<code>&lt;script&gt;</code> 标签初始下载，执行带来的迟延。
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/04/27/无阻塞的脚本/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/04/23/你不知道的javascript（this）/" itemprop="url">
                   你不知道的javascript（this）
                 </a>
@@ -512,7 +937,7 @@ console.log( window.count );  //NAN
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">26</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
