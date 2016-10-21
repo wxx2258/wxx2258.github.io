@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="前端知识总结,源码解读系类,sea.js," />
 
 
 
@@ -57,16 +57,22 @@
 
 
 
-<meta name="description" content="一寸光阴一寸金，三寸光阴一个鑫。">
+<meta name="description" content="这里是从sea.js 源码中的 util-request.js，用于向服务器请求和加载资源到页面，在sea.js 中，其在Module.fetch() 中被调用。建议大家先行阅读sea.js源码（Module.js核心代码），对本篇的理解会更加顺畅。
+
+前提引入我们来看 Module.fetch() 中的一段代码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sea.js源码（seajs.request()请求资源）">
 <meta property="og:url" content="http://yoursite.com/2016/10/21/sea-js源码（seajs-request-请求资源）/index.html">
 <meta property="og:site_name" content="Wxx's blog">
-<meta property="og:description" content="一寸光阴一寸金，三寸光阴一个鑫。">
-<meta property="og:updated_time" content="2016-10-21T03:01:50.760Z">
+<meta property="og:description" content="这里是从sea.js 源码中的 util-request.js，用于向服务器请求和加载资源到页面，在sea.js 中，其在Module.fetch() 中被调用。建议大家先行阅读sea.js源码（Module.js核心代码），对本篇的理解会更加顺畅。
+
+前提引入我们来看 Module.fetch() 中的一段代码">
+<meta property="og:updated_time" content="2016-10-21T06:56:36.460Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sea.js源码（seajs.request()请求资源）">
-<meta name="twitter:description" content="一寸光阴一寸金，三寸光阴一个鑫。">
+<meta name="twitter:description" content="这里是从sea.js 源码中的 util-request.js，用于向服务器请求和加载资源到页面，在sea.js 中，其在Module.fetch() 中被调用。建议大家先行阅读sea.js源码（Module.js核心代码），对本篇的理解会更加顺畅。
+
+前提引入我们来看 Module.fetch() 中的一段代码">
 
 
 
@@ -300,7 +306,32 @@
       
 
       
-        
+        <blockquote>
+<p>这里是从sea.js 源码中的 util-request.js，用于向服务器请求和加载资源到页面，在sea.js 中，其在Module.fetch() 中被调用。建议大家先行阅读<br><a href="http://wxx2258.github.io/2016/10/21/sea-js%E6%BA%90%E7%A0%81%EF%BC%88Module-js%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81%EF%BC%89/" target="_blank" rel="external">sea.js源码（Module.js核心代码）</a>，对本篇的理解会更加顺畅。</p>
+</blockquote>
+<h2 id="前提引入"><a href="#前提引入" class="headerlink" title="前提引入"></a>前提引入</h2><p>我们来看 Module.fetch() 中的一段代码</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">function sendRequest() &#123;</span><br><span class="line">  seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset, emitData.crossorigin)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function onRequest(error) &#123;</span><br><span class="line">  delete fetchingList[requestUri]</span><br><span class="line">  fetchedList[requestUri] = true</span><br><span class="line"></span><br><span class="line">  // Save meta data of anonymous module</span><br><span class="line">  if (anonymousMeta) &#123;</span><br><span class="line">    Module.save(uri, anonymousMeta)</span><br><span class="line">    anonymousMeta = null</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // Call callbacks</span><br><span class="line">  var m, mods = callbackList[requestUri]</span><br><span class="line">  delete callbackList[requestUri]</span><br><span class="line">  while ((m = mods.shift())) &#123;</span><br><span class="line">    // When 404 occurs, the params error will be true</span><br><span class="line">    if(error === true) &#123;</span><br><span class="line">      m.error()</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">      m.load()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码大体的意思就是 sendRequest() 调用后会 执行<code>seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset, emitData.crossorigin)</code>。即引出我们本篇的主人公，seajs.request() 。这里我们向seajs.request 传入了四个参数:</p>
+<ul>
+<li>requestUri： 资源的请求路径 </li>
+<li>onRequest ： 这里便是上面这段代码的onRequest 函数，是我们加载完执行的回调</li>
+<li>charset ： 文件编码</li>
+<li>crossorigin :： 跨域属性，允许配置元素获取数据的 CORS 请求是否需要携带凭证。</li>
+</ul>
+<h2 id="seajs-request-url-callback-charset-crossorigin"><a href="#seajs-request-url-callback-charset-crossorigin" class="headerlink" title="seajs.request(url, callback, charset, crossorigin)"></a>seajs.request(url, callback, charset, crossorigin)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * util-request.js - The utilities for requesting script and style files</span><br><span class="line"> * ref: tests/research/load-js-css/test.html</span><br><span class="line"> */</span><br><span class="line">if (isWebWorker) &#123;</span><br><span class="line">  function requestFromWebWorker(url, callback, charset, crossorigin) &#123;</span><br><span class="line">    // Load with importScripts</span><br><span class="line">    var error</span><br><span class="line">    try &#123;</span><br><span class="line">      importScripts(url)</span><br><span class="line">    &#125; catch (e) &#123;</span><br><span class="line">      error = e</span><br><span class="line">    &#125;</span><br><span class="line">    callback(error)</span><br><span class="line">  &#125;</span><br><span class="line">  // For Developers</span><br><span class="line">  seajs.request = requestFromWebWorker</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">  var doc = document</span><br><span class="line">  var head = doc.head || doc.getElementsByTagName(&quot;head&quot;)[0] || doc.documentElement</span><br><span class="line">  var baseElement = head.getElementsByTagName(&quot;base&quot;)[0]</span><br><span class="line"></span><br><span class="line">  var currentlyAddingScript</span><br><span class="line"></span><br><span class="line">  function request(url, callback, charset, crossorigin) &#123;</span><br><span class="line">    var node = doc.createElement(&quot;script&quot;)</span><br><span class="line"></span><br><span class="line">    if (charset) &#123;</span><br><span class="line">      node.charset = charset</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (!isUndefined(crossorigin)) &#123;</span><br><span class="line">      node.setAttribute(&quot;crossorigin&quot;, crossorigin)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    addOnload(node, callback, url)</span><br><span class="line"></span><br><span class="line">    node.async = true</span><br><span class="line">    node.src = url</span><br><span class="line"></span><br><span class="line">    // For some cache cases in IE 6-8, the script executes IMMEDIATELY after</span><br><span class="line">    // the end of the insert execution, so use `currentlyAddingScript` to</span><br><span class="line">    // hold current node, for deriving url in `define` call</span><br><span class="line">    currentlyAddingScript = node</span><br><span class="line"></span><br><span class="line">    // ref: #185 &amp; http://dev.jquery.com/ticket/2709</span><br><span class="line">    baseElement ?</span><br><span class="line">        head.insertBefore(node, baseElement) :</span><br><span class="line">        head.appendChild(node)</span><br><span class="line"></span><br><span class="line">    currentlyAddingScript = null</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  function addOnload(node, callback, url) &#123;</span><br><span class="line">    var supportOnload = &quot;onload&quot; in node</span><br><span class="line"></span><br><span class="line">    if (supportOnload) &#123;</span><br><span class="line">      node.onload = onload</span><br><span class="line">      node.onerror = function() &#123;</span><br><span class="line">        emit(&quot;error&quot;, &#123; uri: url, node: node &#125;)</span><br><span class="line">        onload(true)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">      node.onreadystatechange = function() &#123;</span><br><span class="line">        if (/loaded|complete/.test(node.readyState)) &#123;</span><br><span class="line">          onload()</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function onload(error) &#123;</span><br><span class="line">      // Ensure only run once and handle memory leak in IE</span><br><span class="line">      node.onload = node.onerror = node.onreadystatechange = null</span><br><span class="line"></span><br><span class="line">      // Remove the script to reduce memory leak</span><br><span class="line">      if (!data.debug) &#123;</span><br><span class="line">        head.removeChild(node)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // Dereference the node</span><br><span class="line">      node = null</span><br><span class="line"></span><br><span class="line">      callback(error)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // For Developers</span><br><span class="line">  seajs.request = request</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整段代码的流程如下：</p>
+<ul>
+<li>==》 在文档的head中动态的添加一个script标签，同时设置一个async属性为true，这样是为了异步加载这个文件</li>
+<li>==》 执行js文件脚本<ul>
+<li>在seajs中，我们的js文件要通过define() 包装定义成一个模块,执行脚本就是调用 define() </li>
+<li>define() 中解析依赖模块和同步依赖(即 require() )的模块，通过 define() 传递过来的参数形成一个 Module 模块。</li>
+<li>（有关define()的详细讲解，有兴趣的同学可以查看<a href="http://wxx2258.github.io/2016/10/21/seajs%E6%BA%90%E7%A0%81%EF%BC%88define%EF%BC%8Cexec%E5%AE%9A%E4%B9%89%E5%92%8C%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9D%97%E4%BB%A3%E7%A0%81%EF%BC%89/" target="_blank" rel="external">seajs源码（define，exec定义和执行模块代码）</a>）</li>
+</ul>
+</li>
+<li>== 》 执行我们给脚本 监听的 onload() 事件，在onload中我们便执行了回调函数。</li>
+</ul>
+
       
     </div>
 
@@ -311,6 +342,16 @@
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/前端知识总结/" rel="tag">#前端知识总结</a>
+          
+            <a href="/tags/源码解读系类/" rel="tag">#源码解读系类</a>
+          
+            <a href="/tags/sea-js/" rel="tag">#sea.js</a>
+          
+        </div>
       
 
       
@@ -324,10 +365,6 @@
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/10/21/sea-js源码（模块标识seajs-resolve-）/" rel="prev" title="sea.js源码（模块标识seajs.resolve()）">
-                sea.js源码（模块标识seajs.resolve()） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -399,7 +436,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">25</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -409,7 +446,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -453,7 +490,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前提引入"><span class="nav-number">1.</span> <span class="nav-text">前提引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seajs-request-url-callback-charset-crossorigin"><span class="nav-number">2.</span> <span class="nav-text">seajs.request(url, callback, charset, crossorigin)</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

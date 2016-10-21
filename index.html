@@ -256,101 +256,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/10/21/sea-js源码（模块标识seajs-resolve-）/" itemprop="url">
-                  sea.js源码（模块标识seajs.resolve()）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-21T11:02:16+08:00" content="2016-10-21">
-              2016-10-21
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/10/21/sea-js源码（模块标识seajs-resolve-）/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/21/sea-js源码（模块标识seajs-resolve-）/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/10/21/sea-js源码（seajs-request-请求资源）/" itemprop="url">
                   sea.js源码（seajs.request()请求资源）
                 </a>
@@ -400,9 +305,15 @@
 
       
         
-          
-            
-          
+          <blockquote>
+<p>这里是从sea.js 源码中的 util-request.js，用于向服务器请求和加载资源到页面，在sea.js 中，其在Module.fetch() 中被调用。建议大家先行阅读<br><a href="http://wxx2258.github.io/2016/10/21/sea-js%E6%BA%90%E7%A0%81%EF%BC%88Module-js%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81%EF%BC%89/">sea.js源码（Module.js核心代码）</a>，对本篇的理解会更加顺畅。</p>
+</blockquote>
+<h2 id="前提引入"><a href="#前提引入" class="headerlink" title="前提引入"></a>前提引入</h2><p>我们来看 Module.fetch() 中的一段代码</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/10/21/sea-js源码（seajs-request-请求资源）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -495,9 +406,17 @@
 
       
         
-          
-            
-          
+          <blockquote>
+<p>这里是从sea.js 源码中的 Module.js 的Module核心代码抽离出来的，建议大家先行阅读<br><a href="http://wxx2258.github.io/2016/10/21/sea-js%E6%BA%90%E7%A0%81%EF%BC%88Module-js%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81%EF%BC%89/">sea.js源码（Module.js核心代码）</a>，对本篇的理解会更加顺畅。</p>
+</blockquote>
+<h2 id="前提引入"><a href="#前提引入" class="headerlink" title="前提引入"></a>前提引入</h2><p>前面我们讲到 seajs中，最后执行 顶部模块 的callback回调的时候，最后一层一层的向上执行依赖模块。而 其中的依赖模块是我们js文件中用<code>Module.define()</code>定义的，相应就需要<code>Module.exec()</code>去执行编译。</p>
+<p>那么在这之前我们就先看一下 我们js代码如何定义模块。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">define(id,deps,function(require, exports, module) &#123;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/10/21/seajs源码（define，exec定义和执行模块代码）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -590,9 +509,17 @@
 
       
         
-          
-            
-          
+          <blockquote>
+<p>源码版本：3.0.0    sea.js<br>声明：水平有限，读者请客观阅读本博文。如有对源码解读错误的地方，请不吝指出。<br>讲解的风格是先列源码，然后把源码的执行过程表示出来，细节实现请读者阅读讲解上方的源码。<br>建议读者先行阅读一遍源码再理解这篇博文，至少做到理解seajs框架大体的函数工具是做什么。</p>
+</blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在阅读sea.js源码前，我们先来简单看看什么是 JavaScript模块化。</p>
+<p>现在的前端开发， 愈来愈趋向于桌面应用，需要团队合作，管理。开发一个新的页面，我们可能需要加载其他别人写好的模块，这个时候，我们就需要javascript模块化。</p>
+<p>模块：简单来说就是实现特定功能的一组方法。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/10/21/sea-js源码（Module-js核心代码）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1226,6 +1153,109 @@
 
 
     
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/web缓存（三）-HTML5缓存/" itemprop="url">
+                  web缓存（三）-HTML5缓存
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T21:51:04+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/31/web缓存（三）-HTML5缓存/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/31/web缓存（三）-HTML5缓存/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="web缓存"><a href="#web缓存" class="headerlink" title="web缓存"></a>web缓存</h2><ul>
+<li>什么是web缓存：<ul>
+<li>Web缓存是指一个Web资源（如html页面，图片，js，数据等）存在于Web服务器和客户端（浏览器）之间的副本。缓存会根据进来的请求保存输出内容的副本；当下一个请求来到的时候，如果是相同的URL，缓存会根据缓存机制决定是直接使用副本响应访问请求，还是向源服务器再次发送请求。</li>
+</ul>
+</li>
+<li>本篇主要讲的是HTML5缓存
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/07/31/web缓存（三）-HTML5缓存/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -1271,7 +1301,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">25</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1281,7 +1311,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
