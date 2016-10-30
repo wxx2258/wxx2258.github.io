@@ -1,0 +1,849 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript,combo," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="前言在学习如何实现一个combo算法之前，先让我们来看看它解决了哪些问题：
+
+用过js模块化的同学应该都知道，模块化给我们带来许多好处，但如果我们在一个页面中依赖许多模块，不做一定的处理，就会发起许多的http请求，影响页面性能。通过combo算法，将请求合并，发送一个http请求，由后台解析所需文件，一次性将我们需要的文件返回。
+
+相信很多前端开发人员都做过这么一件事，将页面多个JavaScri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js实现一个combo算法">
+<meta property="og:url" content="http://yoursite.com/2016/10/30/js实现一个combo算法/index.html">
+<meta property="og:site_name" content="Wxx's blog">
+<meta property="og:description" content="前言在学习如何实现一个combo算法之前，先让我们来看看它解决了哪些问题：
+
+用过js模块化的同学应该都知道，模块化给我们带来许多好处，但如果我们在一个页面中依赖许多模块，不做一定的处理，就会发起许多的http请求，影响页面性能。通过combo算法，将请求合并，发送一个http请求，由后台解析所需文件，一次性将我们需要的文件返回。
+
+相信很多前端开发人员都做过这么一件事，将页面多个JavaScri">
+<meta property="og:updated_time" content="2016-10-30T04:47:01.914Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="js实现一个combo算法">
+<meta name="twitter:description" content="前言在学习如何实现一个combo算法之前，先让我们来看看它解决了哪些问题：
+
+用过js模块化的同学应该都知道，模块化给我们带来许多好处，但如果我们在一个页面中依赖许多模块，不做一定的处理，就会发起许多的http请求，影响页面性能。通过combo算法，将请求合并，发送一个http请求，由后台解析所需文件，一次性将我们需要的文件返回。
+
+相信很多前端开发人员都做过这么一件事，将页面多个JavaScri">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> js实现一个combo算法 | Wxx's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?5a81bb25f4a74a4ec7999f0c15191703";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Wxx's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'rLFP8c9G6YyjxLUsEh_M','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                js实现一个combo算法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-30T12:44:49+08:00" content="2016-10-30">
+              2016-10-30
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/30/js实现一个combo算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/30/js实现一个combo算法/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在学习如何实现一个combo算法之前，先让我们来看看它解决了哪些问题：</p>
+<ul>
+<li><p>用过js模块化的同学应该都知道，模块化给我们带来许多好处，但如果我们在一个页面中依赖许多模块，不做一定的处理，就会发起许多的http请求，影响页面性能。通过combo算法，将请求合并，发送一个http请求，由后台解析所需文件，一次性将我们需要的文件返回。</p>
+</li>
+<li><p>相信很多前端开发人员都做过这么一件事，将页面多个JavaScript文件合并成一个js文件，目的是减少http请求数，以提高页面性能。但同时带来的问题：维护麻烦，模块冗余，缓存粒度大。使用combo算法看起来更优雅，不需要去合并成一个文件。</p>
+<a id="more"></a>
+</li>
+</ul>
+<h2 id="Combo算法的实现"><a href="#Combo算法的实现" class="headerlink" title="Combo算法的实现"></a>Combo算法的实现</h2><p>首先让我们来看一下，假设我们的页面需要加载下面这么几个文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var comboFile = [&quot;file:///E:/src/a/c.js&quot;,</span><br><span class="line">                 &quot;file:///E:/src/a.js&quot;, </span><br><span class="line">                 &quot;file:///E:/src/b.css&quot;,</span><br><span class="line">                 &quot;file:///E:/src/d.css&quot;];</span><br></pre></td></tr></table></figure></p>
+<p>那么最终我们需要合并成两个combo请求，<code>file:///E:/src/??a/c.js,a/e.b.js,b/d.js</code> 和 <code>file:///E:/src/??b.css,d.css</code> 。</p>
+<p>不难想到这个合并的过程：</p>
+<ul>
+<li>解析找到文件相同的目录，与不同的路径。<ul>
+<li>将数组中文件路径解析为对象，相同目录同一标识属性，不同路径赋值不同的路径。</li>
+<li>解析对象，获取相同的目录，和不同路径数组。</li>
+</ul>
+</li>
+<li>根据经过处理的路径数组，分类文件，重新组成一个路径数组</li>
+<li>遍历分类文件，拼接字符串形成 combo链接<br>接下来我们一步一步顺着思路解析。</li>
+</ul>
+<h2 id="全局变量声明"><a href="#全局变量声明" class="headerlink" title="全局变量声明"></a>全局变量声明</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var comboSyntax = [&quot;??&quot;, &quot;,&quot;]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>comboSyntax：combo服务语法数组。存储需要合成combo链接的字符串。</li>
+</ul>
+<h2 id="将数组中文件路径解析为路径对象"><a href="#将数组中文件路径解析为路径对象" class="headerlink" title="将数组中文件路径解析为路径对象"></a>将数组中文件路径解析为路径对象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">function uris2meta(uris) &#123;</span><br><span class="line">  var meta = &#123;</span><br><span class="line">    _KEYS : []</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  for(var i = 0,len = uris.length ; i &lt; len ; i++)&#123;</span><br><span class="line">    var parts = uris[i].replace(&quot;://&quot;,&quot;__&quot;).split(&quot;/&quot;);</span><br><span class="line">    var m = meta;</span><br><span class="line">    for(var j = 0,len = parts.length ; j &lt; len ; j++)&#123;</span><br><span class="line">      var part = parts[j];</span><br><span class="line">      if (!m[part]) &#123;</span><br><span class="line">        m[part] = &#123;</span><br><span class="line">          _KEYS : []</span><br><span class="line">        &#125;;</span><br><span class="line">        m._KEYS.push(part);</span><br><span class="line">      &#125;</span><br><span class="line">      m =  m[part];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // console.log(JSON.stringify(meta))</span><br><span class="line">  return meta;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>_KEYS用于记录关键字数组，也就是路径值，该对象的属性名称集合。</li>
+<li><code>var parts = uris[i].replace(&quot;://&quot;,&quot;__&quot;).split(&quot;/&quot;);</code>通过正则先修改 <code>://</code> 为 <code>__</code>，然后根据 字符’/‘ 进行split() 的到路径数组。</li>
+<li>一层一层的玩下创建对象属性，如果该路径未存储，就以其“路径值”作为标志 建立一个新的属性，并添加到__KEYS中。</li>
+<li>下面是我们通过执行<code>uris2meta(comboFile)</code> 处理数据得到的对象。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;_KEYS&quot;: [</span><br><span class="line">        &quot;file__&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;file__&quot;: &#123;</span><br><span class="line">        &quot;_KEYS&quot;: [</span><br><span class="line">            &quot;E:&quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;E:&quot;: &#123;</span><br><span class="line">            &quot;_KEYS&quot;: [</span><br><span class="line">                &quot;src&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;src&quot;: &#123;</span><br><span class="line">                &quot;_KEYS&quot;: [</span><br><span class="line">                    &quot;a&quot;,</span><br><span class="line">                    &quot;a.js&quot;,</span><br><span class="line">                    &quot;b.css&quot;,</span><br><span class="line">                    &quot;d.css&quot;</span><br><span class="line">                ],</span><br><span class="line">                &quot;a&quot;: &#123;</span><br><span class="line">                    &quot;_KEYS&quot;: [</span><br><span class="line">                        &quot;c.js&quot;</span><br><span class="line">                    ],</span><br><span class="line">                    &quot;c.js&quot;: &#123;</span><br><span class="line">                        &quot;_KEYS&quot;: []</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                &quot;a.js&quot;: &#123;</span><br><span class="line">                    &quot;_KEYS&quot;: []</span><br><span class="line">                &#125;,</span><br><span class="line">                &quot;b.css&quot;: &#123;</span><br><span class="line">                    &quot;_KEYS&quot;: []</span><br><span class="line">                &#125;,</span><br><span class="line">                &quot;d.css&quot;: &#123;</span><br><span class="line">                    &quot;_KEYS&quot;: []</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="根据路径对象获取相同目录和不同路径"><a href="#根据路径对象获取相同目录和不同路径" class="headerlink" title="根据路径对象获取相同目录和不同路径"></a>根据路径对象获取相同目录和不同路径</h2><ul>
+<li><p>代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">// 根据路径对象形成一个 paths 路径数组[相同目录，不同路径]</span><br><span class="line">  function meta2paths(meta) &#123;</span><br><span class="line">    var paths = [];</span><br><span class="line">    var _KEYS = meta._KEYS;</span><br><span class="line"></span><br><span class="line">    for(var i = 0,len = _KEYS.length; i &lt; len; i++)&#123;</span><br><span class="line">      var part = _KEYS[i];</span><br><span class="line">      var root = part;</span><br><span class="line">      var m = meta[part];</span><br><span class="line">      var KEYS = m._KEYS;</span><br><span class="line"></span><br><span class="line">      while(KEYS.length === 1)&#123;</span><br><span class="line">        root += &apos;/&apos; + KEYS[0];</span><br><span class="line">        m = m[KEYS[0]];</span><br><span class="line">        KEYS = m._KEYS;</span><br><span class="line">        // console.log(root,i)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      if(KEYS.length)&#123;</span><br><span class="line">        paths.push([root.replace(&quot;__&quot;, &quot;://&quot;), meta2arr(m)])</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    console.log(paths)</span><br><span class="line">    return paths;</span><br><span class="line">  &#125;</span><br><span class="line">// 根据后面的不同路径，形成一个数组</span><br><span class="line">  function meta2arr(meta) &#123;</span><br><span class="line">    var arr = [];</span><br><span class="line">    var _KEYS = meta._KEYS;</span><br><span class="line"></span><br><span class="line">    for (var i = 0, len = _KEYS.length; i &lt; len; i++) &#123;</span><br><span class="line">      var key = _KEYS[i];</span><br><span class="line"></span><br><span class="line">      var r = meta2arr(meta[key])</span><br><span class="line"></span><br><span class="line">      var m = r.length;</span><br><span class="line">      if(m)&#123;</span><br><span class="line">        for (var j = 0; j &lt; m; j++)&#123;</span><br><span class="line">          arr.push(key + &apos;/&apos; +　r[j]);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;else&#123;</span><br><span class="line">        arr.push(key);</span><br><span class="line">      &#125; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return arr;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当_KEYS数组长度为1，说明所有的请求都通过该目录，所以我们循环并通过<code>m._KEYS</code>一层一层的往下叠加，得到相同目录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">while(KEYS.length === 1)&#123;</span><br><span class="line">    root += &apos;/&apos; + KEYS[0];</span><br><span class="line">    m = m[KEYS[0]];</span><br><span class="line">    KEYS = m._KEYS;</span><br><span class="line">    // console.log(root,i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这里主要用的是递归的思想。<code>meta2arr(meta[key])</code>将子目录属性 往下传递调用，直到最后一层。此时它已经没有_KEY属性了，便开始向上返回值。<code>arr.push(key + &#39;/&#39; +　r[j]);</code>不断叠加形成完整的目录。</p>
+</li>
+<li><p>遍历完数组后，所有不同的路径都被添加到数组中，最终函数返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">var arr = [];</span><br><span class="line">var _KEYS = meta._KEYS;</span><br><span class="line">for (var i = 0, len = _KEYS.length; i &lt; len; i++) &#123;</span><br><span class="line">  var key = _KEYS[i];</span><br><span class="line"></span><br><span class="line">  var r = meta2arr(meta[key])</span><br><span class="line"></span><br><span class="line">  var m = r.length;</span><br><span class="line">  if(m)&#123;</span><br><span class="line">    for (var j = 0; j &lt; m; j++)&#123;</span><br><span class="line">      arr.push(key + &apos;/&apos; +　r[j]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;else&#123;</span><br><span class="line">    arr.push(key);</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br><span class="line">return arr;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下面我们看通过执行<code>meta2paths(uris2meta(comboFile))</code>得到的数组</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ &quot;file:///E:/src&quot; , [&quot;a/c.js&quot;,&quot;a.js&quot;,&quot;b.css&quot;,&quot;d.css&quot;] ]</span><br></pre></td></tr></table></figure>
+<h2 id="根据路径数组，形成combo链接"><a href="#根据路径数组，形成combo链接" class="headerlink" title="根据路径数组，形成combo链接"></a>根据路径数组，形成combo链接</h2><p>我们需要根据文件格式进行一下分类，不然不同文件格式形成的combo链接并不是我们想要的结果。</p>
+<h3 id="根据经过处理的路径数组，分类文件，重新组成一个路径数组"><a href="#根据经过处理的路径数组，分类文件，重新组成一个路径数组" class="headerlink" title="根据经过处理的路径数组，分类文件，重新组成一个路径数组"></a>根据经过处理的路径数组，分类文件，重新组成一个路径数组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">// 根据文件格式，给文件分组</span><br><span class="line">  function files2group(files) &#123;</span><br><span class="line">    var group = []</span><br><span class="line">    var hash = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    for (var i = 0, len = files.length; i &lt; len; i++) &#123;</span><br><span class="line">      var file = files[i]</span><br><span class="line">      var ext = getExt(file)</span><br><span class="line">      // console.log(ext)</span><br><span class="line">      if (ext) &#123;</span><br><span class="line">        (hash[ext] || (hash[ext] = [])).push(file)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for (var k in hash) &#123;</span><br><span class="line">      if (hash.hasOwnProperty(k)) &#123;</span><br><span class="line">        group.push(hash[k])</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return group</span><br><span class="line">  &#125;</span><br><span class="line">// 根据文件判断 文件格式</span><br><span class="line">  function getExt(file) &#123;</span><br><span class="line">    var p = file.lastIndexOf(&quot;.&quot;)</span><br><span class="line">    return p &gt;= 0 ? file.substring(p) : &quot;&quot;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>根据文件后缀判断文件格式，<code>file.lastIndexOf(&quot;.&quot;)</code>获得的是文件后缀，得到文件类型。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var p = file.lastIndexOf(&quot;.&quot;)</span><br><span class="line">   return p &gt;= 0 ? file.substring(p) : &quot;&quot;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>遍历路径数组，<code>(hash[ext] || (hash[ext] = [])).push(file)</code>将相同文件类型的放在一个数组中。<code>group.push(hash[k])</code>将所有的类型数组合并。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var hash = &#123;&#125;</span><br><span class="line">……</span><br><span class="line">        (hash[ext] || (hash[ext] = [])).push(file)</span><br><span class="line">……</span><br><span class="line">    group.push(hash[k])</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+<ul>
+<li>我们看一下我们得到的结果</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ [&quot;a/c.js , a.js&quot;],[&quot;b.css , d.css&quot;] ]</span><br></pre></td></tr></table></figure>
+<h3 id="遍历分类文件，拼接字符串形成-combo链接"><a href="#遍历分类文件，拼接字符串形成-combo链接" class="headerlink" title="遍历分类文件，拼接字符串形成 combo链接"></a>遍历分类文件，拼接字符串形成 combo链接</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 通过路径数组形成 combo链接</span><br><span class="line">  function paths2hash(paths) &#123;</span><br><span class="line">    var comboHash = [];</span><br><span class="line">    for (var i = 0, len = paths.length; i &lt; len; i++) &#123;</span><br><span class="line">      var path = paths[i]</span><br><span class="line">      var root = path[0] + &quot;/&quot;</span><br><span class="line">      var group = files2group(path[1])</span><br><span class="line"></span><br><span class="line">      for (var j = 0, m = group.length; j &lt; m; j++) &#123;</span><br><span class="line">        // 遍历某类文件，连接字符</span><br><span class="line">        var copy = []</span><br><span class="line">        for (var i = 0, len = group[j].length; i &lt; len; i++) &#123;</span><br><span class="line">          copy[i] = group[j][i].replace(/\?.*$/, &apos;&apos;)</span><br><span class="line">        &#125;</span><br><span class="line">        comboHash[j] = root + comboSyntax[0] + copy.join(comboSyntax[1]);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // console.log(comboHash);</span><br><span class="line">    return comboHash;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过<code>var group = files2group(path[1])</code>得到文件分类形成的二维数组。接下来遍历二维数组，连接字符串形成combo链接。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">……</span><br><span class="line">        comboHash[j] = root + comboSyntax[0] + copy.join(comboSyntax[1]);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>最终返回的结果：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&quot;file:///E:/src/??a/c.js,a.js&quot;, &quot;file:///E:/src/??b.css,d.css&quot;]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>到此，我们就得到我们想要的combo链接。</p>
+</blockquote>
+<h2 id="资源："><a href="#资源：" class="headerlink" title="资源："></a>资源：</h2><p>源码： <a href="https://github.com/wxx2258/front-end-knowledge/blob/master/js%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/javascript%E6%A8%A1%E5%9D%97%E5%8C%96/myCombo.js" target="_blank" rel="external">https://github.com/wxx2258/front-end-knowledge/blob/master/js%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/javascript%E6%A8%A1%E5%9D%97%E5%8C%96/myCombo.js</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag">#javascript</a>
+          
+            <a href="/tags/combo/" rel="tag">#combo</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/21/sea-js源码（seajs-request-请求资源）/" rel="next" title="sea.js源码（seajs.request()请求资源）">
+                <i class="fa fa-chevron-left"></i> sea.js源码（seajs.request()请求资源）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/30/js实现一个combo算法/"
+           data-title="js实现一个combo算法" data-url="http://yoursite.com/2016/10/30/js实现一个combo算法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="吴晓鑫" />
+          <p class="site-author-name" itemprop="name">吴晓鑫</p>
+          <p class="site-description motion-element" itemprop="description">一寸光阴一寸金，三寸光阴一个鑫。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wxx2258" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Combo算法的实现"><span class="nav-number">2.</span> <span class="nav-text">Combo算法的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全局变量声明"><span class="nav-number">3.</span> <span class="nav-text">全局变量声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将数组中文件路径解析为路径对象"><span class="nav-number">4.</span> <span class="nav-text">将数组中文件路径解析为路径对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#根据路径对象获取相同目录和不同路径"><span class="nav-number">5.</span> <span class="nav-text">根据路径对象获取相同目录和不同路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#根据路径数组，形成combo链接"><span class="nav-number">6.</span> <span class="nav-text">根据路径数组，形成combo链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根据经过处理的路径数组，分类文件，重新组成一个路径数组"><span class="nav-number">6.1.</span> <span class="nav-text">根据经过处理的路径数组，分类文件，重新组成一个路径数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遍历分类文件，拼接字符串形成-combo链接"><span class="nav-number">6.2.</span> <span class="nav-text">遍历分类文件，拼接字符串形成 combo链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源："><span class="nav-number">7.</span> <span class="nav-text">资源：</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">吴晓鑫</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"wxx2258"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
