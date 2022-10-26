@@ -477,7 +477,7 @@ return function (global, window, document, undefined) {
         };
     })();
 
-    /* Array compacting. Copyright Lo-Dash. MIT License: https://github.com/lodash/lodash/blob/master/LICENSE.txt */
+    /* Array compacting. Copyright Lo-Dash. MIT License: https://github.com/lodash/lodash/blob/master/oldBlogLICENSE.txt */
     function compactSparseArray (array) {
         var index = -1,
             length = array ? array.length : 0,

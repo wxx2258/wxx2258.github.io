@@ -65,13 +65,13 @@
 <meta property="og:site_name" content="Wxx's blog">
 <meta property="og:description" content="前言zepto是一个轻量级的类jQuery的JavaScript库，适合在移动端页面开发使用。轻量又提供许多dom操作API。 
 前面我们讲解了zepto模块，现在来看看event模块。">
-<meta property="og:image" content="https://github.com/wxx2258/front-end-knowledge/blob/master/%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/zepto%E6%BA%90%E7%A0%81Event%E6%A8%A1%E5%9D%97.png?raw=true">
+<meta property="og:image" content="https://github.com/wxx2258/front-end-knowledge/blob/master/oldBlog%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/zepto%E6%BA%90%E7%A0%81Event%E6%A8%A1%E5%9D%97.png?raw=true">
 <meta property="og:updated_time" content="2016-11-10T02:40:43.061Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="event模块-zepto源码">
 <meta name="twitter:description" content="前言zepto是一个轻量级的类jQuery的JavaScript库，适合在移动端页面开发使用。轻量又提供许多dom操作API。 
 前面我们讲解了zepto模块，现在来看看event模块。">
-<meta name="twitter:image" content="https://github.com/wxx2258/front-end-knowledge/blob/master/%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/zepto%E6%BA%90%E7%A0%81Event%E6%A8%A1%E5%9D%97.png?raw=true">
+<meta name="twitter:image" content="https://github.com/wxx2258/front-end-knowledge/blob/master/oldBlog%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/zepto%E6%BA%90%E7%A0%81Event%E6%A8%A1%E5%9D%97.png?raw=true">
 
 
 
@@ -308,7 +308,7 @@
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>zepto是一个轻量级的类jQuery的JavaScript库，适合在移动端页面开发使用。轻量又提供许多dom操作API。 </p>
 <p>前面我们讲解了<a href="http://localhost:4000/2016/11/09/zepto%E6%A8%A1%E5%9D%97-zepto-js%E6%BA%90%E7%A0%81/" target="_blank" rel="external">zepto模块</a>，现在来看看event模块。</p>
 <a id="more"></a>
-<h2 id="event模块"><a href="#event模块" class="headerlink" title="event模块"></a>event模块</h2><p>整体结构：<br><img src="https://github.com/wxx2258/front-end-knowledge/blob/master/%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/zepto%E6%BA%90%E7%A0%81Event%E6%A8%A1%E5%9D%97.png?raw=true" alt="image"></p>
+<h2 id="event模块"><a href="#event模块" class="headerlink" title="event模块"></a>event模块</h2><p>整体结构：<br><img src="https://github.com/wxx2258/front-end-knowledge/blob/master/oldBlog%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/zepto%E6%BA%90%E7%A0%81Event%E6%A8%A1%E5%9D%97.png?raw=true" alt="image"></p>
 <p>先看下面代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">	&lt;title&gt;event&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;div class=&quot;a&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line">&lt;script src=&quot;../../src/zepto.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;../../src/event.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">var obj = &#123;name: &apos;Zepto&apos;&#125;,</span><br><span class="line">    handler = function()&#123; console.log(&quot;hello from + &quot;, this.name) &#125;</span><br><span class="line">$(document).on(&apos;click&apos;, $.proxy(handler, obj))</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">$.Event(&apos;myevent&apos;)</span><br><span class="line"></span><br><span class="line">$(document).on(&apos;myevent&apos;,&quot;.a&quot;, function(e, from, to)&#123;</span><br><span class="line">  console.log(&apos;change on %o with data %s, %s&apos;, e.target, from, to)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">$(&quot;.a&quot;).trigger(&apos;myevent&apos;, [&apos;one&apos;, &apos;two&apos;])</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
 <blockquote>
 <p>上面的实例代码，基本将event模块上的主要方法和内容包含了<code>$.proxy(),$.Event(),on(),trigger()</code>这些方法。在zepto的官方文档中，其明确不推荐我们用bind等方法绑定事件，其实bind调用是on()方法，所以用on()绑定事件更好。</p>
@@ -350,8 +350,8 @@
 <ul>
 <li>remove()函数中，delete操作符删除句柄对象，并调用removeEventListener移除监听事件。</li>
 </ul>
-<h2 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h2><p><a href="https://github.com/wxx2258/front-end-knowledge/blob/master/%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/src/event.js" target="_blank" rel="external">event模块源码（注：此为拷贝版本，对应的是本博文的内容，最新版本请到zepto官网获取。）</a></p>
-<p><a href="https://github.com/wxx2258/front-end-knowledge/blob/master/%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/myzepto/event.html" target="_blank" rel="external">示例代码：zepto.html</a></p>
+<h2 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h2><p><a href="https://github.com/wxx2258/front-end-knowledge/blob/master/oldBlog%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/src/event.js" target="_blank" rel="external">event模块源码（注：此为拷贝版本，对应的是本博文的内容，最新版本请到zepto官网获取。）</a></p>
+<p><a href="https://github.com/wxx2258/front-end-knowledge/blob/master/oldBlog%E7%A7%BB%E5%8A%A8web/zepto%E6%BA%90%E7%A0%81%E7%B3%BB%E7%B1%BB/%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0/myzepto/event.html" target="_blank" rel="external">示例代码：zepto.html</a></p>
 
       
     </div>
